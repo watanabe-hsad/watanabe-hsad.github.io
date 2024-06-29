@@ -8,7 +8,7 @@
       <link href="/2024/06/29/Test/"/>
       <url>/2024/06/29/Test/</url>
       
-        <content type="html"><![CDATA[<p><code>$&#123;PATH:~A&#125;$&#123;PWD:~A&#125;</code></p>]]></content>
+        <content type="html"><![CDATA[<p><code>$&#123;PATH:~A&#125;$&#123;PWD:~A&#125;</code></p><p>${PATH:<del>A}${PWD:</del>A} ????.???</p><blockquote><p>${PWD::$:$:$</p></blockquote>]]></content>
       
       
       
