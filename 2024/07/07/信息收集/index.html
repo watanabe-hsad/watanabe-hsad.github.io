@@ -1,0 +1,486 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#0078E7"><meta name="author" content="Hsad"><meta name="copyright" content="Hsad"><meta name="generator" content="Hexo 7.2.0"><meta name="theme" content="hexo-theme-yun"><title>信息收集 | Hsad's Blog</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;display=swap" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/star-markdown-css@0.4.1/dist/yun/yun-markdown.min.css"><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/prism-theme-vars/base.css"><script src="https://fastly.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><script>function initScrollReveal() {
+  [".post-card",".markdown-body img"].forEach((target)=> {
+    ScrollReveal().reveal(target);
+  })
+}
+document.addEventListener("DOMContentLoaded", initScrollReveal);
+document.addEventListener("pjax:success", initScrollReveal);
+</script><link rel="icon" type="image/png" href="/favicon.ico"><link rel="mask-icon" href="/favicon.ico" color="#0078E7"><link rel="preload" href="/css/hexo-theme-yun.css" as="style"><link rel="prefetch" href="/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="preconnect" href="https://fastly.jsdelivr.net/npm/" crossorigin><script id="yun-config">
+    window.Yun = {}
+    window.CONFIG = {"hostname":"hsad.xyz","root":"/","title":"所以你弃权","version":"1.10.11","mode":"auto","copycode":true,"page":{"isPost":true},"i18n":{"placeholder":"搜索...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）"},"anonymous_image":"https://cdn.yunyoujun.cn/img/avatar/none.jpg","say":{"api":"https://el-bot-api.vercel.app/api/words/young"},"fireworks":{"colors":null},"vendors":{"host":"https://fastly.jsdelivr.net/npm/","darken":"https://fastly.jsdelivr.net/npm/darken@1.5.0"}};
+  </script><link rel="stylesheet" href="/css/hexo-theme-yun.css"><script src="/js/hexo-theme-yun.js" type="module"></script><meta name="description" content="信息收集内容在划定了测试范围之后，就需要进入信息收集阶段。在这个阶段，渗透人员需要使用各种公开资源尽可能地获取测试目标的相关信息。他们搜集信息的互联网渠道主要有：论坛&#x2F;公告板&#x2F;新闻组&#x2F;媒体文章&#x2F;博客&#x2F;社交网络&#x2F;github&#x2F;其他商业或非商业性的网站。此外，他们也可以借助各种搜索引擎中获取相关数据，如谷歌、雅虎、MSN必应、百度等">
+<meta property="og:type" content="article">
+<meta property="og:title" content="信息收集">
+<meta property="og:url" content="https://hsad.xyz/2024/07/07/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/index.html">
+<meta property="og:site_name" content="Hsad&#39;s Blog">
+<meta property="og:description" content="信息收集内容在划定了测试范围之后，就需要进入信息收集阶段。在这个阶段，渗透人员需要使用各种公开资源尽可能地获取测试目标的相关信息。他们搜集信息的互联网渠道主要有：论坛&#x2F;公告板&#x2F;新闻组&#x2F;媒体文章&#x2F;博客&#x2F;社交网络&#x2F;github&#x2F;其他商业或非商业性的网站。此外，他们也可以借助各种搜索引擎中获取相关数据，如谷歌、雅虎、MSN必应、百度等">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hsad.xyz/2024/07/07/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/CMS.png">
+<meta property="article:published_time" content="2024-07-07T08:59:34.000Z">
+<meta property="article:modified_time" content="2024-07-07T14:27:32.170Z">
+<meta property="article:author" content="Hsad">
+<meta property="article:tag" content="渗透测试">
+<meta property="article:tag" content="信息收集">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hsad.xyz/2024/07/07/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/CMS.png"><script>(function() {
+  if (CONFIG.mode !== 'auto') return
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+  const setting = localStorage.getItem('darken-mode') || 'auto'
+  if (setting === 'dark' || (prefersDark && setting !== 'light'))
+    document.documentElement.classList.toggle('dark', true)
+})()</script></head><body><script src="https://code.iconify.design/2/2.1.1/iconify.min.js"></script><script>// Define global variable
+IconifyProviders = {
+  // Empty prefix: overwrite default API provider configuration
+  '': {
+    // Use custom API first, use Iconify public API as backup
+    resources: [
+        'https://api.iconify.design',
+    ],
+    // Wait for 1 second before switching API hosts
+    rotate: 1000,
+  },
+};</script><script defer src="https://fastly.jsdelivr.net/npm/animejs@latest"></script><script defer src="/js/ui/fireworks.js" type="module"></script><canvas class="fireworks"></canvas><div class="container"><a class="sidebar-toggle hty-icon-button" id="menu-btn"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><div class="sidebar-toggle sidebar-overlay"></div><aside class="sidebar"><script src="/js/sidebar.js" type="module"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button sidebar-nav-active" data-target="post-toc-wrap" title="文章目录"><span class="icon iconify" data-icon="ri:list-ordered"></span></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button" data-target="site-overview-wrap" title="站点概览"><span class="icon iconify" data-icon="ri:passport-line"></span></li></ul><div class="sidebar-panel" id="site-overview-wrap"><div class="site-info fix-top"><a class="site-author-avatar" href="/about/" title="Hsad"><img width="96" loading="lazy" src="/images/avatar.jpg" alt="Hsad"><span class="site-author-status" title="凉">☺️</span></a><div class="site-author-name"><a href="/about/">Hsad</a></div><span class="site-name">Hsad's Blog</span><sub class="site-subtitle">一个人的世界</sub><div class="site-description">翻着我们的照片 想念若隐若现</div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/" title="首页"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:home-4-line"></span></span></a><div class="site-state-item"><a href="/archives/" title="归档"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:archive-line"></span></span><span class="site-state-item-count">9</span></a></div><div class="site-state-item"><a href="/categories/" title="分类"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:folder-2-line"></span></span><span class="site-state-item-count">4</span></a></div><div class="site-state-item"><a href="/tags/" title="标签"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:price-tag-3-line"></span></span><span class="site-state-item-count">11</span></a></div><a class="site-state-item hty-icon-button" target="_blank" rel="noopener" href="https://yun.yunyoujun.cn" title="文档"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:settings-line"></span></span></a></nav><hr style="margin-bottom:0.5rem"><div class="links-of-author"><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://qm.qq.com/cgi-bin/qm/qr?k=EYiK7-b5ur1mWxbX7aV2AEBsuoW9c732" title="QQ" target="_blank" style="color:orange"><span class="icon iconify" data-icon="ri:qq-line"></span></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://github.com/watanabe-hsad" title="GitHub" target="_blank" style="color:#181717"><span class="icon iconify" data-icon="ri:github-line"></span></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="mailto:dubian.zzy@outlook.com" title="E-Mail" target="_blank" style="color:#8E71C1"><span class="icon iconify" data-icon="ri:mail-line"></span></a></div><hr style="margin:0.5rem 1rem"><div class="links"><a class="links-item hty-icon-button" href="/links/" title="我的小伙伴们" style="color:dodgerblue"><span class="icon iconify" data-icon="ri:genderless-line"></span></a></div><br><a class="links-item hty-icon-button" id="toggle-mode-btn" href="javascript:;" title="Mode" style="color: #f1cb64"><span class="icon iconify" data-icon="ri:contrast-2-line"></span></a></div><div class="sidebar-panel sidebar-panel-active" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content"><ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86%E5%86%85%E5%AE%B9"><span class="toc-number">1.</span> <span class="toc-text">信息收集内容</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9F%9F%E5%90%8D%E7%9B%B8%E5%85%B3%E4%BF%A1%E6%81%AF"><span class="toc-number">2.</span> <span class="toc-text">域名相关信息</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%9F%9F%E5%90%8D%E5%88%86%E7%B1%BB"><span class="toc-number">2.1.</span> <span class="toc-text">域名分类</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%9F%9F%E5%90%8D%E4%BF%A1%E6%81%AF%E6%9F%A5%E8%AF%A2%E6%96%B9%E5%BC%8F"><span class="toc-number">2.2.</span> <span class="toc-text">域名信息查询方式</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#whois%E6%9F%A5%E8%AF%A2"><span class="toc-number">2.2.1.</span> <span class="toc-text">whois查询</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E5%8F%8D%E6%9F%A5"><span class="toc-number">2.2.2.</span> <span class="toc-text">反查</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E5%A4%87%E6%A1%88%E4%BF%A1%E6%81%AF%E6%9F%A5%E8%AF%A2"><span class="toc-number">2.2.3.</span> <span class="toc-text">备案信息查询</span></a></li></ol></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AD%90%E5%9F%9F%E5%90%8D%E4%BF%A1%E6%81%AF%E6%9F%A5%E8%AF%A2%E6%96%B9%E5%BC%8F"><span class="toc-number">2.3.</span> <span class="toc-text">子域名信息查询方式</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#IP%E7%9B%B8%E5%85%B3%E4%BF%A1%E6%81%AF"><span class="toc-number">3.</span> <span class="toc-text">IP相关信息</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AB%AF%E5%8F%A3%E6%9C%8D%E5%8A%A1%E7%9B%B8%E5%85%B3%E4%BF%A1%E6%81%AF"><span class="toc-number">4.</span> <span class="toc-text">端口服务相关信息</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E7%AB%AF%E5%8F%A3%E5%8F%8A%E6%BC%8F%E6%B4%9E"><span class="toc-number">4.1.</span> <span class="toc-text">常见端口及漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E5%85%B1%E4%BA%AB%E6%9C%8D%E5%8A%A1"><span class="toc-number">4.1.1.</span> <span class="toc-text">文件共享服务</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E8%BF%9C%E7%A8%8B%E8%BF%9E%E6%8E%A5%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%8F%A3"><span class="toc-number">4.1.2.</span> <span class="toc-text">远程连接服务端口</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%8F%A3"><span class="toc-number">4.1.3.</span> <span class="toc-text">数据库服务端口</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E9%82%AE%E4%BB%B6%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%8F%A3"><span class="toc-number">4.1.4.</span> <span class="toc-text">邮件服务端口</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E5%B8%B8%E8%A7%81%E5%8D%8F%E8%AE%AE%E7%AB%AF%E5%8F%A3"><span class="toc-number">4.1.5.</span> <span class="toc-text">网络常见协议端口</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E7%89%B9%E6%AE%8A%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%8F%A3"><span class="toc-number">4.1.6.</span> <span class="toc-text">特殊服务端口</span></a></li></ol></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Nmap"><span class="toc-number">4.2.</span> <span class="toc-text">Nmap</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8C%87%E7%BA%B9%E8%AF%86%E5%88%AB"><span class="toc-number">5.</span> <span class="toc-text">指纹识别</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#CMS%E6%8C%87%E7%BA%B9%E8%AF%86%E5%88%AB"><span class="toc-number">5.1.</span> <span class="toc-text">CMS指纹识别</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84CMS"><span class="toc-number">5.1.1.</span> <span class="toc-text">常见的CMS</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E5%90%84%E7%B1%BB%E7%BD%91%E7%AB%99%E5%BC%80%E6%BA%90CMS"><span class="toc-number">5.1.2.</span> <span class="toc-text">各类网站开源CMS</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#CMS%E6%8C%87%E7%BA%B9%E8%AF%86%E5%88%AB%E6%80%9D%E8%B7%AF"><span class="toc-number">5.1.3.</span> <span class="toc-text">CMS指纹识别思路</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#CMS%E8%AF%86%E5%88%AB%E5%B7%A5%E5%85%B7"><span class="toc-number">5.1.4.</span> <span class="toc-text">CMS识别工具</span></a></li></ol></li><li class="toc-item toc-level-5"><a class="toc-link" href="#CDN%E6%8C%87%E7%BA%B9%E8%AF%86%E5%88%AB"><span class="toc-number">5.2.</span> <span class="toc-text">CDN指纹识别</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#WAF%E6%8C%87%E7%BA%B9%E8%AF%86%E5%88%AB"><span class="toc-number">5.3.</span> <span class="toc-text">WAF指纹识别</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#WAF%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="toc-number">5.3.1.</span> <span class="toc-text">WAF的作用</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#WAF%E5%88%86%E7%B1%BB"><span class="toc-number">5.3.2.</span> <span class="toc-text">WAF分类</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81WAF%E5%8E%82%E5%95%86"><span class="toc-number">5.3.3.</span> <span class="toc-text">常见WAF厂商</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#WAF%E8%AF%86%E5%88%AB%E6%80%9D%E8%B7%AF"><span class="toc-number">5.3.4.</span> <span class="toc-text">WAF识别思路</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#WAF%E8%A7%A6%E5%8F%91%E6%8B%A6%E6%88%AA%E6%96%B9%E5%BC%8F"><span class="toc-number">5.3.5.</span> <span class="toc-text">WAF触发拦截方式</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#WAF%E8%AF%86%E5%88%AB%E5%B7%A5%E5%85%B7"><span class="toc-number">5.3.6.</span> <span class="toc-text">WAF识别工具</span></a></li></ol></li></ol></li></ol></div></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="hty-card post-block" itemscope itemtype="https://schema.org/Article" style="--smc-primary:#0078E7;"><link itemprop="mainEntityOfPage" href="https://hsad.xyz/2024/07/07/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="Hsad"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="Hsad's Blog"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">信息收集</h1><div class="post-meta"><div class="post-time"><span class="post-meta-item-icon"><span class="icon iconify" data-icon="ri:calendar-line"></span></span> <time title="创建时间：2024-07-07 16:59:34" itemprop="dateCreated datePublished" datetime="2024-07-07T16:59:34+08:00">2024-07-07</time></div><div class="post-classify"><span class="post-category"> <span class="post-meta-item-icon" style="margin-right:3px;"><span class="icon iconify" data-icon="ri:folder-line"></span></span><span itemprop="about" itemscope itemtype="https://schema.org/Thing"><a class="category-item" href="/categories/%E5%AE%89%E5%85%A8%E7%9B%B8%E5%85%B3/" style="--text-color:var(--hty-text-color)" itemprop="url" rel="index"><span itemprop="text">安全相关</span></a></span> > <span itemprop="about" itemscope itemtype="https://schema.org/Thing"><a class="category-item" href="/categories/%E5%AE%89%E5%85%A8%E7%9B%B8%E5%85%B3/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" style="--text-color:var(--hty-text-color)" itemprop="url" rel="index"><span itemprop="text">渗透测试</span></a></span></span><span class="post-tag"><span class="post-meta-divider">-</span><a class="tag-item" href="/tags/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" style="--text-color:var(--hty-text-color)"><span class="post-meta-item-icon"><span class="icon iconify" data-icon="ri:price-tag-3-line"></span></span><span class="tag-name">渗透测试</span></a><a class="tag-item" href="/tags/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/" style="--text-color:var(--hty-text-color)"><span class="post-meta-item-icon"><span class="icon iconify" data-icon="ri:price-tag-3-line"></span></span><span class="tag-name">信息收集</span></a></span></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content markdown-body"><h4 id="信息收集内容"><a href="#信息收集内容" class="headerlink" title="信息收集内容"></a>信息收集内容</h4><p>在划定了测试范围之后，就需要进入信息收集阶段。在这个阶段，渗透人员需要使用各种公开资源尽可能地获取测试目标的相关信息。他们搜集信息的互联网渠道主要有：论坛&#x2F;公告板&#x2F;新闻组&#x2F;媒体文章&#x2F;博客&#x2F;社交网络&#x2F;github&#x2F;其他商业或非商业性的网站。此外，他们也可以借助各种搜索引擎中获取相关数据，如谷歌、雅虎、MSN必应、百度等。收集的信息主要包括:</p>
+<p>（1）收集目标网站服务器信息：域名、子域名、CNAME、cdn、真实IP、系统类型、版本等；</p>
+<p>（2）识别并收集目标网站指纹信息：CMS、中间件、网页编程语言等及其通用漏洞调查收集；</p>
+<p>（3）扫描并收集目标网站目录结构：一些文件可以访问获得信息、后台管理页面位置、日志位置等；</p>
+<p>（4）网站的敏感信息：</p>
+<p>whois信息、姓名、备案、邮箱、电话反查（邮箱丢社工库，社工准备等）；<br>弱口令扫描、密码爆破等（如针对系统管理员、网站后台管理员、数据库管理员等）；<br>网站源码是否泄露等，如github源码。<br>（5）收集目标服务器主机端口信息：不同端口提供不同的攻击思路和方向；</p>
+<p>（6）网络防护信息：网络边界设备或网络节点设备，如有没有防火墙，有没有IPS、IDS或WAF，网络行为管理，全流量分析。</p>
+<p>收集的信息越多，渗透测试成功的概率越高。<br>在信息收集中，最主要的就是收集服务器的配置信息和网站的敏感信息，其中包括域名及子域名信息、目标网站系统、CMS指纹、目标网站真实IP 、开放的端口等。换句话说，只要是与目标网站相关的信息，我们都应该去尽量搜集。</p>
+<h4 id="域名相关信息"><a href="#域名相关信息" class="headerlink" title="域名相关信息"></a>域名相关信息</h4><p>知道目标的域名之后，我们要做的第一件事就是获取域名的注册信息，注意关注该域名的注册商和注册人的联系方式（电话和邮箱）等信息。</p>
+<h5 id="域名分类"><a href="#域名分类" class="headerlink" title="域名分类"></a>域名分类</h5><p>国际域名：.com(商业公司);:net(网络服务):.org(组织协会等);.gov(政府部门);.edu(教育机构);.mil(军事领域);.int(国际组织)</p>
+<p>国别域名：.CN代表中国，.UK代表英国，.US代表美国　</p>
+<p>新顶级域名：biz,info，name，pro, aero, coop, museum…</p>
+<h5 id="域名信息查询方式"><a href="#域名信息查询方式" class="headerlink" title="域名信息查询方式"></a>域名信息查询方式</h5><h6 id="whois查询"><a href="#whois查询" class="headerlink" title="whois查询"></a>whois查询</h6><p>Whois是一个标准的互联网协议， 可用于收集域名注册信息，注册的域名、IP地址等信息。简单来说， Whois就是一个用于查询域名是否</p>
+<p>己被注册以及注册域名的详细信息的数据库（如域名所有人、域名注册商）。</p>
+<p>在Whois查询中，得到注册人的姓名和邮箱信息通常对测试个人站点非常有用，因为我们可以通过搜索引擎和社交网络挖掘出域名所有人</p>
+<p>的很多信息。对中小站点而言，域名所有人往往就是管理员。</p>
+<ul>
+<li><strong>Kali系统</strong>：在Kali系统中， Whois 己经默认安装，只需输入要查询的域名即可，代码为<code>whois+域名</code>（一般域名不包含主机名，如</li>
+</ul>
+<p>·baidu.com）。注意，Kali系统需连接真实网络，能上网。</p>
+<ul>
+<li><strong><a target="_blank" rel="noopener" href="https://whois.chinaz.com/">站长之家</a></strong></li>
+<li><strong><a target="_blank" rel="noopener" href="https://whois.aliyun.com/">阿里云查询</a></strong></li>
+</ul>
+<h6 id="反查"><a href="#反查" class="headerlink" title="反查"></a>反查</h6><p><a target="_blank" rel="noopener" href="https://whois.chinaz.com/reverse/">邮箱反查 注册人反查 电话反查</a></p>
+<h6 id="备案信息查询"><a href="#备案信息查询" class="headerlink" title="备案信息查询"></a>备案信息查询</h6><ul>
+<li><strong><a target="_blank" rel="noopener" href="https://www.beianx.cn/">ICP备案查询网</a></strong></li>
+<li><strong><a target="_blank" rel="noopener" href="http://www.tianyancha.como/">天眼查</a></strong></li>
+<li><strong><a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/?wm=gwo#/Integrated/index">ICP&#x2F;IP地址&#x2F;域名信息备案管理系统</a></strong></li>
+</ul>
+<h5 id="子域名信息查询方式"><a href="#子域名信息查询方式" class="headerlink" title="子域名信息查询方式"></a>子域名信息查询方式</h5><p>子域名也就是二级域名， 是指顶级域名下的域名。假设我们的目标网络规模比较大，直接从主域入手显然是很不理智的， 因为对于这种</p>
+<p>规模的目标， 一般其主域都是重点防护区域，所以不如先进入目标的某个子域，然后再想办法迂回接近真正的目标，这无疑是个比较好</p>
+<p>的选择。</p>
+<ul>
+<li><p><strong><a target="_blank" rel="noopener" href="https://searchdns.netcraft.com/">What’s that site running?</a></strong></p>
+</li>
+<li><p><strong><a target="_blank" rel="noopener" href="https://github.com/euphrat1ca/LayerDomainFinder">Layer子域名挖掘机</a></strong></p>
+</li>
+<li><p><strong><a target="_blank" rel="noopener" href="https://github.com/aboul3la/Sublist3r">Sublist3r</a></strong></p>
+</li>
+<li><p><strong><a target="_blank" rel="noopener" href="https://github.com/lijiejie/subDomainsBrute">subDomainsBrute</a></strong></p>
+</li>
+<li><p><strong>Google语法  site:xxx.com</strong></p>
+</li>
+<li><p><strong><a target="_blank" rel="noopener" href="https://crt.sh/">证书透明度公开曰志枚举</a></strong></p>
+</li>
+</ul>
+<h4 id="IP相关信息"><a href="#IP相关信息" class="headerlink" title="IP相关信息"></a>IP相关信息</h4><ul>
+<li><p><strong><a target="_blank" rel="noopener" href="http://ip.chinaz.com/">IP查询</a></strong></p>
+</li>
+<li><p><strong><a target="_blank" rel="noopener" href="https://ip.chinaz.com/linksip">同IP查询</a></strong></p>
+</li>
+<li><p><strong><a target="_blank" rel="noopener" href="https://www.maxmind.com/en/home">IP经纬度</a></strong></p>
+</li>
+</ul>
+<h4 id="端口服务相关信息"><a href="#端口服务相关信息" class="headerlink" title="端口服务相关信息"></a>端口服务相关信息</h4><p>查看本机端口</p>
+<p>Windows：netstat -aon|findstr 3306</p>
+<p>Linux: netstat -an|grep 3306 </p>
+<p>远程机器端口</p>
+<p>telnet 192.168.142.137 80 </p>
+<p>wget 192.168.142.137 80 </p>
+<p>nc -vz 192.168.142.137 445</p>
+<h5 id="常见端口及漏洞"><a href="#常见端口及漏洞" class="headerlink" title="常见端口及漏洞"></a>常见端口及漏洞</h5><h6 id="文件共享服务"><a href="#文件共享服务" class="headerlink" title="文件共享服务"></a>文件共享服务</h6><table>
+<thead>
+<tr>
+<th align="center">端口号</th>
+<th>端口说明</th>
+<th>攻击方向</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">21&#x2F;22&#x2F;69</td>
+<td>FTP&#x2F;SFTP文件传输协议</td>
+<td>允许匿名上传、下载、爆破和嗅探操作</td>
+</tr>
+<tr>
+<td align="center">2049</td>
+<td>NFS服务（NetworkFileSystem）</td>
+<td>配置不当</td>
+</tr>
+<tr>
+<td align="center">139</td>
+<td>Samba服务</td>
+<td>爆破、未授权访问、远程代码和执行</td>
+</tr>
+<tr>
+<td align="center">389</td>
+<td>LDAP目录访问协议</td>
+<td>注入、允许匿名访问、弱口令</td>
+</tr>
+</tbody></table>
+<h6 id="远程连接服务端口"><a href="#远程连接服务端口" class="headerlink" title="远程连接服务端口"></a>远程连接服务端口</h6><table>
+<thead>
+<tr>
+<th align="center">端口号</th>
+<th>端口说明</th>
+<th>攻击方向</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">22</td>
+<td>SSH远程连接</td>
+<td>爆破、SSH隧道及内网代理转发 文件传输</td>
+</tr>
+<tr>
+<td align="center">23</td>
+<td>Telnet远程连接</td>
+<td>爆破、嗅探、弱口令</td>
+</tr>
+<tr>
+<td align="center">3389</td>
+<td>RDP远程桌面连接</td>
+<td>Shift后门（WindowsServer2003以下的系统）、爆破</td>
+</tr>
+<tr>
+<td align="center">5900</td>
+<td>VNC</td>
+<td>弱口令爆破</td>
+</tr>
+<tr>
+<td align="center">5632</td>
+<td>PcAnywhere远程控制服务</td>
+<td>抓密码、代码执行</td>
+</tr>
+</tbody></table>
+<h6 id="数据库服务端口"><a href="#数据库服务端口" class="headerlink" title="数据库服务端口"></a>数据库服务端口</h6><table>
+<thead>
+<tr>
+<th>端口号</th>
+<th>端口说明</th>
+<th>攻击方向</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>3306</td>
+<td>MySQL</td>
+<td>注入、提权、爆破</td>
+</tr>
+<tr>
+<td>1433</td>
+<td>MSSQL数据库</td>
+<td>注入、提权、SA弱口令</td>
+</tr>
+<tr>
+<td>1521</td>
+<td>Oracle数据库</td>
+<td>TNS爆破、注入、反弹shell</td>
+</tr>
+<tr>
+<td>5432</td>
+<td>PostgreSQL数据库</td>
+<td>爆破、注入、弱口令</td>
+</tr>
+<tr>
+<td>27017&#x2F;27018</td>
+<td>MongoDB</td>
+<td>爆破、未授权访问</td>
+</tr>
+<tr>
+<td>6379</td>
+<td>Redis数据库</td>
+<td>可尝试未授权访问、弱口令爆破</td>
+</tr>
+<tr>
+<td>5000</td>
+<td>Sysbase&#x2F;DB2数据库</td>
+<td>爆破、注入</td>
+</tr>
+</tbody></table>
+<h6 id="邮件服务端口"><a href="#邮件服务端口" class="headerlink" title="邮件服务端口"></a>邮件服务端口</h6><table>
+<thead>
+<tr>
+<th>端口号</th>
+<th>端口说明</th>
+<th>攻击方向</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>25</td>
+<td>SMTP邮件服务</td>
+<td>邮件伪造</td>
+</tr>
+<tr>
+<td>110</td>
+<td>POP3协议</td>
+<td>爆破、嗅探</td>
+</tr>
+<tr>
+<td>143</td>
+<td>IMAP协议</td>
+<td>爆破</td>
+</tr>
+</tbody></table>
+<h6 id="网络常见协议端口"><a href="#网络常见协议端口" class="headerlink" title="网络常见协议端口"></a>网络常见协议端口</h6><table>
+<thead>
+<tr>
+<th>端口号</th>
+<th>端口说明</th>
+<th>攻击方向</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>53</td>
+<td>DNS域名系统</td>
+<td>允许区域传送、DNS劫持  缓存投毒、欺骗</td>
+</tr>
+<tr>
+<td>67&#x2F;68</td>
+<td>DHCP服务</td>
+<td>劫持、欺骗</td>
+</tr>
+<tr>
+<td>161</td>
+<td>SNMP协议</td>
+<td>爆破、搜集目标内网信息</td>
+</tr>
+</tbody></table>
+<h6 id="特殊服务端口"><a href="#特殊服务端口" class="headerlink" title="特殊服务端口"></a>特殊服务端口</h6><table>
+<thead>
+<tr>
+<th>端口号</th>
+<th>端口说明</th>
+<th>攻击方向</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>2181</td>
+<td>Zookeeper服务</td>
+<td>未授权访问</td>
+</tr>
+<tr>
+<td>8069</td>
+<td>Zabbix服务</td>
+<td>远程执行、SQL注入</td>
+</tr>
+<tr>
+<td>9200&#x2F;9300</td>
+<td>Elasticsearch服务</td>
+<td>远程执行</td>
+</tr>
+<tr>
+<td>11211</td>
+<td>Memcached服务</td>
+<td>未授权访问</td>
+</tr>
+<tr>
+<td>512&#x2F;513&#x2F;514</td>
+<td>LinuxRexec服务</td>
+<td>爆破、rlogin登录</td>
+</tr>
+<tr>
+<td>873</td>
+<td>Rsync服务</td>
+<td>匿名访问、文件上传</td>
+</tr>
+<tr>
+<td>3690</td>
+<td>SVN服务</td>
+<td>SVN泄露、未授权访问</td>
+</tr>
+<tr>
+<td>50000</td>
+<td>SAPManagementConsole</td>
+<td>远程执行</td>
+</tr>
+</tbody></table>
+<h5 id="Nmap"><a href="#Nmap" class="headerlink" title="Nmap"></a>Nmap</h5><p>Nmap （Network Mapper <a target="_blank" rel="noopener" href="https://nmap.org/">https://nmap.org/</a></p>
+<p>1）扫描主机(HostiDiscovery)</p>
+<p>2）扫描端口(Port Scanning）</p>
+<p>3）探测操作系统、软件版本（Operating System Detection、Version Detection)</p>
+<p>参数类型</p>
+<p>nmap–help</p>
+<ul>
+<li><p>TARGETSPECIFICATIOM:自标，对什么进行扫描，比如是域名、TP或者网络</p>
+</li>
+<li><p>HOSTDISCOVERY:主机发现，怎么对主机进行扫描，比如简单扫描，还是全部，扫一遍，或者用相应的协议扫</p>
+</li>
+<li><p>SCANTECHNIOQUES：扫描技术，协议日勺设置</p>
+</li>
+<li><p>PORTSPECIFICATIONANDSCANORDER:端口和扫描顺序设置 SERVICEVERSIONDETECTION:服务和版本识别</p>
+</li>
+<li><p>SCRIPT SCAN:使用脚本，nmap本身内置了大量的lua脚本，而且还可以自己编写脚本</p>
+</li>
+<li><p>OS DETECTION:操作系统识别</p>
+</li>
+<li><p>TIMING AND PERFORMANCE:时间和性能设置，比如扫描频率、重试次数等等 FIREWALL&#x2F;IDS EVASION AND SPOOFING:防火墙绕过和欺骗，比如使用代理假IP等</p>
+</li>
+<li><p>OUTPUT:把扫描接出输出到文件 MISC：启用IPv6等等配置</p>
+</li>
+</ul>
+<p>nmap本身内置了大量的lua脚本，而且还可以自己已编写脚本 </p>
+<p>Is &#x2F;usr&#x2F;share&#x2F;nmap&#x2F;scripts&#x2F; I wc -1</p>
+<p>全部清单：<a target="_blank" rel="noopener" href="https://nmap.org/book/nse.html">Nmap Scripting Engine</a></p>
+<p>例如：</p>
+<p>nmap 192.168.142.137 –script http-enum 列举HTTP服务</p>
+<p>nmap–script&#x3D;auth绕过鉴权 </p>
+<p>nmap–script&#x3D;brute 暴力破解 nmap –script&#x3D;vuln 扫描漏洞</p>
+<h4 id="指纹识别"><a href="#指纹识别" class="headerlink" title="指纹识别"></a>指纹识别</h4><p><strong>识别对象</strong></p>
+<ol>
+<li>CMS信息：比如Discuz、织梦、帝国CMS、PHPCMS、ECshop等</li>
+<li>前端技术：比如HTML5、jquery、bootstrap、Vue、ace等;</li>
+<li>开发语言：比如PHP、Java、Ruby、Python、C#等;</li>
+<li>Web服务器：比如Apache、 Nginx、IIS、lighttpd等;</li>
+<li>应用服务器：比如Tomcat、Jboss、Weblogic、Websphere等;</li>
+<li>操作系统信息：比如Linux、win2k8、win7、Kali、Centos等;</li>
+<li>CDN信息：是否使用CDN，如cloudflare、帝联、蓝讯、网宿、七牛云、阿里云等；</li>
+<li>WAF信息：是否使用WAF，如D盾、云锁、宝塔、安全狗、360等</li>
+</ol>
+<h5 id="CMS指纹识别"><a href="#CMS指纹识别" class="headerlink" title="CMS指纹识别"></a>CMS指纹识别</h5><p>内容管理系统</p>
+<p>Content Management System</p>
+<p>通过关键特征器、开发语言、版本等等</p>
+<p>识别出月标的CMS系统、服务操作系统、CDN、WAF的类别</p>
+<h6 id="常见的CMS"><a href="#常见的CMS" class="headerlink" title="常见的CMS"></a><strong>常见的CMS</strong></h6><p>博客（比如CSDN、博客园）、微博、站、导航网站（hao123）、信息分类（知乎）、商城、百科…．　</p>
+<p>问答网站、企业官网、学校官网、医院官网、团购网(58）</p>
+<p><img src="CMS.png" loading="lazy"></p>
+<h6 id="各类网站开源CMS"><a href="#各类网站开源CMS" class="headerlink" title="各类网站开源CMS"></a><strong>各类网站开源CMS</strong></h6><ul>
+<li>企业建站系统：Metlnfo(米拓)、蝉知、SiteServer CMS等;</li>
+<li>B2C商城系统：商派Shopex、ECshop、HiShop、XpShop等</li>
+<li>门户建站系统：DedeCMS(织梦)、帝国CMS、PHPCMS、动易CmsTop等;</li>
+<li>博客系统：WordPress、Z-Blog等</li>
+<li>论坛社区：Discuz、PHPwind、WeCenter等</li>
+<li>问答系统：Tipask、whatsns等</li>
+<li>知识百科系统：HDwiki;</li>
+<li>B2B门户系统：Destoon、B2Bbuilder、友邻B2B等</li>
+<li>人才招聘网站系统：骑士CMS、PHP云人才管理系统</li>
+<li>房产网站系统：FangCms等;</li>
+<li>在线教育建站系统：Kesion、EduSoho;</li>
+<li>电影网站系统：苹果cMS、ctcms、movcms等</li>
+<li>小说文学建站系统：杰奇CMS</li>
+</ul>
+<h6 id="CMS指纹识别思路"><a href="#CMS指纹识别思路" class="headerlink" title="CMS指纹识别思路"></a>CMS指纹识别思路</h6><p>版权信息、特定文件MD5值、查看网页源代码、通过特定文件分析</p>
+<h6 id="CMS识别工具"><a href="#CMS识别工具" class="headerlink" title="CMS识别工具"></a>CMS识别工具</h6><ul>
+<li>whatweb(kali)</li>
+<li>浏览器插件</li>
+<li><ul>
+<li><a target="_blank" rel="noopener" href="https://www.wappalyzer.com/">Wappalyzer</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.whatruns.com/">whatruns</a></li>
+</ul>
+</li>
+<li>在线网站</li>
+<li><ul>
+<li><a target="_blank" rel="noopener" href="http://finger.tidesec.com/">潮汐指纹识别</a></li>
+</ul>
+</li>
+<li>离线网站</li>
+<li><ul>
+<li>御剑指纹扫描器(需要.NET Framework）</li>
+<li>Test404轻量CMS指纹识别v2.1</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/Tuhinshubhra/CMSeeK">CMSeek</a></li>
+</ul>
+</li>
+</ul>
+<h5 id="CDN指纹识别"><a href="#CDN指纹识别" class="headerlink" title="CDN指纹识别"></a>CDN指纹识别</h5><ul>
+<li>(超级)ping</li>
+<li>nslookup</li>
+<li>ldb(load balance detector  Kali)</li>
+<li>国内：</li>
+<li><ul>
+<li><a target="_blank" rel="noopener" href="http://cdn.chinaz.com/">各地CDN节点测速结果 - CDN云观测 - 站长工具</a></li>
+</ul>
+</li>
+<li>国外：</li>
+<li><ul>
+<li><a target="_blank" rel="noopener" href="https://www.cdnplanet.com/tools/cdnfinder/">CDN Finder</a></li>
+</ul>
+</li>
+<li>脚本：</li>
+<li><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/boy-hack/w8fuckcdn/">w8Fuckcdn</a> </li>
+<li><a target="_blank" rel="noopener" href="https://github.com/3xp10it/xcdn">xcdn</a></li>
+</ul>
+</li>
+</ul>
+<h5 id="WAF指纹识别"><a href="#WAF指纹识别" class="headerlink" title="WAF指纹识别"></a>WAF指纹识别</h5><p>Web. Application Firewall Web 应用防火墙</p>
+<p>过滤HTTP&#x2F;HTTPS的请求</p>
+<h6 id="WAF的作用"><a href="#WAF的作用" class="headerlink" title="WAF的作用"></a>WAF的作用</h6><ul>
+<li><p>SQL Injection (SQLi)：阻止SQL注入</p>
+</li>
+<li><p>Cross Site Scripting (XSS)：阻止跨站脚本攻击</p>
+</li>
+<li><p>Local File Inclusion (LFI)： 阻正止利用本地文件包含漏洞进行攻击</p>
+</li>
+<li><p>Remote File Inclusione(RFl)：阻止利用远程文件包含漏洞进行攻击</p>
+</li>
+<li><p>Remote Code Execution(RCE)：阻正止利用远程命令执行漏洞进行攻击 PHP Code Injectiod：阻正止PHP代码注入</p>
+</li>
+<li><p>HTTP Protocol Violations：阻止违反HTTP协议的恶意访问</p>
+</li>
+<li><p>HTTPoXy：阻止利用远程代理感染漏洞进行攻击 Sshllshock：阻止利用Shellshock漏洞进行攻击</p>
+</li>
+<li><p>Session Fixation： 阻止利用Session会话iD不变的漏洞进行攻击 ScannerDetection：阻止黑客扫描网站</p>
+</li>
+<li><p>Metadata&#x2F;ErrorLeakages：阻止源代码&#x2F;错误信息泄露 Project Honey Pot Blacklist：蜜罐项目黑名单</p>
+</li>
+<li><p>GeolP Country Blocking：根据判断IP地址归属地来进行IP阻断</p>
+</li>
+</ul>
+<h6 id="WAF分类"><a href="#WAF分类" class="headerlink" title="WAF分类"></a>WAF分类</h6><p>硬件型WAF厂商安装）</p>
+<p>云WAF（阿里云、腾讯云、华为云.. ）</p>
+<p>软件型 WAF（部署在 Apache、Nginx 等 HTTPServer中）</p>
+<h6 id="常见WAF厂商"><a href="#常见WAF厂商" class="headerlink" title="常见WAF厂商"></a>常见WAF厂商</h6><p>各种云：阿里云、腾讯云、华为云、百度云</p>
+<p>安全狗、宝塔、360、知道创宇、长亭、安恒、</p>
+<h6 id="WAF识别思路"><a href="#WAF识别思路" class="headerlink" title="WAF识别思路"></a>WAF识别思路</h6><ul>
+<li><p>额外的cookie;</p>
+</li>
+<li><p>任何响应或请求的附加标头;</p>
+</li>
+<li><p>响应内容（如果被阻止请求）</p>
+</li>
+<li><p>响应代码（如果被阻止请求）</p>
+</li>
+<li><p>IP地址（云WAF）；</p>
+</li>
+<li><p>JS客户端模块（客户端WAF）</p>
+</li>
+</ul>
+<h6 id="WAF触发拦截方式"><a href="#WAF触发拦截方式" class="headerlink" title="WAF触发拦截方式"></a>WAF触发拦截方式</h6><pre class="language-javascript" data-language="javascript"><code class="language-javascript">xsstring <span class="token operator">=</span> '<span class="token operator">&lt;</span>script<span class="token operator">></span><span class="token function">alert</span><span class="token punctuation">(</span><span class="token string">"Xss"</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token operator">&lt;</span><span class="token operator">/</span>script<span class="token operator">></span></code></pre>
+
+<pre class="language-mysql" data-language="mysql"><code class="language-mysql">sqlistring &#x3D; &quot;UNION SELECT ALL FROM information schema AND &#39; or SLEEP(5) or &#39;&quot;</code></pre>
+
+<pre class="language-bash" data-language="bash"><code class="language-bash">Ifistring <span class="token operator">=</span> "<span class="token punctuation">..</span>/<span class="token punctuation">..</span>/./<span class="token punctuation">..</span>/etc/passwd</code></pre>
+
+<pre class="language-bash" data-language="bash"><code class="language-bash">rcestring <span class="token operator">=</span> <span class="token string">'/bin/cat /etc/passwd; ping 127.0.0.1; curl google.com'</span></code></pre>
+
+<pre class="language-javascript" data-language="javascript"><code class="language-javascript">xxestring <span class="token operator">=</span> '<span class="token operator">&lt;</span><span class="token operator">!</span><span class="token constant">ENTITY</span> xxe <span class="token constant">SYSTEM</span> <span class="token string">"file:///etc/shadow"</span><span class="token operator">></span><span class="token punctuation">]</span><span class="token operator">></span><span class="token operator">&lt;</span>pwn<span class="token operator">></span><span class="token operator">&amp;</span>hack<span class="token punctuation">;</span><span class="token operator">&lt;</span><span class="token operator">/</span>pwn<span class="token operator">></span>"</code></pre>
+
+<h6 id="WAF识别工具"><a href="#WAF识别工具" class="headerlink" title="WAF识别工具"></a>WAF识别工具</h6><p>Kali自带：</p>
+<ul>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/EnableSecurity/wafwOOf">wafwOOf</a> </p>
+</li>
+<li><p>wafw00f <a target="_blank" rel="noopener" href="https://www.12306.cn/">https://www.12306.cn</a></p>
+</li>
+<li><p>nmap <a target="_blank" rel="noopener" href="http://www.12306.cn/">www.12306.cn</a> –script&#x3D;http-waf-detect.nse</p>
+</li>
+<li><p>sqlmap -u “xxx.com?id&#x3D;1” –identify-waf</p>
+</li>
+</ul>
+<p>其他：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/Oxlnfection/Awesome-WAF">Build software better, together</a></li>
+</ul>
+</div></section><div id="reward-container"><span class="hty-icon-button button-glow" id="reward-button" title="打赏" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === &quot;none&quot;) ? &quot;block&quot; : &quot;none&quot;;"><span class="icon iconify" data-icon="ri:hand-coin-line"></span></span><div id="reward-comment">I'm so cute. Please give me money.</div></div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>Hsad</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="https://hsad.xyz/2024/07/07/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/" title="信息收集">https://hsad.xyz/2024/07/07/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 "><span class="icon iconify" data-icon="ri:creative-commons-line"></span><span class="icon iconify" data-icon="ri:creative-commons-by-line"></span><span class="icon iconify" data-icon="ri:creative-commons-nc-line"></span><span class="icon iconify" data-icon="ri:creative-commons-sa-line"></span></a> 许可协议。</li></ul></article><div class="post-nav"><div class="post-nav-item"></div><div class="post-nav-item"><a class="post-nav-next" href="/2024/07/05/EZsql/" rel="next" title="EZsql"><span class="post-nav-text">EZsql</span><span class="icon iconify" data-icon="ri:arrow-right-s-line"></span></a></div></div></div><div class="hty-card" id="comment"></div></main><footer class="sidebar-translate" id="footer"><div class="copyright"><span>&copy; 2019 – 2024 </span><span class="with-love" id="animate"><span class="icon iconify" data-icon="ri:cloud-line"></span></span><span class="author"> Hsad</span></div><div class="powered"><span>由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v7.2.0</span><span class="footer-separator">|</span><span>主题 - <a rel="noopener" href="https://github.com/YunYouJun/hexo-theme-yun" target="_blank"><span>Yun</span></a> v1.10.11</span></div></footer></div><a class="hty-icon-button" id="back-to-top" aria-label="back-to-top" href="#"><span class="icon iconify" data-icon="ri:arrow-up-s-line"></span><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#0078E7" stroke-width="2" stroke-linecap="round"></circle></svg></a><script src="https://fastly.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script><script>const images = [...document.querySelectorAll('.markdown-body img')]
+mediumZoom(images)</script><style>.medium-zoom-image {
+  z-index: 99;
+}</style></body></html>
