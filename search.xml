@@ -4,6 +4,35 @@
   
     
     <entry>
+      <title>web入门-Java</title>
+      <link href="/2024/07/18/web%E5%85%A5%E9%97%A8-Java/"/>
+      <url>/2024/07/18/web%E5%85%A5%E9%97%A8-Java/</url>
+      
+        <content type="html"><![CDATA[<h3 id="web279-300"><a href="#web279-300" class="headerlink" title="web279-300"></a>web279-300</h3><h4 id="web279-struts2漏洞-S2-001"><a href="#web279-struts2漏洞-S2-001" class="headerlink" title="web279(struts2漏洞 S2-001)"></a>web279(struts2漏洞 S2-001)</h4><p><a href="https://www.freebuf.com/column/224041.html">Vulhub漏洞系列：struts2漏洞 S2-001</a></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 安全相关 </category>
+          
+          <category> Web </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Java </tag>
+            
+            <tag> CTFshow </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>MoeCTF2023-web</title>
       <link href="/2024/07/14/MoeCTF2023-web/"/>
       <url>/2024/07/14/MoeCTF2023-web/</url>
@@ -196,9 +225,9 @@
       
         <tags>
             
-            <tag> 文件包含 </tag>
-            
             <tag> CTFshow </tag>
+            
+            <tag> 文件包含 </tag>
             
         </tags>
       
