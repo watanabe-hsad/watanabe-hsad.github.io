@@ -16,8 +16,12 @@ document.addEventListener("pjax:success", initScrollReveal);
 <meta property="og:description" content="字典生成工具crunch简介# 源码 https:&#x2F;&#x2F;github.com&#x2F;crunchsec&#x2F;crunch  Crunch为kali自带工具之一，是一种自定义创建密码字典工具，按照指定的规则生成密码字典，可以针对性的生成字典文件 使用语法和参数crunch &lt;min&gt; &lt;max&gt; [options]  参数详解 min    设定最小字符串长度（必选） max    设定最大字符串长">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://hsad.xyz/2024/08/08/%E5%AD%97%E5%85%B8%E7%94%9F%E6%88%90%E4%B8%8E%E5%AF%86%E7%A0%81%E7%88%86%E7%A0%B4/crunch.png">
+<meta property="og:image" content="https://hsad.xyz/2024/08/08/%E5%AD%97%E5%85%B8%E7%94%9F%E6%88%90%E4%B8%8E%E5%AF%86%E7%A0%81%E7%88%86%E7%A0%B4/crunch_2.png">
+<meta property="og:image" content="https://hsad.xyz/2024/08/08/%E5%AD%97%E5%85%B8%E7%94%9F%E6%88%90%E4%B8%8E%E5%AF%86%E7%A0%81%E7%88%86%E7%A0%B4/wfuzz.png">
+<meta property="og:image" content="https://hsad.xyz/2024/08/08/%E5%AD%97%E5%85%B8%E7%94%9F%E6%88%90%E4%B8%8E%E5%AF%86%E7%A0%81%E7%88%86%E7%A0%B4/wfuzz_2.png">
+<meta property="og:image" content="https://hsad.xyz/2024/08/08/%E5%AD%97%E5%85%B8%E7%94%9F%E6%88%90%E4%B8%8E%E5%AF%86%E7%A0%81%E7%88%86%E7%A0%B4/wfuzz_3.png">
 <meta property="article:published_time" content="2024-08-08T12:17:52.000Z">
-<meta property="article:modified_time" content="2024-08-09T11:32:58.629Z">
+<meta property="article:modified_time" content="2024-08-13T10:56:08.655Z">
 <meta property="article:author" content="Hsad">
 <meta property="article:tag" content="暴力破解">
 <meta name="twitter:card" content="summary">
@@ -38,7 +42,7 @@ IconifyProviders = {
     // Wait for 1 second before switching API hosts
     rotate: 1000,
   },
-};</script><script defer src="https://fastly.jsdelivr.net/npm/animejs@latest"></script><script defer src="/js/ui/fireworks.js" type="module"></script><canvas class="fireworks"></canvas><div class="container"><a class="sidebar-toggle hty-icon-button" id="menu-btn"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><div class="sidebar-toggle sidebar-overlay"></div><aside class="sidebar"><script src="/js/sidebar.js" type="module"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button sidebar-nav-active" data-target="post-toc-wrap" title="文章目录"><span class="icon iconify" data-icon="ri:list-ordered"></span></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button" data-target="site-overview-wrap" title="站点概览"><span class="icon iconify" data-icon="ri:passport-line"></span></li></ul><div class="sidebar-panel" id="site-overview-wrap"><div class="site-info fix-top"><a class="site-author-avatar" href="/about/" title="Hsad"><img width="96" loading="lazy" src="/images/avatar.jpg" alt="Hsad"><span class="site-author-status" title="凉">☺️</span></a><div class="site-author-name"><a href="/about/">Hsad</a></div><span class="site-name">Hsad's Blog</span><sub class="site-subtitle">一个人的世界</sub><div class="site-description">翻着我们的照片 想念若隐若现</div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/" title="首页"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:home-4-line"></span></span></a><div class="site-state-item"><a href="/archives/" title="归档"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:archive-line"></span></span><span class="site-state-item-count">23</span></a></div><div class="site-state-item"><a href="/categories/" title="分类"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:folder-2-line"></span></span><span class="site-state-item-count">6</span></a></div><div class="site-state-item"><a href="/tags/" title="标签"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:price-tag-3-line"></span></span><span class="site-state-item-count">26</span></a></div><a class="site-state-item hty-icon-button" target="_blank" rel="noopener" href="https://yun.yunyoujun.cn" title="文档"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:settings-line"></span></span></a></nav><hr style="margin-bottom:0.5rem"><div class="links-of-author"><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://qm.qq.com/cgi-bin/qm/qr?k=EYiK7-b5ur1mWxbX7aV2AEBsuoW9c732" title="QQ" target="_blank" style="color:orange"><span class="icon iconify" data-icon="ri:qq-line"></span></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://github.com/watanabe-hsad" title="GitHub" target="_blank" style="color:#181717"><span class="icon iconify" data-icon="ri:github-line"></span></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="mailto:dubian.zzy@outlook.com" title="E-Mail" target="_blank" style="color:#8E71C1"><span class="icon iconify" data-icon="ri:mail-line"></span></a></div><hr style="margin:0.5rem 1rem"><div class="links"><a class="links-item hty-icon-button" href="/links/" title="我的小伙伴们" style="color:dodgerblue"><span class="icon iconify" data-icon="ri:genderless-line"></span></a></div><br><a class="links-item hty-icon-button" id="toggle-mode-btn" href="javascript:;" title="Mode" style="color: #f1cb64"><span class="icon iconify" data-icon="ri:contrast-2-line"></span></a></div><div class="sidebar-panel sidebar-panel-active" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%97%E5%85%B8%E7%94%9F%E6%88%90%E5%B7%A5%E5%85%B7"><span class="toc-number">1.</span> <span class="toc-text">字典生成工具</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#crunch"><span class="toc-number">1.1.</span> <span class="toc-text">crunch</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%AE%80%E4%BB%8B"><span class="toc-number">1.1.1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E8%AF%AD%E6%B3%95%E5%92%8C%E5%8F%82%E6%95%B0"><span class="toc-number">1.1.2.</span> <span class="toc-text">使用语法和参数</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AE%9E%E8%B7%B5%E6%A1%88%E4%BE%8B"><span class="toc-number">1.1.3.</span> <span class="toc-text">实践案例</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E7%9A%84%E5%91%BD%E4%BB%A4"><span class="toc-number">1.1.4.</span> <span class="toc-text">常用的命令</span></a></li></ol></li></ol></li></ol></div></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="hty-card post-block" itemscope itemtype="https://schema.org/Article" style="--smc-primary:#0078E7;"><link itemprop="mainEntityOfPage" href="https://hsad.xyz/2024/08/08/%E5%AD%97%E5%85%B8%E7%94%9F%E6%88%90%E4%B8%8E%E5%AF%86%E7%A0%81%E7%88%86%E7%A0%B4/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="Hsad"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="Hsad's Blog"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">字典生成与密码爆破</h1><div class="post-meta"><div class="post-time"><span class="post-meta-item-icon"><span class="icon iconify" data-icon="ri:calendar-line"></span></span> <time title="创建时间：2024-08-08 20:17:52" itemprop="dateCreated datePublished" datetime="2024-08-08T20:17:52+08:00">2024-08-08</time><span class="post-meta-divider">-</span><span class="post-meta-item-icon"><span class="icon iconify" data-icon="ri:calendar-2-line"></span></span> <time title="修改时间：2024-08-09 19:32:58" itemprop="dateModified" datetime="2024-08-09T19:32:58+08:00">2024-08-09</time></div><div class="post-classify"><span class="post-category"> <span class="post-meta-item-icon" style="margin-right:3px;"><span class="icon iconify" data-icon="ri:folder-line"></span></span><span itemprop="about" itemscope itemtype="https://schema.org/Thing"><a class="category-item" href="/categories/%E5%AE%89%E5%85%A8%E7%9B%B8%E5%85%B3/" style="--text-color:var(--hty-text-color)" itemprop="url" rel="index"><span itemprop="text">安全相关</span></a></span> > <span itemprop="about" itemscope itemtype="https://schema.org/Thing"><a class="category-item" href="/categories/%E5%AE%89%E5%85%A8%E7%9B%B8%E5%85%B3/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/" style="--text-color:var(--hty-text-color)" itemprop="url" rel="index"><span itemprop="text">暴力破解</span></a></span></span><span class="post-tag"><span class="post-meta-divider">-</span><a class="tag-item" href="/tags/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/" style="--text-color:var(--hty-text-color)"><span class="post-meta-item-icon"><span class="icon iconify" data-icon="ri:price-tag-3-line"></span></span><span class="tag-name">暴力破解</span></a></span></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content markdown-body"><h3 id="字典生成工具"><a href="#字典生成工具" class="headerlink" title="字典生成工具"></a>字典生成工具</h3><h4 id="crunch"><a href="#crunch" class="headerlink" title="crunch"></a>crunch</h4><h5 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h5><pre class="language-http" data-language="http"><code class="language-http"># 源码
+};</script><script defer src="https://fastly.jsdelivr.net/npm/animejs@latest"></script><script defer src="/js/ui/fireworks.js" type="module"></script><canvas class="fireworks"></canvas><div class="container"><a class="sidebar-toggle hty-icon-button" id="menu-btn"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><div class="sidebar-toggle sidebar-overlay"></div><aside class="sidebar"><script src="/js/sidebar.js" type="module"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button sidebar-nav-active" data-target="post-toc-wrap" title="文章目录"><span class="icon iconify" data-icon="ri:list-ordered"></span></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button" data-target="site-overview-wrap" title="站点概览"><span class="icon iconify" data-icon="ri:passport-line"></span></li></ul><div class="sidebar-panel" id="site-overview-wrap"><div class="site-info fix-top"><a class="site-author-avatar" href="/about/" title="Hsad"><img width="96" loading="lazy" src="/images/avatar.jpg" alt="Hsad"><span class="site-author-status" title="凉">☺️</span></a><div class="site-author-name"><a href="/about/">Hsad</a></div><span class="site-name">Hsad's Blog</span><sub class="site-subtitle">一个人的世界</sub><div class="site-description">翻着我们的照片 想念若隐若现</div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/" title="首页"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:home-4-line"></span></span></a><div class="site-state-item"><a href="/archives/" title="归档"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:archive-line"></span></span><span class="site-state-item-count">24</span></a></div><div class="site-state-item"><a href="/categories/" title="分类"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:folder-2-line"></span></span><span class="site-state-item-count">5</span></a></div><div class="site-state-item"><a href="/tags/" title="标签"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:price-tag-3-line"></span></span><span class="site-state-item-count">26</span></a></div><a class="site-state-item hty-icon-button" target="_blank" rel="noopener" href="https://yun.yunyoujun.cn" title="文档"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:settings-line"></span></span></a></nav><hr style="margin-bottom:0.5rem"><div class="links-of-author"><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://qm.qq.com/cgi-bin/qm/qr?k=EYiK7-b5ur1mWxbX7aV2AEBsuoW9c732" title="QQ" target="_blank" style="color:orange"><span class="icon iconify" data-icon="ri:qq-line"></span></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://github.com/watanabe-hsad" title="GitHub" target="_blank" style="color:#181717"><span class="icon iconify" data-icon="ri:github-line"></span></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="mailto:dubian.zzy@outlook.com" title="E-Mail" target="_blank" style="color:#8E71C1"><span class="icon iconify" data-icon="ri:mail-line"></span></a></div><hr style="margin:0.5rem 1rem"><div class="links"><a class="links-item hty-icon-button" href="/links/" title="我的小伙伴们" style="color:dodgerblue"><span class="icon iconify" data-icon="ri:genderless-line"></span></a></div><br><a class="links-item hty-icon-button" id="toggle-mode-btn" href="javascript:;" title="Mode" style="color: #f1cb64"><span class="icon iconify" data-icon="ri:contrast-2-line"></span></a></div><div class="sidebar-panel sidebar-panel-active" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%97%E5%85%B8%E7%94%9F%E6%88%90%E5%B7%A5%E5%85%B7"><span class="toc-number">1.</span> <span class="toc-text">字典生成工具</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#crunch"><span class="toc-number">1.1.</span> <span class="toc-text">crunch</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%AE%80%E4%BB%8B"><span class="toc-number">1.1.1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E8%AF%AD%E6%B3%95%E5%92%8C%E5%8F%82%E6%95%B0"><span class="toc-number">1.1.2.</span> <span class="toc-text">使用语法和参数</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AE%9E%E8%B7%B5%E6%A1%88%E4%BE%8B"><span class="toc-number">1.1.3.</span> <span class="toc-text">实践案例</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%B0%83%E7%94%A8%E5%AF%86%E7%A0%81%E5%BA%93"><span class="toc-number">1.1.4.</span> <span class="toc-text">调用密码库</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#cupp-ccupp"><span class="toc-number">1.2.</span> <span class="toc-text">cupp(ccupp)</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%AE%80%E4%BB%8B-1"><span class="toc-number">1.2.1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#cupp%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-number">1.2.2.</span> <span class="toc-text">cupp常用命令</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%94%9F%E6%88%90%E5%AD%97%E5%85%B8"><span class="toc-number">1.2.3.</span> <span class="toc-text">生成字典</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%86%E7%A0%B4%E5%B7%A5%E5%85%B7"><span class="toc-number">2.</span> <span class="toc-text">爆破工具</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#wfuzz"><span class="toc-number">2.1.</span> <span class="toc-text">wfuzz</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%AE%80%E4%BB%8B-2"><span class="toc-number">2.1.1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E8%AF%AD%E6%B3%95%E5%92%8C%E5%8F%82%E6%95%B0-1"><span class="toc-number">2.1.2.</span> <span class="toc-text">使用语法和参数</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#wfuzz%E5%B8%B8%E8%A7%81%E7%94%A8%E6%B3%95"><span class="toc-number">2.1.3.</span> <span class="toc-text">wfuzz常见用法</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E6%A8%A1%E7%B3%8A%E6%9F%A5%E8%AF%A2GET%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0"><span class="toc-number">2.1.3.1.</span> <span class="toc-text">模糊查询GET请求参数</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E6%A8%A1%E7%B3%8A%E6%9F%A5%E8%AF%A2POST%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0"><span class="toc-number">2.1.3.2.</span> <span class="toc-text">模糊查询POST请求参数</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0cookie%E5%8F%91%E8%B5%B7%E8%AF%B7%E6%B1%82"><span class="toc-number">2.1.3.3.</span> <span class="toc-text">添加cookie发起请求</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E8%AF%B7%E6%B1%82%E5%A4%B4"><span class="toc-number">2.1.3.4.</span> <span class="toc-text">添加请求头</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E5%AD%90%E5%9F%9F%E5%90%8D%E6%89%AB%E6%8F%8F"><span class="toc-number">2.1.3.5.</span> <span class="toc-text">子域名扫描</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E7%88%86%E7%A0%B4401%E8%AE%A4%E8%AF%81%E7%95%8C%E9%9D%A2"><span class="toc-number">2.1.3.6.</span> <span class="toc-text">爆破401认证界面</span></a></li></ol></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#hydra-%E4%B9%9D%E5%A4%B4%E8%9B%87"><span class="toc-number">2.2.</span> <span class="toc-text">hydra(九头蛇)</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%AE%80%E4%BB%8B-3"><span class="toc-number">2.2.1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E8%AF%AD%E6%B3%95%E5%92%8C%E5%8F%82%E6%95%B0-2"><span class="toc-number">2.2.2.</span> <span class="toc-text">使用语法和参数</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Kail%E5%AD%97%E5%85%B8"><span class="toc-number">2.2.3.</span> <span class="toc-text">Kail字典</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Hydra%E5%AF%86%E7%A0%81%E7%94%9F%E6%88%90%E5%99%A8"><span class="toc-number">2.2.4.</span> <span class="toc-text">Hydra密码生成器</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Hydra%E6%A1%88%E4%BE%8B"><span class="toc-number">2.2.5.</span> <span class="toc-text">Hydra案例</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E6%9A%B4%E7%A0%B4ssh%E7%99%BB%E5%BD%95%E5%AF%86%E7%A0%81"><span class="toc-number">2.2.5.1.</span> <span class="toc-text">暴破ssh登录密码</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#FTP%E5%8D%8F%E8%AE%AE%E7%A0%B4%E8%A7%A3"><span class="toc-number">2.2.5.2.</span> <span class="toc-text">FTP协议破解</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#http%E5%8D%8F%E8%AE%AE%E7%A0%B4%E8%A7%A3"><span class="toc-number">2.2.5.3.</span> <span class="toc-text">http协议破解</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#https%E5%8D%8F%E8%AE%AE%E7%A0%B4%E8%A7%A3"><span class="toc-number">2.2.5.4.</span> <span class="toc-text">https协议破解</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E8%B7%AF%E7%94%B1%E5%99%A8%E7%A0%B4%E8%A7%A3"><span class="toc-number">2.2.5.5.</span> <span class="toc-text">路由器破解</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#http-proxy%E5%8D%8F%E8%AE%AE%E7%A0%B4%E8%A7%A3"><span class="toc-number">2.2.5.6.</span> <span class="toc-text">http-proxy协议破解</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#smb%E7%A0%B4%E8%A7%A3"><span class="toc-number">2.2.5.7.</span> <span class="toc-text">smb破解</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#Windows%E8%BF%9C%E7%A8%8B%E6%A1%8C%E9%9D%A2"><span class="toc-number">2.2.5.8.</span> <span class="toc-text">Windows远程桌面</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E9%82%AE%E7%AE%B1pop3"><span class="toc-number">2.2.5.9.</span> <span class="toc-text">邮箱pop3</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#telnet%E7%A0%B4%E8%A7%A3"><span class="toc-number">2.2.5.10.</span> <span class="toc-text">telnet破解</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E8%AF%AD%E9%9F%B3%E9%80%9A%E8%AE%AF%E5%B7%A5%E5%85%B7teamspeak"><span class="toc-number">2.2.5.11.</span> <span class="toc-text">语音通讯工具teamspeak</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#cisco"><span class="toc-number">2.2.5.12.</span> <span class="toc-text">cisco</span></a></li></ol></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#medusa-%E7%BE%8E%E6%9D%9C%E8%8E%8E"><span class="toc-number">2.3.</span> <span class="toc-text">medusa(美杜莎)</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%AE%80%E4%BB%8B-4"><span class="toc-number">2.3.1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E8%AF%AD%E6%B3%95%E5%92%8C%E5%8F%82%E6%95%B0-3"><span class="toc-number">2.3.2.</span> <span class="toc-text">使用语法和参数</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E7%94%A8%E6%B3%95"><span class="toc-number">2.3.3.</span> <span class="toc-text">常见用法</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#ssh%E7%88%86%E7%A0%B4"><span class="toc-number">2.3.3.1.</span> <span class="toc-text">ssh爆破</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E7%88%86%E7%A0%B4Windows%E8%BF%9C%E7%A8%8B%E8%BF%9C%E7%A8%8B%E6%A1%8C%E9%9D%A2%E5%8D%8F%E8%AE%AE-smbnt-3389"><span class="toc-number">2.3.3.2.</span> <span class="toc-text">爆破Windows远程远程桌面协议(smbnt)3389</span></a></li></ol></li></ol></li></ol></li></ol></div></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="hty-card post-block" itemscope itemtype="https://schema.org/Article" style="--smc-primary:#0078E7;"><link itemprop="mainEntityOfPage" href="https://hsad.xyz/2024/08/08/%E5%AD%97%E5%85%B8%E7%94%9F%E6%88%90%E4%B8%8E%E5%AF%86%E7%A0%81%E7%88%86%E7%A0%B4/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="Hsad"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="Hsad's Blog"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">字典生成与密码爆破</h1><div class="post-meta"><div class="post-time"><span class="post-meta-item-icon"><span class="icon iconify" data-icon="ri:calendar-line"></span></span> <time title="创建时间：2024-08-08 20:17:52" itemprop="dateCreated datePublished" datetime="2024-08-08T20:17:52+08:00">2024-08-08</time><span class="post-meta-divider">-</span><span class="post-meta-item-icon"><span class="icon iconify" data-icon="ri:calendar-2-line"></span></span> <time title="修改时间：2024-08-13 18:56:08" itemprop="dateModified" datetime="2024-08-13T18:56:08+08:00">2024-08-13</time></div><div class="post-classify"><span class="post-category"> <span class="post-meta-item-icon" style="margin-right:3px;"><span class="icon iconify" data-icon="ri:folder-line"></span></span><span itemprop="about" itemscope itemtype="https://schema.org/Thing"><a class="category-item" href="/categories/%E5%AE%89%E5%85%A8%E7%9B%B8%E5%85%B3/" style="--text-color:var(--hty-text-color)" itemprop="url" rel="index"><span itemprop="text">安全相关</span></a></span> > <span itemprop="about" itemscope itemtype="https://schema.org/Thing"><a class="category-item" href="/categories/%E5%AE%89%E5%85%A8%E7%9B%B8%E5%85%B3/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" style="--text-color:var(--hty-text-color)" itemprop="url" rel="index"><span itemprop="text">渗透测试</span></a></span></span><span class="post-tag"><span class="post-meta-divider">-</span><a class="tag-item" href="/tags/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/" style="--text-color:var(--hty-text-color)"><span class="post-meta-item-icon"><span class="icon iconify" data-icon="ri:price-tag-3-line"></span></span><span class="tag-name">暴力破解</span></a></span></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content markdown-body"><h3 id="字典生成工具"><a href="#字典生成工具" class="headerlink" title="字典生成工具"></a>字典生成工具</h3><h4 id="crunch"><a href="#crunch" class="headerlink" title="crunch"></a>crunch</h4><h5 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h5><pre class="language-http" data-language="http"><code class="language-http"># 源码
 <span class="token header"><span class="token header-name keyword">https</span><span class="token punctuation">:</span><span class="token header-value">//github.com/crunchsec/crunch</span></span></code></pre>
 
 <p><strong>Crunch</strong>为<strong>kali</strong>自带工具之一，是一种自定义创建密码字典工具，按照指定的规则生成密码字典，可以针对性的生成字典文件</p>
@@ -78,96 +82,380 @@ oprions
 <p>2.生成最小为5,最大为6，由abcdefg和空格为元素的所有组合(&#x2F;代表空格)</p>
 <pre class="language-javascript" data-language="javascript"><code class="language-javascript">crunch <span class="token number">5</span> <span class="token number">6</span> abcdefg\ 或者 crunch <span class="token number">5</span> <span class="token number">6</span> <span class="token string">"abcdefg "</span></code></pre>
 
-<p>3.生成几个元素的组合（可以用于社工中收集的信息）</p>
+<p>3.多种组合 生成3个元素的组合，前三位为定义的字符串</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">crunch <span class="token number">3</span> <span class="token number">3</span> <span class="token parameter variable">-t</span> d@% <span class="token parameter variable">-p</span> aaa bbb </code></pre>
+
+<p>4.生成几个元素的组合（可以用于社工中收集的信息）</p>
 <pre class="language-javascript" data-language="javascript"><code class="language-javascript">crunch <span class="token number">4</span> <span class="token number">4</span> <span class="token operator">-</span>p zhangsan <span class="token number">2018</span> <span class="token number">0101</span> <span class="token punctuation">.</span><span class="token punctuation">.</span></code></pre>
 
-<p>4.生成指定的字符串（比如生成编号，手机号等）</p>
+<p>5.生成指定的字符串（比如生成编号，手机号等）</p>
 <pre class="language-javascript" data-language="javascript"><code class="language-javascript">crunch <span class="token number">10</span> <span class="token number">10</span> <span class="token operator">-</span>t <span class="token number">201800</span><span class="token operator">%</span><span class="token operator">%</span><span class="token operator">%</span><span class="token operator">%</span></code></pre>
 
 <p><img src="crunch.png" loading="lazy"></p>
-<p>5.调用密码库charset.lst，生成最小为5，最大为8,元素为密码库charset.lst中 mixalpha-numeric-all-space的项目，并保存为 wordlist.txt</p>
-<pre class="language-javascript" data-language="javascript"><code class="language-javascript">crunch <span class="token number">5</span> <span class="token number">8</span> <span class="token operator">-</span>f charset<span class="token punctuation">.</span>lst mixalpha<span class="token operator">-</span>numeric<span class="token operator">-</span>all<span class="token operator">-</span>space <span class="token operator">-</span>o wordlist<span class="token punctuation">.</span>txt 
+<p>6.通过-l参数来使@,%^等特殊字符输出</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">crunch <span class="token number">7</span> <span class="token number">7</span> <span class="token parameter variable">-t</span> p@ss,%^ <span class="token parameter variable">-l</span> a@aaaaa</code></pre>
 
-# 其中charset<span class="token punctuation">.</span>lst在kali_linux的目录为 <span class="token operator">/</span>usr<span class="token operator">/</span>share<span class="token operator">/</span>crunch<span class="token operator">/</span>charset<span class="token punctuation">.</span>lst
-# charset<span class="token punctuation">.</span>lst中mixalpha<span class="token operator">-</span>numeric<span class="token operator">-</span>all<span class="token operator">-</span><span class="token function">space项目包含最常见的元素组合</span><span class="token punctuation">(</span>即大小写字母<span class="token operator">+</span>数字<span class="token operator">+</span>常见符号<span class="token punctuation">)</span>
-# 使用cat <span class="token operator">/</span>usr<span class="token operator">/</span>share<span class="token operator">/</span>crunch<span class="token operator">/</span>charset<span class="token punctuation">.</span>lst 查看所有密码库
+<p>7.-o参数也可使用&gt;&gt;来简化</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">crunch <span class="token number">4</span> <span class="token number">4</span> <span class="token parameter variable">-d</span> <span class="token number">2</span>@ <span class="token parameter variable">-t</span> @@@% <span class="token operator">>></span> test.txt</code></pre>
 
-# 常用的如下，以元素类型组合的名字命名
-hex<span class="token operator">-</span>lower                     <span class="token operator">=</span> <span class="token punctuation">[</span>0123456789abcdef<span class="token punctuation">]</span>
-hex<span class="token operator">-</span>upper                     <span class="token operator">=</span> <span class="token punctuation">[</span>0123456789ABCDEF<span class="token punctuation">]</span>
-numeric                       <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token number">0123456789</span><span class="token punctuation">]</span>
-numeric<span class="token operator">-</span>space                 <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token number">0123456789</span> <span class="token punctuation">]</span>
-symbols14                     <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token operator">!</span>@#$<span class="token operator">%</span><span class="token operator">^</span><span class="token operator">&amp;</span><span class="token operator">*</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">-</span>_<span class="token operator">+=</span><span class="token punctuation">]</span>
-ualpha                        <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token constant">ABCDEFGHIJKLMNOPQRSTUVWXYZ</span><span class="token punctuation">]</span>
-ualpha<span class="token operator">-</span>space                  <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token constant">ABCDEFGHIJKLMNOPQRSTUVWXYZ</span> <span class="token punctuation">]</span>
-ualpha<span class="token operator">-</span>numeric                <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token constant">ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789</span><span class="token punctuation">]</span>
-ualpha<span class="token operator">-</span>numeric<span class="token operator">-</span>space          <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token constant">ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789</span> <span class="token punctuation">]</span>
-ualpha<span class="token operator">-</span>numeric<span class="token operator">-</span>symbol14       <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token constant">ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789</span><span class="token operator">!</span>@#$<span class="token operator">%</span><span class="token operator">^</span><span class="token operator">&amp;</span><span class="token operator">*</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">-</span>_<span class="token operator">+=</span><span class="token punctuation">]</span>
-ualpha<span class="token operator">-</span>numeric<span class="token operator">-</span>symbol14<span class="token operator">-</span>space <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token constant">ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789</span><span class="token operator">!</span>@#$<span class="token operator">%</span><span class="token operator">^</span><span class="token operator">&amp;</span><span class="token operator">*</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">-</span>_<span class="token operator">+=</span> <span class="token punctuation">]</span>
-ualpha<span class="token operator">-</span>numeric<span class="token operator">-</span>all            <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token constant">ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789</span><span class="token operator">!</span>@#$<span class="token operator">%</span><span class="token operator">^</span><span class="token operator">&amp;</span><span class="token operator">*</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">-</span>_<span class="token operator">+=</span><span class="token operator">~</span>`<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">&#123;</span><span class="token punctuation">&#125;</span><span class="token operator">|</span>\\<span class="token operator">:</span><span class="token punctuation">;</span>\"\'<span class="token operator">&lt;</span><span class="token operator">></span><span class="token punctuation">,</span><span class="token punctuation">.</span><span class="token operator">?</span><span class="token operator">/</span><span class="token punctuation">]</span>
-lalpha                        <span class="token operator">=</span> <span class="token punctuation">[</span>abcdefghijklmnopqrstuvwxyz<span class="token punctuation">]</span>
-lalpha<span class="token operator">-</span>space                  <span class="token operator">=</span> <span class="token punctuation">[</span>abcdefghijklmnopqrstuvwxyz <span class="token punctuation">]</span></code></pre>
+<h5 id="调用密码库"><a href="#调用密码库" class="headerlink" title="调用密码库"></a>调用密码库</h5><p><img src="crunch_2.png" loading="lazy"></p>
+<p>特殊字符</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">numeric     表示0123456789
+Lalpha      表示26位小写字母
+Ualpha      表示26位大写字母</code></pre>
 
-<p>5.生成两位小写字母+dog+三位小写字母,并以cbdogaaa字符串开始字典生成.调用密码库charset.lst，生成8位密码;其中元素为密码库 charset.lst中mixalpha-numeric-all-space的项</p>
-<pre class="language-javascript" data-language="javascript"><code class="language-javascript">crunch <span class="token number">8</span> <span class="token number">8</span> <span class="token operator">-</span>f <span class="token operator">/</span>usr<span class="token operator">/</span>share<span class="token operator">/</span>crunch<span class="token operator">/</span>charset<span class="token punctuation">.</span>lst mixalpha<span class="token operator">-</span>numeric<span class="token operator">-</span>all<span class="token operator">-</span>space <span class="token operator">-</span>t @@dog@@@ <span class="token operator">-</span>s cbdogaaa</code></pre>
+<p>实例：调用密码库 charset.lst中的 hex-upper项目字符，生成4位密码，其中格式为@ + hex-upper +% +%</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">crunch <span class="token number">4</span> <span class="token number">4</span> <span class="token parameter variable">-f</span> charset.lst hex-upper <span class="token parameter variable">-t</span> @@%% <span class="token parameter variable">-l</span> @aaa</code></pre>
 
-<p>6.生成某个字符串的排列组合.</p>
-<pre class="language-javascript" data-language="javascript"><code class="language-javascript">crunch <span class="token number">4</span> <span class="token number">4</span> <span class="token operator">-</span>p abc
+<h4 id="cupp-ccupp"><a href="#cupp-ccupp" class="headerlink" title="cupp(ccupp)"></a>cupp(ccupp)</h4><h5 id="简介-1"><a href="#简介-1" class="headerlink" title="简介"></a>简介</h5><p>cupp是一款基于python编写的可交互性的密码字典生成工具。结合社会工程学，你会获得一份根据个人信息生成的专属字典。</p>
+<p>与传统字典相比，其优势在于准确率更高</p>
+<h5 id="cupp常用命令"><a href="#cupp常用命令" class="headerlink" title="cupp常用命令"></a>cupp常用命令</h5><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token parameter variable">-h</span>			常看帮助信息
+<span class="token parameter variable">-i</span>			通过填写信息创建用户密码字典
+<span class="token parameter variable">-w</span>			在已存在的字典进行扩展
+<span class="token parameter variable">-l</span>			从github仓库下载字典
+<span class="token parameter variable">-v</span>			查看版本信息
+<span class="token parameter variable">-q</span>			安静模式</code></pre>
 
-# 生成单词的排列组合
-crunch <span class="token number">4</span> <span class="token number">5</span> <span class="token operator">-</span>p dog cat bird</code></pre>
-
-<p>7.生成6000个密码且生成文件压缩为bzip2格式</p>
-<pre class="language-javascript" data-language="javascript"><code class="language-javascript">crunch <span class="token number">1</span> <span class="token number">5</span> <span class="token operator">-</span>o <span class="token constant">START</span> <span class="token operator">-</span>c <span class="token number">6000</span> <span class="token operator">-</span>z bzip2</code></pre>
-
-<p>8.生成最小为4位，最大为5位元素为所有小写字母的密码字典，并以20M进行分割</p>
-<pre class="language-javascript" data-language="javascript"><code class="language-javascript"># 类型有效值为<span class="token constant">KB</span>、<span class="token constant">MB</span>、<span class="token constant">GB</span>、<span class="token constant">KIB</span>，<span class="token constant">MIB</span>，和<span class="token constant">GIB</span>
-# 前三种类型是基于<span class="token number">1000</span>，而最后三种类型是基于<span class="token number">1024</span>注意数字与类型之间没有空格
-crunch <span class="token number">4</span> <span class="token number">5</span> <span class="token operator">-</span>b 20mib <span class="token operator">-</span>o <span class="token constant">START</span></code></pre>
-
-<p>9.生成3位密码，其中第一位由“a，b，c”中的一个;第二位为“1,2,3”中的一个;第三位为“!，@，#”中的一个。比如1a!、2a#、3b@…..</p>
-<pre class="language-javascript" data-language="javascript"><code class="language-javascript"># <span class="token function">加号</span><span class="token punctuation">(</span><span class="token operator">+</span><span class="token punctuation">)</span>是一个占位符，以便为字符类型指定一个字符集。crunch将使用默认字符集的字符类型，当crunch遇到一个<span class="token operator">+</span><span class="token punctuation">(</span>加号<span class="token punctuation">)</span>的命令行。必须为每个字符类型指定值或使用加号。也就是说，如果你有两个字符类型，你要么为每个类型指定值，要么使用加号。
-crunch <span class="token number">3</span> <span class="token number">3</span> abc <span class="token operator">+</span> <span class="token number">123</span> \<span class="token operator">!</span>@#  <span class="token operator">-</span>t  <span class="token operator">^</span><span class="token operator">%</span>@</code></pre>
-
-<p>10.生成7位密码，格式为“字符p@ss”+大写字母+数字+符号，比如p@ssZ9&gt;……</p>
-<pre class="language-javascript" data-language="javascript"><code class="language-javascript">#加<span class="token operator">-</span>l选项是将字符串中的@作为文字字符集，而不是做为小写字母进行替换
-crunch <span class="token number">7</span> <span class="token number">7</span> <span class="token operator">-</span>t p@ss<span class="token punctuation">,</span><span class="token operator">%</span><span class="token operator">^</span>  <span class="token operator">-</span>l a@aaaaa</code></pre>
-
-<p>11.生成5位密码，格式为三个小写字母+两个数字，并限制每个密码最少出现2种字母，以aab00开头，以zzy99结束。“-d 2@”表示字母连续重复最多2次</p>
-<pre class="language-javascript" data-language="javascript"><code class="language-javascript">crunch <span class="token number">5</span> <span class="token number">5</span> <span class="token operator">-</span>d <span class="token number">2</span>@ <span class="token operator">-</span>t @@@<span class="token operator">%</span><span class="token operator">%</span></code></pre>
-
-<p>12.调用密码库unicode_test.lst中的japanese项目字符，生成4位密码，其中格式为两小写字母+两数字</p>
-<pre class="language-javascript" data-language="javascript"><code class="language-javascript">crunch <span class="token number">4</span> <span class="token number">4</span> <span class="token operator">-</span>f unicode_test<span class="token punctuation">.</span>lst japanese <span class="token operator">-</span>t @@<span class="token operator">%</span><span class="token operator">%</span> <span class="token operator">-</span>l @xdd</code></pre>
-
-<h5 id="常用的命令"><a href="#常用的命令" class="headerlink" title="常用的命令"></a><strong>常用的命令</strong></h5><ol>
-<li>生成六位小写字母密码，其中前四位为pass</li>
+<h5 id="生成字典"><a href="#生成字典" class="headerlink" title="生成字典"></a>生成字典</h5><ol>
+<li><p>运行命令”cupp -i”,填写受害人姓、名、绰号、生日。</p>
+</li>
+<li><p>填写受害人配偶的名字、绰号、生日</p>
+</li>
+<li><p>填写孩子的名字、绰号、生日</p>
+</li>
+<li><p>填写宠物的名字以及公司的名字</p>
+</li>
+<li><p>是否添加一些关于受害人的关键词</p>
+</li>
+<li><p>是否在密码结尾添加一些特殊字符</p>
+</li>
+<li><p>是否在密码结尾添加一些随机数字</p>
+</li>
+<li><p>填写”y”，生成字典，可以在root目录下查看</p>
+</li>
 </ol>
-<p>代码语言：javascript</p>
-<p>复制</p>
-<pre class="language-javascript" data-language="javascript"><code class="language-javascript">crunch <span class="token number">6</span> <span class="token number">6</span> <span class="token operator">-</span>t pass@@ <span class="token operator">-</span>o mm<span class="token punctuation">.</span>txt</code></pre>
+<p>运行命令 “cupp -l” ,填写你想要下载字典的序号，下载完成的字典保存在”&#x2F;root&#x2F;dictionaries&#x2F;chinese”目录下。</p>
+<h3 id="爆破工具"><a href="#爆破工具" class="headerlink" title="爆破工具"></a>爆破工具</h3><h4 id="wfuzz"><a href="#wfuzz" class="headerlink" title="wfuzz"></a>wfuzz</h4><p><a target="_blank" rel="noopener" href="https://www.freebuf.com/column/163553.html">史上最详[ZI]细[DUO]的wfuzz中文教程（一）——初识wfuzz</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.ddosi.org/wfuzz-guide/">Wfuzz详细指南|模糊测试工具使用方法</a></p>
+<h5 id="简介-2"><a href="#简介-2" class="headerlink" title="简介"></a>简介</h5><p>wfuzz 是一款Python开发的Web安全测试工具<br>wfuzz不仅仅是一个web扫描器：</p>
+<ul>
+<li>wfuzz能够通过发现并利用网站弱点&#x2F;漏洞的方式帮助你使网站更加安全。wfuzz的漏洞扫描功能由插件支持。</li>
+<li>wfuzz是一个完全模块化的框架，这使得即使是Python初学者也能够进行开发和贡献代码。开发一个wfuzz插件是一件非常简单的事，通常只需几分钟。</li>
+<li>wfuzz提供了简洁的编程语言接口来处理wfuzz或Burpsuite获取到的HTTP请求和响应。这使得你能够在一个良好的上下文环境中进行手工测试或半自动化的测试，而不需要依赖web形式的扫描器。</li>
+</ul>
+<h5 id="使用语法和参数-1"><a href="#使用语法和参数-1" class="headerlink" title="使用语法和参数"></a>使用语法和参数</h5><pre class="language-javascript" data-language="javascript"><code class="language-javascript">选项：
 
-<ol>
-<li>制作8位纯数字字典</li>
-</ol>
-<p>代码语言：javascript</p>
-<p>复制</p>
-<pre class="language-javascript" data-language="javascript"><code class="language-javascript">crunch <span class="token number">8</span> <span class="token number">8</span> charset<span class="token punctuation">.</span>lst numeric <span class="token operator">-</span>o num8<span class="token punctuation">.</span>txt</code></pre>
+<span class="token operator">-</span>h<span class="token operator">/</span><span class="token operator">--</span>help：帮助
+<span class="token operator">--</span>help：高级帮助
+<span class="token operator">--</span>filter<span class="token operator">-</span>help：筛选器帮助
+<span class="token operator">--</span>version：Wfuzz版本详细信息
+<span class="token operator">-</span>e＜type＞：可用编码器<span class="token operator">/</span>有效负载<span class="token operator">/</span>迭代器<span class="token operator">/</span>打印机<span class="token operator">/</span>脚本列表
 
-<ol>
-<li>制作139开头的手机密码字典</li>
-</ol>
-<p>代码语言：javascript</p>
-<p>复制</p>
-<pre class="language-javascript" data-language="javascript"><code class="language-javascript">crunch <span class="token number">11</span> <span class="token number">11</span>  <span class="token operator">+</span><span class="token number">0123456789</span> <span class="token operator">-</span>t <span class="token number">139</span><span class="token operator">%</span><span class="token operator">%</span><span class="token operator">%</span><span class="token operator">%</span><span class="token operator">%</span><span class="token operator">%</span><span class="token operator">%</span><span class="token operator">%</span> <span class="token operator">-</span>o num13<span class="token punctuation">.</span>dic</code></pre>
+<span class="token operator">--</span>recipe＜filename＞：从配方中读取选项。对各种食谱重复上述步骤。
+<span class="token operator">--</span>dump recipe＜filename＞：将当前选项打印为配方
+<span class="token operator">--</span>oF＜filename＞：将模糊结果保存到文件中。这些可以稍后使用wfuzz有效负载来使用。
 
-<ol>
-<li>在线使用生成的密码,参数最后面的-表示引用crunch生成的密码，例如无线密码在线破解</li>
-</ol>
-<p>代码语言：javascript</p>
-<p>复制</p>
-<pre class="language-javascript" data-language="javascript"><code class="language-javascript">crunch <span class="token number">2</span> <span class="token number">4</span> <span class="token number">0123456789</span> <span class="token operator">|</span> aircrack <span class="token operator">-</span>ng a<span class="token punctuation">,</span>cap <span class="token operator">-</span>e MyESSID <span class="token operator">-</span>w <span class="token operator">-</span> 
-crunch <span class="token number">10</span> <span class="token number">1012345</span> <span class="token operator">--</span>stodout <span class="token operator">|</span> airolib <span class="token operator">-</span>ng testdlb <span class="token operator">-</span><span class="token keyword">import</span> passwd –  
-crunch <span class="token number">1</span> <span class="token number">6</span> <span class="token number">0123456789</span> <span class="token operator">|</span> john pwd<span class="token punctuation">.</span>txt <span class="token operator">--</span>stdin <span class="token operator">-</span></code></pre></div></section><div id="reward-container"><span class="hty-icon-button button-glow" id="reward-button" title="打赏" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === &quot;none&quot;) ? &quot;block&quot; : &quot;none&quot;;"><span class="icon iconify" data-icon="ri:hand-coin-line"></span></span><div id="reward-comment">I'm so cute. Please give me money.</div></div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>Hsad</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="https://hsad.xyz/2024/08/08/%E5%AD%97%E5%85%B8%E7%94%9F%E6%88%90%E4%B8%8E%E5%AF%86%E7%A0%81%E7%88%86%E7%A0%B4/" title="字典生成与密码爆破">https://hsad.xyz/2024/08/08/%E5%AD%97%E5%85%B8%E7%94%9F%E6%88%90%E4%B8%8E%E5%AF%86%E7%A0%81%E7%88%86%E7%A0%B4/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 "><span class="icon iconify" data-icon="ri:creative-commons-line"></span><span class="icon iconify" data-icon="ri:creative-commons-by-line"></span><span class="icon iconify" data-icon="ri:creative-commons-nc-line"></span><span class="icon iconify" data-icon="ri:creative-commons-sa-line"></span></a> 许可协议。</li></ul></article><div class="post-nav"><div class="post-nav-item"><a class="post-nav-prev" href="/2024/08/09/KaliLinux%E7%9A%84%E5%9F%BA%E6%9C%AC%E9%85%8D%E7%BD%AE/" rel="prev" title="KaliLinux的基本配置"><span class="icon iconify" data-icon="ri:arrow-left-s-line"></span><span class="post-nav-text">KaliLinux的基本配置</span></a></div><div class="post-nav-item"><a class="post-nav-next" href="/2024/08/06/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/" rel="next" title="极客大挑战2019-web"><span class="post-nav-text">极客大挑战2019-web</span><span class="icon iconify" data-icon="ri:arrow-right-s-line"></span></a></div></div></div><div class="hty-card" id="comment"></div></main><footer class="sidebar-translate" id="footer"><div class="copyright"><span>&copy; 2019 – 2024 </span><span class="with-love" id="animate"><span class="icon iconify" data-icon="ri:cloud-line"></span></span><span class="author"> Hsad</span></div><div class="powered"><span>由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v7.2.0</span><span class="footer-separator">|</span><span>主题 - <a rel="noopener" href="https://github.com/YunYouJun/hexo-theme-yun" target="_blank"><span>Yun</span></a> v1.10.11</span></div></footer></div><a class="hty-icon-button" id="back-to-top" aria-label="back-to-top" href="#"><span class="icon iconify" data-icon="ri:arrow-up-s-line"></span><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#0078E7" stroke-width="2" stroke-linecap="round"></circle></svg></a><script src="https://fastly.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script><script>const images = [...document.querySelectorAll('.markdown-body img')]
+<span class="token operator">-</span>c：带颜色的输出
+<span class="token operator">-</span>v：详细信息。
+<span class="token operator">-</span>f filename，printer：使用指定的打印机（如果省略了原始打印机）将结果存储在输出文件中。
+<span class="token operator">-</span>o printer：使用指定的打印机显示结果。
+<span class="token operator">--</span>interact<span class="token operator">:</span>（beta）如果选中，则捕获所有按键。这允许您与程序交互。
+<span class="token operator">--</span>dry<span class="token operator">-</span>run：打印应用请求的结果，而不实际发出任何<span class="token constant">HTTP</span>请求。
+<span class="token operator">--</span>prev：打印以前的<span class="token constant">HTTP</span>请求（仅当使用生成模糊结果的有效负载时）
+<span class="token operator">--</span>efield＜expr＞：显示指定的语言表达式以及当前负载。对各个字段重复上述操作。
+<span class="token operator">--</span>field＜expr＞：不显示有效负载，只显示指定的语言表达式。对各个字段重复上述操作。
+
+<span class="token operator">-</span>p addr：使用ip<span class="token operator">:</span>port<span class="token operator">:</span>type格式的代理。重复使用各种代理的选项。如果省略，类型可以是<span class="token constant">SOCKS4</span>、<span class="token constant">SOCKS5</span>或<span class="token constant">HTTP</span>。
+
+<span class="token operator">-</span>t <span class="token constant">N</span>：指定并发连接数（默认值为<span class="token number">10</span>）
+<span class="token operator">-</span>s <span class="token constant">N</span>：指定请求之间的时间延迟（默认值为<span class="token number">0</span>）
+<span class="token operator">-</span><span class="token constant">R</span> depth：递归路径发现深度是最大递归级别。
+<span class="token operator">-</span><span class="token constant">D</span> depth：最大链接深度级别。
+<span class="token operator">-</span><span class="token constant">L</span><span class="token punctuation">,</span> <span class="token operator">--</span>follow<span class="token operator">:</span>遵循<span class="token constant">HTTP</span>重定向
+<span class="token operator">--</span>ip<span class="token operator">-</span>host<span class="token operator">:</span>port：以ip<span class="token operator">:</span>port格式指定要连接的ip，而不是<span class="token constant">URL</span>的主机
+<span class="token operator">-</span><span class="token constant">Z</span>：扫描模式（将忽略连接错误）。
+<span class="token operator">--</span>req delay <span class="token constant">N</span>：设置请求允许的最长时间（以秒为单位）（<span class="token constant">CURLOPT_TIMEOUT</span>）。默认值<span class="token number">90</span>。
+<span class="token operator">--</span>conn<span class="token operator">-</span>delay <span class="token constant">N</span>：设置服务器连接阶段要花费的最长时间（以秒为单位）（<span class="token constant">CURLOPT_CONNECTTIMEOUT</span>）。默认值<span class="token number">90</span>。
+
+<span class="token operator">-</span><span class="token constant">A</span><span class="token punctuation">,</span> <span class="token operator">--</span><span class="token constant">AA</span><span class="token punctuation">,</span> <span class="token operator">--</span><span class="token constant">AAA</span><span class="token operator">:</span> <span class="token operator">--</span>script<span class="token operator">=</span><span class="token keyword">default</span>，verbose，discovery<span class="token operator">-</span>v<span class="token operator">-</span>c的别名
+<span class="token operator">--</span>no<span class="token operator">-</span>cache：禁用插件缓存。将扫描每个请求。
+<span class="token operator">--</span>script<span class="token operator">=</span>：相当于<span class="token operator">--</span>script<span class="token operator">=</span>默认值
+<span class="token operator">--</span>script<span class="token operator">=</span><span class="token operator">&lt;</span>plugins<span class="token operator">></span>：运行脚本的扫描<span class="token operator">&lt;</span>plugins<span class="token operator">></span>是以逗号分隔的插件文件或插件类别列表
+<span class="token operator">--</span>script help<span class="token operator">=</span><span class="token operator">&lt;</span>plugins<span class="token operator">></span>：显示有关脚本的帮助。
+<span class="token operator">--</span>script<span class="token operator">-</span>args n1<span class="token operator">=</span>v1，…：为脚本提供参数。即<span class="token operator">--</span>script args grep<span class="token punctuation">.</span>regex<span class="token operator">=</span>“<span class="token operator">&lt;</span><span class="token constant">A</span> href<span class="token operator">=</span>\”（<span class="token punctuation">.</span><span class="token operator">*</span>？）\“<span class="token operator">></span>”
+
+<span class="token operator">-</span>u url：指定请求的url。
+<span class="token operator">-</span>m iterator：指定用于组合有效载荷的迭代器（默认为product）
+<span class="token operator">-</span>z payload：以名称<span class="token punctuation">[</span>，参数<span class="token punctuation">]</span><span class="token punctuation">[</span>，编码器<span class="token punctuation">]</span>的形式为每个<span class="token constant">FUZZ</span>关键字指定有效负载。可以使用编码器列表，即md5<span class="token operator">-</span>sha1。编码器可以是链式的，即。md5@sha1<span class="token punctuation">.</span>可以使用编码器类别。即url
+使用帮助作为有效负载来显示有效负载插件的详细信息（您可以使用<span class="token operator">--</span>slice进行过滤）
+
+<span class="token operator">--</span>zP＜params＞：指定有效负载的参数（必须以<span class="token operator">-</span>z或<span class="token operator">-</span>w开头）。
+<span class="token operator">--</span>zD<span class="token operator">&lt;</span><span class="token keyword">default</span><span class="token operator">></span>：指定有效负载的默认参数（必须以<span class="token operator">-</span>z或<span class="token operator">-</span>w开头）。
+<span class="token operator">--</span>zE＜encoder＞：指定有效负载的编码器（它必须以<span class="token operator">-</span>z或<span class="token operator">-</span>w开头）。
+<span class="token operator">--</span>slice＜filter＞：使用指定的表达式过滤有效负载的元素。它必须以<span class="token operator">-</span>z开头。
+<span class="token operator">-</span>w wordlist：指定wordlist文件（<span class="token operator">-</span>z文件的别名，wordlist）。
+<span class="token operator">-</span><span class="token constant">V</span> alltype：所有参数brutforming（allvars和allpost）。不需要<span class="token constant">FUZZ</span>关键字。
+<span class="token operator">-</span><span class="token constant">X</span> method：指定请求的<span class="token constant">HTTP</span>方法，即<span class="token constant">HEAD</span>或<span class="token constant">FUZZ</span>
+
+<span class="token operator">-</span>b cookie：为请求指定cookie。对各种cookie重复选项。
+<span class="token operator">-</span>d postdata：使用postdata（例如：“id<span class="token operator">=</span><span class="token constant">FUZZ</span><span class="token operator">&amp;</span>catalog<span class="token operator">=</span><span class="token number">1</span>”）
+<span class="token operator">-</span><span class="token constant">H</span> <span class="token literal-property property">header：使用header（例如：“Cookie</span><span class="token operator">:</span>id<span class="token operator">=</span><span class="token number">1312321</span><span class="token operator">&amp;</span>user<span class="token operator">=</span><span class="token constant">FUZZ</span>”）。对各种标题重复选项。
+<span class="token operator">--</span>basic<span class="token operator">/</span>ntlm<span class="token operator">/</span>digest auth：格式为“user<span class="token operator">:</span>pass”或“<span class="token constant">FUZZ</span><span class="token operator">:</span><span class="token constant">FUZZ</span>”或
+
+<span class="token operator">--</span>hc<span class="token operator">/</span>hl<span class="token operator">/</span>hw<span class="token operator">/</span>hh <span class="token constant">N</span><span class="token punctuation">[</span>，<span class="token constant">N</span><span class="token punctuation">]</span><span class="token operator">+</span>：隐藏具有指定代码<span class="token operator">/</span>行<span class="token operator">/</span>字<span class="token operator">/</span>字符的响应（使用<span class="token constant">BBB</span>从基线获取值）
+<span class="token operator">--</span>sc<span class="token operator">/</span>sl<span class="token operator">/</span>sw<span class="token operator">/</span>sh <span class="token constant">N</span><span class="token punctuation">[</span>，<span class="token constant">N</span><span class="token punctuation">]</span><span class="token operator">+</span>：显示具有指定代码<span class="token operator">/</span>行<span class="token operator">/</span>字<span class="token operator">/</span>字符的响应（使用<span class="token constant">BBB</span>获取基线值）
+<span class="token operator">--</span>ss<span class="token operator">/</span>hs正则表达式：显示<span class="token operator">/</span>隐藏内容中具有指定正则表达式的响应
+<span class="token operator">--</span>filter＜filter＞：使用指定的筛选器表达式显示<span class="token operator">/</span>隐藏响应（使用<span class="token constant">BBB</span>从基线获取值）
+<span class="token operator">--</span>prefilter＜filter＞：使用指定的表达式在模糊化之前过滤项目。对串联过滤器重复上述步骤。
+</code></pre>
+
+<h5 id="wfuzz常见用法"><a href="#wfuzz常见用法" class="headerlink" title="wfuzz常见用法"></a>wfuzz常见用法</h5><hr>
+<h6 id="模糊查询GET请求参数"><a href="#模糊查询GET请求参数" class="headerlink" title="模糊查询GET请求参数"></a>模糊查询GET请求参数</h6><pre class="language-none"><code class="language-none">wfuzz -u &quot;http:&#x2F;&#x2F;192.168.1.104&#x2F;test.php?FUZZ&#x3D;&#x2F;etc&#x2F;passwd&quot; -w &#x2F;usr&#x2F;share&#x2F;wfuzz&#x2F;wordlist&#x2F;general&#x2F;common.txt --hh 80</code></pre>
+
+<p><img src="wfuzz.png" loading="lazy"></p>
+<h6 id="模糊查询POST请求参数"><a href="#模糊查询POST请求参数" class="headerlink" title="模糊查询POST请求参数"></a>模糊查询POST请求参数</h6><pre class="language-none"><code class="language-none">wfuzz -w &#x2F;usr&#x2F;share&#x2F;wfuzz&#x2F;wordlist&#x2F;general&#x2F;common.txt -d &quot;uname&#x3D;FUZZ&amp;pass&#x3D;FUZZ&quot;  --hc 302 http:&#x2F;&#x2F;192.168.1.102&#x2F;user.php</code></pre>
+
+<h6 id="添加cookie发起请求"><a href="#添加cookie发起请求" class="headerlink" title="添加cookie发起请求"></a>添加cookie发起请求</h6><pre class="language-none"><code class="language-none">wfuzz -w &#x2F;usr&#x2F;share&#x2F;wfuzz&#x2F;wordlist&#x2F;general&#x2F;common.txt -b cookie&#x3D;value1 -b cookie2&#x3D;value2 http:&#x2F;&#x2F;192.168.1.102&#x2F;FUZZ</code></pre>
+
+<h6 id="添加请求头"><a href="#添加请求头" class="headerlink" title="添加请求头"></a>添加请求头</h6><pre class="language-none"><code class="language-none">wfuzz -w &#x2F;usr&#x2F;share&#x2F;wfuzz&#x2F;wordlist&#x2F;general&#x2F;common.txt -H &quot;Referer: 127.0.0.1&quot; http:&#x2F;&#x2F;192.168.1.102&#x2F;FUZZ</code></pre>
+
+<h6 id="子域名扫描"><a href="#子域名扫描" class="headerlink" title="子域名扫描"></a>子域名扫描</h6><pre class="language-none"><code class="language-none">wfuzz -w &#x2F;usr&#x2F;share&#x2F;amass&#x2F;wordlists&#x2F;subdomains-top1mil-5000.txt -u cc123.com -H &quot;Host:FUZZ.cc123.com&quot; --hw 53</code></pre>
+
+<p><img src="wfuzz_2.png" loading="lazy"></p>
+<h6 id="爆破401认证界面"><a href="#爆破401认证界面" class="headerlink" title="爆破401认证界面"></a>爆破401认证界面</h6><pre class="language-none"><code class="language-none">wfuzz -c -w &#x2F;usr&#x2F;share&#x2F;wordlists&#x2F;rockyou.txt --basic mum:FUZZ -u http:&#x2F;&#x2F;192.168.1.106:631&#x2F;admin&#x2F; -b &quot;org.cups.sid&#x3D;f607a41978fbca423d4de60f686fe8f5&quot; -d &quot;org.cups.sid&#x3D;f607a41978fbca423d4de60f686fe8f5&amp;OP&#x3D;add-printer&quot; -Z --hc 401</code></pre>
+
+<p><img src="wfuzz_3.png" loading="lazy"></p>
+<h4 id="hydra-九头蛇"><a href="#hydra-九头蛇" class="headerlink" title="hydra(九头蛇)"></a>hydra(九头蛇)</h4><h5 id="简介-3"><a href="#简介-3" class="headerlink" title="简介"></a>简介</h5><p>Hydra是一个暴力在线密码破解程序，一个针对系统登录密码的快速爆破工具。</p>
+<p>我们可以使用Hydra运行一个字典并”暴力破解”一些身份验证服务，想象一下试图在特定服务上手动猜测某人的密码（SSH, Web应用程序登录框, FTP，SNMP），使用 Hydra 运行密码字典以确定正确的密码。</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token comment"># Hydra能够尝试暴力破解以下协议：</span>
+
+Asterisk, AFP, Cisco AAA, Cisco auth, Cisco enable, CVS, Firebird, FTP, HTTP-FORM-GET, HTTP-FORM-POST, HTTP-GET, HTTP-HEAD, HTTP-POST, HTTP-PROXY, HTTPS-FORM-GET, HTTPS-FORM-POST, HTTPS-GET, HTTPS-HEAD, HTTPS-POST, HTTP-Proxy, ICQ, IMAP, IRC, LDAP, MS-SQL, MYSQL, NCP, NNTP, Oracle监听器, Oracle SID, Oracle, PC-Anywhere, PCNFS, POP3, POSTGRES, RDP, Rexec, Rlogin, Rsh, RTSP, SAP/R3, SIP, SMB, SMTP, SMTP枚举, SNMP v1+v2+v3, SOCKS5, SSH <span class="token punctuation">(</span>v1和v2<span class="token punctuation">)</span>, SSHKEY, Subversion, Teamspeak <span class="token punctuation">(</span>TS2<span class="token punctuation">)</span>, Telnet, VMware-Auth, VNC以及XMPP等。</code></pre>
+
+<h5 id="使用语法和参数-2"><a href="#使用语法和参数-2" class="headerlink" title="使用语法和参数"></a>使用语法和参数</h5><p>语法：hydra [-Options] [IP] [service]</p>
+<p>Example:  hydra -l user -P passlist.txt <a href="ftp://192.168.0.1/">ftp://192.168.0.1</a></p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token parameter variable">-l</span> login 小写，指定用户名进行破解
+<span class="token parameter variable">-L</span> <span class="token function">file</span> 大写，指定用户的用户名字典
+<span class="token parameter variable">-p</span> pass 小写，用于指定密码破解，很少使用，一般采用密码字典。
+<span class="token parameter variable">-P</span> <span class="token function">file</span> 大写，用于指定密码字典。
+<span class="token parameter variable">-e</span> ns 额外的选项，n：空密码试探，s：使用指定账户和密码试探
+<span class="token parameter variable">-M</span> <span class="token function">file</span> 指定目标ip列表文件，批量破解。
+<span class="token parameter variable">-o</span> <span class="token function">file</span> 指定结果输出文件
+<span class="token parameter variable">-f</span> 找到第一对登录名或者密码的时候中止破解。
+<span class="token parameter variable">-t</span> tasks 同时运行的线程数，默认是16
+<span class="token parameter variable">-w</span> <span class="token function">time</span> 设置最大超时时间，单位
+<span class="token parameter variable">-v</span> / <span class="token parameter variable">-V</span> 显示详细过程
+<span class="token parameter variable">-R</span> 恢复爆破（如果破解中断了，下次执行 hydra <span class="token parameter variable">-R</span> /path/to/hydra.restore 就可以继续任务。）
+<span class="token parameter variable">-x</span> 自定义密码。</code></pre>
+
+<pre class="language-bash" data-language="bash"><code class="language-bash">service：指定服务名，支持的服务跟协议有：telnet，ftp，pop3等等。
+注意点：
+<span class="token number">1</span>.自己创建字典,然后放在当前的目录下或者指定目录。
+<span class="token number">2</span>.参数可以统一放在最后，格式比如hydra <span class="token function">ip</span> 服务 参数。
+<span class="token number">3</span>.如果能确定用户名一项时候，比如web登录破解，直接用 -l就可以，然后剩余时间破解密码。
+<span class="token number">4</span>.缺点，如果目标网站登录时候需要验证码就无法破解。
+<span class="token number">5</span>.man hydra最万能。
+<span class="token number">6</span>.或者hydra <span class="token parameter variable">-U</span> http-form等查看具体帮助。</code></pre>
+
+<h5 id="Kail字典"><a href="#Kail字典" class="headerlink" title="Kail字典"></a>Kail字典</h5><p>在kail中是自带字典的，可以通过&#x2F;usr&#x2F;share&#x2F;wordlists&#x2F;dirb路径进行查看，当然都是txt文件，也可以自己向里面添加。</p>
+<table>
+<thead>
+<tr>
+<th>文件名</th>
+<th>介绍</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>big.txt</td>
+<td>大的字典</td>
+</tr>
+<tr>
+<td>small.txt</td>
+<td>小的字典</td>
+</tr>
+<tr>
+<td>catala.txt</td>
+<td>项目配置字典</td>
+</tr>
+<tr>
+<td>common.txt</td>
+<td>公共字典</td>
+</tr>
+<tr>
+<td>euskera.txt</td>
+<td>数据目录字典</td>
+</tr>
+<tr>
+<td>extensions_common.txt</td>
+<td>常用文件扩展名字典</td>
+</tr>
+<tr>
+<td>indexes.txt</td>
+<td>首页字典</td>
+</tr>
+<tr>
+<td>mutations_common.txt</td>
+<td>备份扩展名</td>
+</tr>
+<tr>
+<td>spanish.txt</td>
+<td>方法名或库目录</td>
+</tr>
+<tr>
+<td>others</td>
+<td>扩展目录，默认用户名、默认密码等</td>
+</tr>
+<tr>
+<td>stress</td>
+<td>压力测试</td>
+</tr>
+<tr>
+<td>vulns</td>
+<td>漏洞测试</td>
+</tr>
+</tbody></table>
+<h5 id="Hydra密码生成器"><a href="#Hydra密码生成器" class="headerlink" title="Hydra密码生成器"></a>Hydra密码生成器</h5><table>
+<thead>
+<tr>
+<th>参数</th>
+<th>介绍</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>-x MIN:MAX:CHARSET 密码暴力破解生成器</td>
+<td>规则：MIN表示生成密码的最短长度；MAX表示生成密码的最长长度；CHARSET表示使用指定的字符生成密码，’a’表示所有的小写字母，’A’表示所有的大写字母,’1’表示所有的数字，对于其他字符，只需要添加在后面即可</td>
+</tr>
+<tr>
+<td>-y</td>
+<td>使用方式见-x，它表示charset的字符是实际的字符，而不是正则表达式</td>
+</tr>
+<tr>
+<td>-x 3:5:a</td>
+<td>生成的密码字典长度为3到5位，由所有的小写字母组成</td>
+</tr>
+<tr>
+<td>-x 5:8:A1</td>
+<td>生成的密码字典长度为5到8位，有所有的大写字母和数字组成</td>
+</tr>
+<tr>
+<td>-x 5:5&#x2F;%,.-</td>
+<td>生成的密码字典长度为5位，只由’&#x2F; % , . -‘这5种字符构成</td>
+</tr>
+<tr>
+<td>-x 3:5:aA1 -y</td>
+<td>生成的密码字典长度为3到5位，且只由’a A 1’这三种字符组成</td>
+</tr>
+<tr>
+<td>-x 3:5:aA1.-+#</td>
+<td>生成的密码字典长度为3到8位，由大小写字母+数字+.-+#进行组合。</td>
+</tr>
+</tbody></table>
+<h5 id="Hydra案例"><a href="#Hydra案例" class="headerlink" title="Hydra案例"></a>Hydra案例</h5><h6 id="暴破ssh登录密码"><a href="#暴破ssh登录密码" class="headerlink" title="暴破ssh登录密码"></a>暴破ssh登录密码</h6><p>为了测试方便，我们创建两个简单的字典文件</p>
+<p>根据命令参数，组织参数格式如下：</p>
+<pre class="language-ruby" data-language="ruby"><code class="language-ruby">root<span class="token variable">@kali</span><span class="token operator">:</span><span class="token operator">/</span>mnt<span class="token comment"># hydra -L user.txt -P password.txt -t 2 -vV -e ns 192.168.154.131 ssh</span></code></pre>
+
+<h6 id="FTP协议破解"><a href="#FTP协议破解" class="headerlink" title="FTP协议破解"></a>FTP协议破解</h6><pre class="language-css" data-language="css"><code class="language-css">破解ftp：
+
+hydra -L 用户名字典 -P 密码字典 -t 6 -e ns IP地址 -v</code></pre>
+
+<h6 id="http协议破解"><a href="#http协议破解" class="headerlink" title="http协议破解"></a>http协议破解</h6><pre class="language-csharp" data-language="csharp"><code class="language-csharp"><span class="token keyword">get</span>方式提交，破解web登录：
+
+hydra <span class="token operator">-</span>L 用户名字典 <span class="token operator">-</span>P 密码字典 <span class="token operator">-</span>t 线程 <span class="token operator">-</span>v <span class="token operator">-</span>e ns IP地址 http<span class="token operator">-</span><span class="token keyword">get</span> <span class="token operator">/</span>admin<span class="token operator">/</span>
+hydra <span class="token operator">-</span>L 用户名字典 <span class="token operator">-</span>P 密码字典 <span class="token operator">-</span>t 线程 <span class="token operator">-</span>v <span class="token operator">-</span>e ns <span class="token operator">-</span>f IP地址 http<span class="token operator">-</span><span class="token keyword">get</span> <span class="token operator">/</span>admin<span class="token operator">/</span>index<span class="token punctuation">.</span>php
+
+post方式提交，破解web登录：
+
+hydra <span class="token operator">-</span>f <span class="token operator">-</span>l 用户名 <span class="token operator">-</span>P 密码字典 <span class="token operator">-</span>V <span class="token operator">-</span>s <span class="token number">9900</span> IP地址 http<span class="token operator">-</span>post<span class="token operator">-</span>form <span class="token string">"/admin/index.php?action=login:user=USER&amp;pw=PASS:"</span>
+
+
+<span class="token preprocessor property">#/index.php …这个是登录的 url</span>
+<span class="token preprocessor property">#后门是POST的数据 其中的用户名密码使用 USER PASS 来代替</span>
+<span class="token preprocessor property">#然后是如果登录出错 会出现的字符 。。。然后开始破解</span></code></pre>
+
+<h6 id="https协议破解"><a href="#https协议破解" class="headerlink" title="https协议破解"></a>https协议破解</h6><pre class="language-bash" data-language="bash"><code class="language-bash">破解https
+
+hydra <span class="token parameter variable">-m</span> /index.php <span class="token parameter variable">-l</span> 用户名 <span class="token parameter variable">-P</span> 密码字典.txt IP地址 https</code></pre>
+
+<h6 id="路由器破解"><a href="#路由器破解" class="headerlink" title="路由器破解"></a>路由器破解</h6><pre class="language-bash" data-language="bash"><code class="language-bash">hydra <span class="token parameter variable">-l</span> admin <span class="token parameter variable">-x</span> <span class="token number">6</span>:10:1a.~<span class="token operator">!</span>@<span class="token comment">#$%^&amp;()-= -t 8 192.168.1.1 http-get /</span>
+<span class="token parameter variable">-l</span> admin 为尝试破解的用户名。
+
+<span class="token comment"># -x 6:10:1a. 表示枚举的密码由 数字、小写字母和单字符’.'等等组成，长度为 6 - 10 位。-t 8 表示分 8 个并行任务进行爆破尝试。192.168.1.1 为 Router 地址。http-get 为破解方式（协议）</span></code></pre>
+
+<h6 id="http-proxy协议破解"><a href="#http-proxy协议破解" class="headerlink" title="http-proxy协议破解"></a>http-proxy协议破解</h6><pre class="language-cpp" data-language="cpp"><code class="language-cpp">破解http<span class="token operator">-</span>proxy：
+
+hydra <span class="token operator">-</span>l admin <span class="token operator">-</span>P 字典<span class="token punctuation">.</span>txt http<span class="token operator">-</span>proxy<span class="token operator">:</span><span class="token comment">//IP地址</span></code></pre>
+
+<h6 id="smb破解"><a href="#smb破解" class="headerlink" title="smb破解"></a>smb破解</h6><pre class="language-css" data-language="css"><code class="language-css">破解smb：
+
+hydra -l 用户名字典 -P 密码字典 IP地址 smb</code></pre>
+
+<h6 id="Windows远程桌面"><a href="#Windows远程桌面" class="headerlink" title="Windows远程桌面"></a>Windows远程桌面</h6><pre class="language-scss" data-language="scss"><code class="language-scss">破解<span class="token function">rdp</span><span class="token punctuation">(</span>windows远程登录<span class="token punctuation">)</span>：
+
+hydra ip地址 rdp -l administrator -P 密码字典.txt -V</code></pre>
+
+<h6 id="邮箱pop3"><a href="#邮箱pop3" class="headerlink" title="邮箱pop3"></a>邮箱pop3</h6><pre class="language-css" data-language="css"><code class="language-css">破解邮箱pop3：
+
+hydra -l 用户名 -P 密码字典.txt my.pop3.mail pop3</code></pre>
+
+<h6 id="telnet破解"><a href="#telnet破解" class="headerlink" title="telnet破解"></a>telnet破解</h6><pre class="language-css" data-language="css"><code class="language-css">hydra ip地址 telnet -l 用户字典.txt -P 密码字典.txt -t 32 -s 23 -e ns -f -V</code></pre>
+
+<h6 id="语音通讯工具teamspeak"><a href="#语音通讯工具teamspeak" class="headerlink" title="语音通讯工具teamspeak"></a>语音通讯工具teamspeak</h6><pre class="language-css" data-language="css"><code class="language-css">hydra -l 用户名字典 -P 密码字典.txt -s 端口号 -vV ip teamspeak</code></pre>
+
+<h6 id="cisco"><a href="#cisco" class="headerlink" title="cisco"></a>cisco</h6><pre class="language-css" data-language="css"><code class="language-css">hydra -P 密码字典 IP地址 cisco
+hydra -m cloud -P 密码字典 IP地址 cisco-enable</code></pre>
+
+<h4 id="medusa-美杜莎"><a href="#medusa-美杜莎" class="headerlink" title="medusa(美杜莎)"></a>medusa(美杜莎)</h4><h5 id="简介-4"><a href="#简介-4" class="headerlink" title="简介"></a>简介</h5><p>Medusa(美杜莎)是一个速度快，支持大规模并行，模块化，爆破登录。可以同时对多个主机，用户或密码执行强力测试。Medusa 和 hydra 一样，同样属于在线密码破解工具。不同的是，medusa 的稳定性相较于 hydra 要好很多，但其支持模块要比 hydra 少一些。</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token comment"># medusa支持一下协议</span>
+
+AFP, CVS, FTP, HTTP, IMAP, MS-SQL, MySQL, NCP <span class="token punctuation">(</span>NetWare<span class="token punctuation">)</span>,NNTP, PcAnywhere, POP3, PostgreSQL, rexec, RDP、rlogin, rsh, SMBNT, SMTP<span class="token punctuation">(</span>AUTH/VRFY<span class="token punctuation">)</span>, SNMP, SSHv2, SVN, Telnet, VmAuthd, VNC、Generic Wrapper以及Web表单</code></pre>
+
+<h5 id="使用语法和参数-3"><a href="#使用语法和参数-3" class="headerlink" title="使用语法和参数"></a>使用语法和参数</h5><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token comment"># 使用语法</span>
+medusa <span class="token punctuation">[</span>options<span class="token punctuation">]</span> <span class="token parameter variable">-h</span> <span class="token operator">&lt;</span>目标主机<span class="token operator">></span> <span class="token parameter variable">-u</span> <span class="token operator">&lt;</span>用户名<span class="token operator">></span> <span class="token parameter variable">-P</span> <span class="token operator">&lt;</span>密码字典文件<span class="token operator">></span>
+<span class="token comment"># -h 参数指定要破解的目标主机IP或域名，-u 参数指定要破解的用户名，-P 参数指定密码字典文件路径</span></code></pre>
+
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token parameter variable">-h</span> <span class="token punctuation">[</span>TEXT<span class="token punctuation">]</span>    <span class="token comment">#目标IP</span>
+<span class="token parameter variable">-H</span> <span class="token punctuation">[</span>FILE<span class="token punctuation">]</span>    <span class="token comment">#目标主机文件</span>
+<span class="token parameter variable">-u</span> <span class="token punctuation">[</span>TEXT<span class="token punctuation">]</span>    <span class="token comment">#用户名</span>
+<span class="token parameter variable">-U</span> <span class="token punctuation">[</span>FILE<span class="token punctuation">]</span>    <span class="token comment">#用户名文件</span>
+<span class="token parameter variable">-p</span> <span class="token punctuation">[</span>TEXT<span class="token punctuation">]</span>    <span class="token comment">#密码;</span>
+<span class="token parameter variable">-P</span> <span class="token punctuation">[</span>FILE<span class="token punctuation">]</span>    <span class="token comment">#密码文件</span>
+<span class="token parameter variable">-C</span> <span class="token punctuation">[</span>FILE<span class="token punctuation">]</span>    <span class="token comment">#组合条目文件</span>
+<span class="token parameter variable">-O</span> <span class="token punctuation">[</span>FILE<span class="token punctuation">]</span>    <span class="token comment">#文件日志信息</span>
+<span class="token parameter variable">-e</span> <span class="token punctuation">[</span>n/s/ns<span class="token punctuation">]</span>    <span class="token comment">#N意为空密码，S意为密码与用户名相同;指定要排除的密码，可以使用正则表达式。</span>
+<span class="token parameter variable">-M</span> <span class="token punctuation">[</span>TEXT<span class="token punctuation">]</span>    <span class="token comment">#模块执行名称</span>
+<span class="token parameter variable">-m</span> <span class="token punctuation">[</span>TEXT<span class="token punctuation">]</span>    <span class="token comment">#传递参数到模块</span>
+<span class="token parameter variable">-d</span>    <span class="token comment">#显示所有的模块名称</span>
+<span class="token parameter variable">-n</span> <span class="token punctuation">[</span>NUM<span class="token punctuation">]</span>    <span class="token comment">#使用非默认端口</span>
+<span class="token parameter variable">-s</span>    <span class="token comment">#启用SSL</span>
+<span class="token parameter variable">-r</span> <span class="token punctuation">[</span>NUM<span class="token punctuation">]</span>    <span class="token comment">#重试间隔时间，默认为3秒</span>
+<span class="token parameter variable">-t</span> <span class="token punctuation">[</span>NUM<span class="token punctuation">]</span>    <span class="token comment">#设定线程数量</span>
+<span class="token parameter variable">-L</span>    <span class="token comment">#并行化，每个用户使用一个线程</span>
+<span class="token parameter variable">-f</span>    <span class="token comment">#在任何主机上找到第一个账号/密码后，停止破解</span>
+<span class="token parameter variable">-q</span>    <span class="token comment">#显示模块的使用信息</span>
+<span class="token parameter variable">-v</span> <span class="token punctuation">[</span>NUM<span class="token punctuation">]</span>    <span class="token comment">#详细级别（0-6）</span>
+<span class="token parameter variable">-w</span> <span class="token punctuation">[</span>NUM<span class="token punctuation">]</span>    <span class="token comment">#错误调试级别（0-10）</span>
+<span class="token parameter variable">-V</span>    <span class="token comment">#显示版本</span>
+<span class="token parameter variable">-Z</span> <span class="token punctuation">[</span>TEXT<span class="token punctuation">]</span>    <span class="token comment">#继续扫描上一次</span></code></pre>
+
+<h5 id="常见用法"><a href="#常见用法" class="headerlink" title="常见用法"></a>常见用法</h5><h6 id="ssh爆破"><a href="#ssh爆破" class="headerlink" title="ssh爆破"></a>ssh爆破</h6><pre class="language-python" data-language="python"><code class="language-python">medusa <span class="token operator">-</span>M ssh <span class="token operator">-</span>h <span class="token number">192.168</span><span class="token number">.56</span><span class="token number">.131</span> <span class="token operator">-</span>u root <span class="token operator">-</span>P <span class="token operator">/</span>usr<span class="token operator">/</span>share<span class="token operator">/</span>john<span class="token operator">/</span>password<span class="token punctuation">.</span>lst <span class="token operator">-</span>f
+<span class="token triple-quoted-string string">'''
+-h：要爆破的目标主机IP地址 192.168.56.131
+-l：要爆破的用户名 root
+-P：要爆破的密码字典 用的字典是自己弄的
+-M：调用模块ssh执行
+-f：一旦爆破成功一个就立即停止爆破
+'''</span></code></pre>
+
+<h6 id="爆破Windows远程远程桌面协议-smbnt-3389"><a href="#爆破Windows远程远程桌面协议-smbnt-3389" class="headerlink" title="爆破Windows远程远程桌面协议(smbnt)3389"></a>爆破Windows远程远程桌面协议(smbnt)3389</h6><pre class="language-python" data-language="python"><code class="language-python">medusa <span class="token operator">-</span>M smbnt <span class="token operator">-</span>h <span class="token number">192.168</span><span class="token number">.56</span><span class="token number">.132</span> <span class="token operator">-</span>u Administrator <span class="token operator">-</span>P <span class="token operator">/</span>usr<span class="token operator">/</span>share<span class="token operator">/</span>john<span class="token operator">/</span>password<span class="token punctuation">.</span>lst <span class="token operator">-</span>f
+<span class="token triple-quoted-string string">'''
+-h：要爆破的目标主机IP地址 192.168.56.132
+-l：要爆破的用户名 Administrator
+-P：要爆破的密码字典 /usr/share/john/password.lst
+-M：调用smbnt模块执行
+-f：一旦爆破成功一个就立即停止爆破
+'''</span></code></pre>
+
+<p>Ps: 验证码爆破可以使用ddddocr和captcha-killer-modified</p>
+</div></section><div id="reward-container"><span class="hty-icon-button button-glow" id="reward-button" title="打赏" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === &quot;none&quot;) ? &quot;block&quot; : &quot;none&quot;;"><span class="icon iconify" data-icon="ri:hand-coin-line"></span></span><div id="reward-comment">I'm so cute. Please give me money.</div></div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>Hsad</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="https://hsad.xyz/2024/08/08/%E5%AD%97%E5%85%B8%E7%94%9F%E6%88%90%E4%B8%8E%E5%AF%86%E7%A0%81%E7%88%86%E7%A0%B4/" title="字典生成与密码爆破">https://hsad.xyz/2024/08/08/%E5%AD%97%E5%85%B8%E7%94%9F%E6%88%90%E4%B8%8E%E5%AF%86%E7%A0%81%E7%88%86%E7%A0%B4/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 "><span class="icon iconify" data-icon="ri:creative-commons-line"></span><span class="icon iconify" data-icon="ri:creative-commons-by-line"></span><span class="icon iconify" data-icon="ri:creative-commons-nc-line"></span><span class="icon iconify" data-icon="ri:creative-commons-sa-line"></span></a> 许可协议。</li></ul></article><div class="post-nav"><div class="post-nav-item"><a class="post-nav-prev" href="/2024/08/09/KaliLinux%E7%9A%84%E5%9F%BA%E6%9C%AC%E9%85%8D%E7%BD%AE/" rel="prev" title="KaliLinux的基本配置"><span class="icon iconify" data-icon="ri:arrow-left-s-line"></span><span class="post-nav-text">KaliLinux的基本配置</span></a></div><div class="post-nav-item"><a class="post-nav-next" href="/2024/08/06/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%982019/" rel="next" title="极客大挑战2019-web"><span class="post-nav-text">极客大挑战2019-web</span><span class="icon iconify" data-icon="ri:arrow-right-s-line"></span></a></div></div></div><div class="hty-card" id="comment"></div></main><footer class="sidebar-translate" id="footer"><div class="copyright"><span>&copy; 2019 – 2024 </span><span class="with-love" id="animate"><span class="icon iconify" data-icon="ri:cloud-line"></span></span><span class="author"> Hsad</span></div><div class="powered"><span>由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v7.2.0</span><span class="footer-separator">|</span><span>主题 - <a rel="noopener" href="https://github.com/YunYouJun/hexo-theme-yun" target="_blank"><span>Yun</span></a> v1.10.11</span></div></footer></div><a class="hty-icon-button" id="back-to-top" aria-label="back-to-top" href="#"><span class="icon iconify" data-icon="ri:arrow-up-s-line"></span><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#0078E7" stroke-width="2" stroke-linecap="round"></circle></svg></a><script src="https://fastly.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script><script>const images = [...document.querySelectorAll('.markdown-body img')]
 mediumZoom(images)</script><style>.medium-zoom-image {
   z-index: 99;
 }</style></body></html>
