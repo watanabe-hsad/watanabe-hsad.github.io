@@ -1,0 +1,321 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#0078E7"><meta name="author" content="Hsad"><meta name="copyright" content="Hsad"><meta name="generator" content="Hexo 7.2.0"><meta name="theme" content="hexo-theme-yun"><title>密码学的数论基础知识——整除性和同余 | Hsad's Blog</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;display=swap" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/star-markdown-css@0.4.1/dist/yun/yun-markdown.min.css"><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/prism-theme-vars/base.css"><script src="https://fastly.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><script>function initScrollReveal() {
+  [".post-card",".markdown-body img"].forEach((target)=> {
+    ScrollReveal().reveal(target);
+  })
+}
+document.addEventListener("DOMContentLoaded", initScrollReveal);
+document.addEventListener("pjax:success", initScrollReveal);
+</script><link rel="icon" type="image/png" href="/favicon.ico"><link rel="mask-icon" href="/favicon.ico" color="#0078E7"><link rel="preload" href="/css/hexo-theme-yun.css" as="style"><link rel="prefetch" href="/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="preconnect" href="https://fastly.jsdelivr.net/npm/" crossorigin><script id="yun-config">
+    window.Yun = {}
+    window.CONFIG = {"hostname":"hsad.xyz","root":"/","title":["watanabe","Blog"],"version":"1.10.11","mode":"auto","copycode":true,"page":{"isPost":true},"i18n":{"placeholder":"搜索...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）"},"anonymous_image":"https://cdn.yunyoujun.cn/img/avatar/none.jpg","say":{"api":"https://el-bot-api.vercel.app/api/words/young"},"fireworks":{"colors":null},"vendors":{"host":"https://fastly.jsdelivr.net/npm/","darken":"https://fastly.jsdelivr.net/npm/darken@1.5.0"}};
+  </script><link rel="stylesheet" href="/css/hexo-theme-yun.css"><script src="/js/hexo-theme-yun.js" type="module"></script><meta name="description" content="MathJax &#x3D; {  tex: {    inlineMath: [[&#39;$&#39;, &#39;$&#39;], [&#39;\$&#39;, &#39;\$&#39;]]  }};  整除性整除定义 设 $a,b\in\mathbf{Z}$，$a\ne 0$。如果 $\exists q\in\mathbf{Z}$，使得 $b&#x3D;aq$，那么就说 $b$ 可被 $a$  整除，记作 $a\mid b$；$b$ 不被 $a$ 整除记作 $a">
+<meta property="og:type" content="article">
+<meta property="og:title" content="密码学的数论基础知识——整除性和同余">
+<meta property="og:url" content="https://hsad.xyz/2025/02/11/%E5%AF%86%E7%A0%81%E5%AD%A6%E7%9A%84%E6%95%B0%E8%AE%BA%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E2%80%94%E2%80%94%E6%95%B4%E9%99%A4%E6%80%A7%E5%92%8C%E5%90%8C%E4%BD%99/index.html">
+<meta property="og:site_name" content="Hsad&#39;s Blog">
+<meta property="og:description" content="MathJax &#x3D; {  tex: {    inlineMath: [[&#39;$&#39;, &#39;$&#39;], [&#39;\$&#39;, &#39;\$&#39;]]  }};  整除性整除定义 设 $a,b\in\mathbf{Z}$，$a\ne 0$。如果 $\exists q\in\mathbf{Z}$，使得 $b&#x3D;aq$，那么就说 $b$ 可被 $a$  整除，记作 $a\mid b$；$b$ 不被 $a$ 整除记作 $a">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hsad.xyz/2025/02/11/%E5%AF%86%E7%A0%81%E5%AD%A6%E7%9A%84%E6%95%B0%E8%AE%BA%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E2%80%94%E2%80%94%E6%95%B4%E9%99%A4%E6%80%A7%E5%92%8C%E5%90%8C%E4%BD%99/ExtendedEuclidean1.png">
+<meta property="article:published_time" content="2025-02-11T03:16:43.000Z">
+<meta property="article:modified_time" content="2025-07-13T11:40:36.804Z">
+<meta property="article:author" content="Hsad">
+<meta property="article:tag" content="密码学">
+<meta property="article:tag" content="数论">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hsad.xyz/2025/02/11/%E5%AF%86%E7%A0%81%E5%AD%A6%E7%9A%84%E6%95%B0%E8%AE%BA%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E2%80%94%E2%80%94%E6%95%B4%E9%99%A4%E6%80%A7%E5%92%8C%E5%90%8C%E4%BD%99/ExtendedEuclidean1.png"><script>(function() {
+  if (CONFIG.mode !== 'auto') return
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+  const setting = localStorage.getItem('darken-mode') || 'auto'
+  if (setting === 'dark' || (prefersDark && setting !== 'light'))
+    document.documentElement.classList.toggle('dark', true)
+})()</script></head><body><script src="https://code.iconify.design/2/2.1.1/iconify.min.js"></script><script>// Define global variable
+IconifyProviders = {
+  // Empty prefix: overwrite default API provider configuration
+  '': {
+    // Use custom API first, use Iconify public API as backup
+    resources: [
+        'https://api.iconify.design',
+    ],
+    // Wait for 1 second before switching API hosts
+    rotate: 1000,
+  },
+};</script><script defer src="https://fastly.jsdelivr.net/npm/animejs@latest"></script><script defer src="/js/ui/fireworks.js" type="module"></script><canvas class="fireworks"></canvas><div class="container"><a class="sidebar-toggle hty-icon-button" id="menu-btn"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><div class="sidebar-toggle sidebar-overlay"></div><aside class="sidebar"><script src="/js/sidebar.js" type="module"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button sidebar-nav-active" data-target="post-toc-wrap" title="文章目录"><span class="icon iconify" data-icon="ri:list-ordered"></span></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button" data-target="site-overview-wrap" title="站点概览"><span class="icon iconify" data-icon="ri:passport-line"></span></li></ul><div class="sidebar-panel" id="site-overview-wrap"><div class="site-info fix-top"><a class="site-author-avatar" href="/about/" title="Hsad"><img width="96" loading="lazy" src="/images/avatar.jpg" alt="Hsad"><span class="site-author-status" title="凉">☺️</span></a><div class="site-author-name"><a href="/about/">Hsad</a></div><span class="site-name">Hsad's Blog</span><sub class="site-subtitle">一个人的世界</sub><div class="site-description">翻着我们的照片 想念若隐若现</div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/" title="首页"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:home-4-line"></span></span></a><div class="site-state-item"><a href="/archives/" title="归档"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:archive-line"></span></span><span class="site-state-item-count">55</span></a></div><div class="site-state-item"><a href="/categories/" title="分类"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:folder-2-line"></span></span><span class="site-state-item-count">8</span></a></div><div class="site-state-item"><a href="/tags/" title="标签"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:price-tag-3-line"></span></span><span class="site-state-item-count">43</span></a></div><a class="site-state-item hty-icon-button" target="_blank" rel="noopener" href="https://yun.yunyoujun.cn" title="文档"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:settings-line"></span></span></a></nav><hr style="margin-bottom:0.5rem"><div class="links-of-author"><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://qm.qq.com/cgi-bin/qm/qr?k=EYiK7-b5ur1mWxbX7aV2AEBsuoW9c732" title="QQ" target="_blank" style="color:orange"><span class="icon iconify" data-icon="ri:qq-line"></span></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://github.com/watanabe-hsad" title="GitHub" target="_blank" style="color:#181717"><span class="icon iconify" data-icon="ri:github-line"></span></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="mailto:dubian.zzy@outlook.com" title="E-Mail" target="_blank" style="color:#8E71C1"><span class="icon iconify" data-icon="ri:mail-line"></span></a></div><hr style="margin:0.5rem 1rem"><div class="links"><a class="links-item hty-icon-button" href="/links/" title="我的小伙伴们" style="color:dodgerblue"><span class="icon iconify" data-icon="ri:genderless-line"></span></a></div><br><a class="links-item hty-icon-button" id="toggle-mode-btn" href="javascript:;" title="Mode" style="color: #f1cb64"><span class="icon iconify" data-icon="ri:contrast-2-line"></span></a></div><div class="sidebar-panel sidebar-panel-active" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B4%E9%99%A4%E6%80%A7"><span class="toc-number">1.</span> <span class="toc-text">整除性</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B4%E9%99%A4"><span class="toc-number">1.1.</span> <span class="toc-text">整除</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89"><span class="toc-number">1.1.1.</span> <span class="toc-text">定义</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%95%B4%E9%99%A4%E7%9A%84%E6%80%A7%E8%B4%A8"><span class="toc-number">1.1.2.</span> <span class="toc-text">整除的性质</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B4%A0%E6%95%B0%E4%B8%8E%E5%90%88%E6%95%B0"><span class="toc-number">1.2.</span> <span class="toc-text">素数与合数</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89-1"><span class="toc-number">1.2.1.</span> <span class="toc-text">定义</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%B4%A0%E6%95%B0%E4%B8%8E%E5%90%88%E6%95%B0%E7%9A%84%E7%AE%80%E5%8D%95%E6%80%A7%E8%B4%A8"><span class="toc-number">1.2.2.</span> <span class="toc-text">素数与合数的简单性质</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%AE%97%E6%9C%AF%E5%9F%BA%E6%9C%AC%E5%AE%9A%E7%90%86"><span class="toc-number">1.2.3.</span> <span class="toc-text">算术基本定理</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E7%AE%97%E6%9C%AF%E5%9F%BA%E6%9C%AC%E5%BC%95%E7%90%86"><span class="toc-number">1.2.3.1.</span> <span class="toc-text">算术基本引理</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E7%AE%97%E6%9C%AF%E5%9F%BA%E6%9C%AC%E5%AE%9A%E7%90%86%EF%BC%88%E5%94%AF%E4%B8%80%E5%88%86%E8%A7%A3%E5%AE%9A%E7%90%86%EF%BC%89"><span class="toc-number">1.2.3.2.</span> <span class="toc-text">算术基本定理（唯一分解定理）</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E6%A0%87%E5%87%86%E7%B4%A0%E5%9B%A0%E6%95%B0%E5%88%86%E8%A7%A3%E5%BC%8F"><span class="toc-number">1.2.3.3.</span> <span class="toc-text">标准素因数分解式</span></a></li></ol></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A8%A1%E8%BF%90%E7%AE%97"><span class="toc-number">1.3.</span> <span class="toc-text">模运算</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89-2"><span class="toc-number">1.3.1.</span> <span class="toc-text">定义</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%BF%90%E7%AE%97%E8%A7%84%E5%88%99"><span class="toc-number">1.3.2.</span> <span class="toc-text">运算规则</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%80%E5%A4%A7%E5%85%AC%E7%BA%A6%E6%95%B0"><span class="toc-number">1.4.</span> <span class="toc-text">最大公约数</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89-3"><span class="toc-number">1.4.1.</span> <span class="toc-text">定义</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%9C%80%E5%A4%A7%E5%85%AC%E7%BA%A6%E6%95%B0%E4%B8%8E%E6%9C%80%E5%B0%8F%E5%85%AC%E5%80%8D%E6%95%B0%E7%9A%84%E6%80%A7%E8%B4%A8"><span class="toc-number">1.4.2.</span> <span class="toc-text">最大公约数与最小公倍数的性质</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%AC%A7%E5%87%A0%E9%87%8C%E5%BE%97%E7%AE%97%E6%B3%95"><span class="toc-number">1.4.3.</span> <span class="toc-text">欧几里得算法</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E8%BF%87%E7%A8%8B"><span class="toc-number">1.4.3.1.</span> <span class="toc-text">过程</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E8%AF%81%E6%98%8E"><span class="toc-number">1.4.3.2.</span> <span class="toc-text">证明</span></a></li></ol></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%89%A9%E5%B1%95%E7%9A%84%E6%AC%A7%E5%87%A0%E9%87%8C%E5%BE%97%E7%AE%97%E6%B3%95"><span class="toc-number">1.5.</span> <span class="toc-text">扩展的欧几里得算法</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%9C%80%E5%A4%A7%E5%85%AC%E7%BA%A6%E6%95%B0%E8%A1%A8%E7%A4%BA%E5%85%AC%E7%90%86"><span class="toc-number">1.5.1.</span> <span class="toc-text">最大公约数表示公理</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%89%A9%E5%B1%95%E7%9A%84%E6%AC%A7%E5%87%A0%E9%87%8C%E5%BE%97%E7%AE%97%E6%B3%95-1"><span class="toc-number">1.5.2.</span> <span class="toc-text">扩展的欧几里得算法</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E8%BF%87%E7%A8%8B-1"><span class="toc-number">1.5.2.1.</span> <span class="toc-text">过程</span></a></li></ol></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%80%E5%B0%8F%E5%85%AC%E5%80%8D%E6%95%B0"><span class="toc-number">1.6.</span> <span class="toc-text">最小公倍数</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89-4"><span class="toc-number">1.6.1.</span> <span class="toc-text">定义</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%B8%A4%E4%B8%AA%E6%95%B0"><span class="toc-number">1.6.2.</span> <span class="toc-text">两个数</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%A4%9A%E4%B8%AA%E6%95%B0"><span class="toc-number">1.6.3.</span> <span class="toc-text">多个数</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%8C%E4%BD%99%E5%85%B3%E7%B3%BB"><span class="toc-number">2.</span> <span class="toc-text">同余关系</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%90%8C%E4%BD%99"><span class="toc-number">2.1.</span> <span class="toc-text">同余</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89-5"><span class="toc-number">2.1.1.</span> <span class="toc-text">定义</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%90%8C%E4%BD%99%E7%9A%84%E6%80%A7%E8%B4%A8"><span class="toc-number">2.1.2.</span> <span class="toc-text">同余的性质</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B9%98%E6%B3%95%E9%80%86%E5%85%83"><span class="toc-number">2.2.</span> <span class="toc-text">乘法逆元</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89-6"><span class="toc-number">2.2.1.</span> <span class="toc-text">定义</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E6%B1%82%E9%80%86%E5%85%83"><span class="toc-number">2.2.2.</span> <span class="toc-text">如何求逆元</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E6%89%A9%E5%B1%95%E6%AC%A7%E5%87%A0%E9%87%8C%E5%BE%97%E6%B3%95"><span class="toc-number">2.2.2.1.</span> <span class="toc-text">扩展欧几里得法</span></a></li></ol></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%80%E6%AC%A1%E5%90%8C%E4%BD%99%E6%96%B9%E7%A8%8B"><span class="toc-number">2.3.</span> <span class="toc-text">一次同余方程</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%90%8C%E4%BD%99%E6%96%B9%E7%A8%8B"><span class="toc-number">2.3.1.</span> <span class="toc-text">同余方程</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%90%8C%E4%BD%99%E4%B8%8B%E7%9A%84%E6%B6%88%E5%8E%BB%E5%BE%8B"><span class="toc-number">2.3.2.</span> <span class="toc-text">同余下的消去律</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%B8%80%E6%AC%A1%E5%90%8C%E4%BD%99%E6%96%B9%E7%A8%8B%E6%9C%89%E8%A7%A3%E7%9A%84%E6%9D%A1%E4%BB%B6"><span class="toc-number">2.3.3.</span> <span class="toc-text">一次同余方程有解的条件</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%AD%E5%9B%BD%E5%89%A9%E4%BD%99%E5%AE%9A%E7%90%86"><span class="toc-number">2.4.</span> <span class="toc-text">中国剩余定理</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%BC%95%E5%85%A5"><span class="toc-number">2.4.1.</span> <span class="toc-text">引入</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89-7"><span class="toc-number">2.4.2.</span> <span class="toc-text">定义</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%BF%87%E7%A8%8B-2"><span class="toc-number">2.4.3.</span> <span class="toc-text">过程</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%AF%81%E6%98%8E-1"><span class="toc-number">2.4.4.</span> <span class="toc-text">证明</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%A7%A3%E9%87%8A"><span class="toc-number">2.4.5.</span> <span class="toc-text">解释</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AC%A7%E6%8B%89%E5%87%BD%E6%95%B0"><span class="toc-number">2.5.</span> <span class="toc-text">欧拉函数</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89-8"><span class="toc-number">2.5.1.</span> <span class="toc-text">定义</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%80%A7%E8%B4%A8"><span class="toc-number">2.5.2.</span> <span class="toc-text">性质</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%AF%81%E6%98%8E-2"><span class="toc-number">2.5.3.</span> <span class="toc-text">证明</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%B8%BE%E4%BE%8B"><span class="toc-number">2.5.4.</span> <span class="toc-text">举例</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AC%A7%E6%8B%89%E5%AE%9A%E7%90%86-%E8%B4%B9%E9%A9%AC%E5%B0%8F%E5%AE%9A%E7%90%86"><span class="toc-number">2.6.</span> <span class="toc-text">欧拉定理 费马小定理</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%AC%A7%E6%8B%89%E5%AE%9A%E7%90%86"><span class="toc-number">2.6.1.</span> <span class="toc-text">欧拉定理</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89-9"><span class="toc-number">2.6.1.1.</span> <span class="toc-text">定义</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E8%AF%81%E6%98%8E-3"><span class="toc-number">2.6.1.2.</span> <span class="toc-text">证明</span></a></li></ol></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%B4%B9%E9%A9%AC%E5%B0%8F%E5%AE%9A%E7%90%86"><span class="toc-number">2.6.2.</span> <span class="toc-text">费马小定理</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89-10"><span class="toc-number">2.6.2.1.</span> <span class="toc-text">定义</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E8%AF%81%E6%98%8E-4"><span class="toc-number">2.6.2.2.</span> <span class="toc-text">证明</span></a></li></ol></li></ol></li></ol></li></ol></div></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="hty-card post-block" itemscope itemtype="https://schema.org/Article" style="--smc-primary:#0078E7;"><link itemprop="mainEntityOfPage" href="https://hsad.xyz/2025/02/11/%E5%AF%86%E7%A0%81%E5%AD%A6%E7%9A%84%E6%95%B0%E8%AE%BA%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E2%80%94%E2%80%94%E6%95%B4%E9%99%A4%E6%80%A7%E5%92%8C%E5%90%8C%E4%BD%99/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="Hsad"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="Hsad's Blog"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">密码学的数论基础知识——整除性和同余</h1><div class="post-meta"><div class="post-time"><span class="post-meta-item-icon"><span class="icon iconify" data-icon="ri:calendar-line"></span></span> <time title="创建时间：2025-02-11 11:16:43" itemprop="dateCreated datePublished" datetime="2025-02-11T11:16:43+08:00">2025-02-11</time><span class="post-meta-divider">-</span><span class="post-meta-item-icon"><span class="icon iconify" data-icon="ri:calendar-2-line"></span></span> <time title="修改时间：2025-07-13 19:40:36" itemprop="dateModified" datetime="2025-07-13T19:40:36+08:00">2025-07-13</time></div><div class="post-classify"><span class="post-category"> <span class="post-meta-item-icon" style="margin-right:3px;"><span class="icon iconify" data-icon="ri:folder-line"></span></span><span itemprop="about" itemscope itemtype="https://schema.org/Thing"><a class="category-item" href="/categories/%E8%AF%BE%E7%A8%8B%E5%86%85%E5%AE%B9/" style="--text-color:var(--hty-text-color)" itemprop="url" rel="index"><span itemprop="text">课程内容</span></a></span> > <span itemprop="about" itemscope itemtype="https://schema.org/Thing"><a class="category-item" href="/categories/%E8%AF%BE%E7%A8%8B%E5%86%85%E5%AE%B9/%E5%AF%86%E7%A0%81%E5%AD%A6/" style="--text-color:var(--hty-text-color)" itemprop="url" rel="index"><span itemprop="text">密码学</span></a></span></span><span class="post-tag"><span class="post-meta-divider">-</span><a class="tag-item" href="/tags/%E5%AF%86%E7%A0%81%E5%AD%A6/" style="--text-color:var(--hty-text-color)"><span class="post-meta-item-icon"><span class="icon iconify" data-icon="ri:price-tag-3-line"></span></span><span class="tag-name">密码学</span></a><a class="tag-item" href="/tags/%E6%95%B0%E8%AE%BA/" style="--text-color:var(--hty-text-color)"><span class="post-meta-item-icon"><span class="icon iconify" data-icon="ri:price-tag-3-line"></span></span><span class="tag-name">数论</span></a></span></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content markdown-body"><script>MathJax = {  tex: {    inlineMath: [['$', '$'], ['\$', '\$']]  }};</script><script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+<h3 id="整除性"><a href="#整除性" class="headerlink" title="整除性"></a>整除性</h3><h4 id="整除"><a href="#整除" class="headerlink" title="整除"></a>整除</h4><h5 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h5><p> 设 $a,b\in\mathbf{Z}$，$a\ne 0$。如果 $\exists q\in\mathbf{Z}$，使得 $b&#x3D;aq$，那么就说 $b$ 可被 $a$  <strong>整除</strong>，记作 $a\mid b$；$b$ 不被 $a$ 整除记作 $a\nmid b$。</p>
+<h5 id="整除的性质"><a href="#整除的性质" class="headerlink" title="整除的性质"></a>整除的性质</h5><ul>
+<li>$a\mid b\iff-a\mid b\iff a\mid-b\iff|a|\mid|b|$</li>
+<li>$a\mid b\land b\mid c\implies a\mid c$</li>
+<li>$a\mid b\land a\mid c\iff\forall x,y\in\mathbf{Z}, a\mid(xb+yc)$</li>
+</ul>
+<blockquote>
+<p><strong>证明</strong>：因为$  b \mid a  $且 $ b \mid c $</p>
+<p>必然存在 $ q_1, q_2 \in \mathbb{Z} $，使得 $ a &#x3D; q_1 b $ 且 $ c &#x3D; q_2 b $</p>
+<p>对于任意 $ s, t \in \mathbb{Z} $，有 $sa &#x3D; s q_1 b$ 且 $tc &#x3D; t q_2 b$ </p>
+<p>必有 $sa \pm tc &#x3D; s q_1 b \pm t q_2 b$ </p>
+<p>​					 $ &#x3D; b (s q_1 \pm t q_2) $<br>所以 $ b \mid (sa \pm tc) $</p>
+</blockquote>
+<ul>
+<li>$a\mid b\land b\mid a\implies b&#x3D;\pm a$</li>
+<li>设 $m\ne0$，那么 $a\mid b\iff ma\mid mb$。</li>
+<li>设 $b\ne0$，那么 $a\mid b\implies|a|\le|b|$。</li>
+<li>设 $a\ne0,b&#x3D;qa+c$，那么 $a\mid b\iff a\mid c$。</li>
+</ul>
+<h4 id="素数与合数"><a href="#素数与合数" class="headerlink" title="素数与合数"></a>素数与合数</h4><h5 id="定义-1"><a href="#定义-1" class="headerlink" title="定义"></a>定义</h5><p>设整数 $p\ne0,\pm1$。如果 $p$ 除了平凡约数外没有其他约数，那么称 $p$ 为 <strong>素数</strong>（<strong>不可约数</strong>）。</p>
+<p>若整数 $a\ne0,\pm 1$ 且 $a$ 不是素数，则称 $a$ 为 <strong>合数</strong>。</p>
+<blockquote>
+<p>$p$ 和 $-p$ 总是同为素数或者同为合数。<strong>如果没有特别说明，素数总是指正的素数。</strong></p>
+<p>整数的因数是素数，则该素数称为该整数的素因数（素约数）。</p>
+</blockquote>
+<h5 id="素数与合数的简单性质"><a href="#素数与合数的简单性质" class="headerlink" title="素数与合数的简单性质"></a>素数与合数的简单性质</h5><ul>
+<li>大于 $1$ 的整数 $a$ 是合数，等价于 $a$ 可以表示为整数 $d$ 和 $e$（$1&lt;d,e&lt;a$）的乘积。</li>
+<li>如果素数 $p$ 有大于 $1$ 的约数 $d$，那么 $d&#x3D;p$。</li>
+<li>大于 $1$ 的整数 $a$ 一定可以表示为素数的乘积。</li>
+<li>对于合数 $a$，一定存在素数 $p\le\sqrt{a}$ 使得 $p\mid a$。</li>
+</ul>
+<blockquote>
+<p><strong>证明：</strong> 既然 n &gt; 1 是合数，则 n &#x3D; ab ，其中 1 &lt; a &lt; n  且  1 &lt; b &lt; n 。</p>
+<p>首先，不可能 $ a &gt; \sqrt{n} $ 且 $ b &gt; \sqrt{n} $，因为这样 $ ab &gt; \sqrt{n} \cdot \sqrt{n} &#x3D; n $，与 $ n &#x3D; ab $ 矛盾。</p>
+<p>假设 $ a \leq \sqrt{n} $。根据引理2-1，既然 $ a &gt; 1 $，$ a $ 必有素因子 $ p $（即 $ p \mid a $）。</p>
+<p>因为 $ p \mid a $，$ a \mid n $，所以 $ p \mid n $。</p>
+<p>又因为 $ p \leq a $，$ a \leq \sqrt{n} $，所以 $ p \leq \sqrt{n} $。得证！</p>
+</blockquote>
+<ul>
+<li>素数有无穷多个。</li>
+<li>所有大于 $3$ 的素数都可以表示为 $6n\pm 1$ 的形式。</li>
+<li>任何大于1的整数必有素因子。</li>
+</ul>
+<blockquote>
+<p><strong>证明</strong>：设集合S包含所有大于1且没有素因子的整数。只需证明S为空集。假设S不为空集，m∈S是S中最小整数（m&gt;1且没有素因子）。</p>
+<ol>
+<li>m不可能为素数，因为任何素数都有素因子（它本身）。</li>
+<li>m为合数，则有m&#x3D;ab，其中1&lt;a&lt;m，1&lt;b&lt;m。</li>
+</ol>
+<p>既然a&lt;m，必有a∉S。a必有素因子，设为p。</p>
+<p>因为 p|a 且 a|m，则 p|m，</p>
+<p>故而m有素因子p，与m∈S矛盾，得证。</p>
+</blockquote>
+<h5 id="算术基本定理"><a href="#算术基本定理" class="headerlink" title="算术基本定理"></a>算术基本定理</h5><h6 id="算术基本引理"><a href="#算术基本引理" class="headerlink" title="算术基本引理"></a>算术基本引理</h6><p>​    设 $p$ 是素数，$p\mid a_1a_2$，那么 $p\mid a_1$ 和 $p\mid a_2$ 至少有一个成立。</p>
+<p>算术基本引理是素数的本质属性，也是素数的真正定义。</p>
+<h6 id="算术基本定理（唯一分解定理）"><a href="#算术基本定理（唯一分解定理）" class="headerlink" title="算术基本定理（唯一分解定理）"></a>算术基本定理（唯一分解定理）</h6><p>​    设正整数 $a$，那么必有表示：<br>​<br>$$<br>a&#x3D;p_1p_2\cdots p_s<br>$$</p>
+<p>其中 $p_j(1\le j\le s)$ 是素数。并且在不计次序的意义下，该表示唯一。</p>
+<h6 id="标准素因数分解式"><a href="#标准素因数分解式" class="headerlink" title="标准素因数分解式"></a>标准素因数分解式</h6><p>​    将上述表示中，相同的素数合并，可得：<br>​<br>$$<br>a&#x3D;{p_1}^{\alpha_1}{p_2}^{\alpha_2}\cdots{p_s}^{\alpha_s},p_1&lt;p_2&lt;\cdots&lt;p_s<br>$$</p>
+<p>称为正整数 $a$ 的标准素因数分解式。</p>
+<p>算术基本定理和算术基本引理，两个定理是等价的。</p>
+<h4 id="模运算"><a href="#模运算" class="headerlink" title="模运算"></a>模运算</h4><h5 id="定义-2"><a href="#定义-2" class="headerlink" title="定义"></a>定义</h5><p>设 $ a, b \in \mathbb{Z} $ 且 $ b &gt; 0 $，如果 $ q, r \in \mathbb{Z} $ 满足$ a &#x3D; qb + r, $且$ 0 \leq r &lt; b, $则定义 $a \mod b :&#x3D; r$</p>
+<h5 id="运算规则"><a href="#运算规则" class="headerlink" title="运算规则"></a>运算规则</h5><p>模运算与基本四则运算有些相似，但是除法例外。其规则如下：</p>
+<p>$b \mid a \iff a \mod b &#x3D; 0$</p>
+<p>$(a + b) \mod p &#x3D; (a \mod p + b \mod p) \mod p $</p>
+<p>$(a - b) \mod p &#x3D; (a \mod p - b \mod p) \mod p$</p>
+<p>$(a * b) \mod p &#x3D; (a \mod p * b \mod p) \mod p $</p>
+<h4 id="最大公约数"><a href="#最大公约数" class="headerlink" title="最大公约数"></a>最大公约数</h4><h5 id="定义-3"><a href="#定义-3" class="headerlink" title="定义"></a>定义</h5><p>最大公约数即为 Greatest Common Divisor，常缩写为 gcd。</p>
+<p>一组整数的公约数，是指同时是这组数中每一个数的约数的数。$\pm 1$ 是任意一组整数的公约数。</p>
+<p>一组整数的最大公约数，是指所有公约数里面最大的一个。</p>
+<p>对不全为 $0$ 的整数 $a,b$，将其最大公约数记为 $\gcd(a,b)$，不引起歧义时可简写为 $(a,b)$。</p>
+<p>对不全为 $0$ 的整数 $a_1,\dots,a_n$，将其最大公约数记为 $\gcd(a_1,\dots,a_n)$，不引起歧义时可简写为 $(a_1,\dots,a_n)$。</p>
+<h5 id="最大公约数与最小公倍数的性质"><a href="#最大公约数与最小公倍数的性质" class="headerlink" title="最大公约数与最小公倍数的性质"></a>最大公约数与最小公倍数的性质</h5><p>最大公约数有如下性质：</p>
+<ul>
+<li>$(a_1,\dots,a_n)&#x3D;(|a_1|,\dots,|a_n|)$；</li>
+<li>$(a,b)&#x3D;(b,a)$；</li>
+<li>若 $a\ne 0$，则 $(a,0)&#x3D;(a,a)&#x3D;|a|$；</li>
+<li>$(bq+r,b)&#x3D;(r,b)$；</li>
+<li>$(a_1,\dots,a_n)&#x3D;((a_1,a_2),a_3,\dots,a_n)$。进而 $\forall 1&lt;k&lt;n-1,~(a_1,\dots,a_n)&#x3D;((a_1,\dots,a_k),(a_{k+1},\dots,a_n))$；</li>
+<li>对不全为 $0$ 的整数 $a_1,\dots,a_n$ 和非零整数 $m$，$(ma_1,\dots,ma_n)&#x3D;|m|(a_1,\dots,a_n)$；</li>
+<li>对不全为 $0$ 的整数 $a_1,\dots,a_n$，若 $(a_1,\dots,a_n)&#x3D;d$，则 $(a_1&#x2F;d,\dots,a_n&#x2F;d)&#x3D;1$；</li>
+<li>$(a^n,b^n)&#x3D;(a,b)^n$。</li>
+</ul>
+<p>最大公约数还有如下与互素相关的性质：</p>
+<ul>
+<li>若 $b|ac$ 且 $(a,b)&#x3D;1$，则 $b\mid c$；</li>
+<li>若 $b|c$、$a|c$ 且 $(a,b)&#x3D;1$，则 $ab\mid c$；</li>
+<li>若 $(a,b)&#x3D;1$，则 $(a,bc)&#x3D;(a,c)$；</li>
+<li>若 $(a_i,b_j)&#x3D;1,~\forall 1\leq i\leq n,1\leq j\leq m$，则 $\left(\prod_i a_i,\prod_j b_j\right)&#x3D;1$。特别地，若 $(a,b)&#x3D;1$，则 $(a^n,b^m)&#x3D;1$；</li>
+<li>对整数 $a_1,\dots,a_n$，若 $\exists v\in \mathbf{Z},<del>\prod_i a_i&#x3D;v^m$，且 $(a_i,a_j)&#x3D;1,</del>\forall i\ne j$，则 $\forall 1\leq i\leq n,~\sqrt[m]{a_i}\in\mathbf{Z}$。</li>
+</ul>
+<p>最小公倍数有如下性质：</p>
+<ul>
+<li>$[a_1,\dots,a_n]&#x3D;[|a_1|,\dots,|a_n|]$；</li>
+<li>$[a,b]&#x3D;[b,a]$；</li>
+<li>若 $a\ne 0$，则 $[a,1]&#x3D;[a,a]&#x3D;|a|$；</li>
+<li>若 $a\mid b$，则 $[a,b]&#x3D;|b|$；</li>
+<li>$[a_1,\dots,a_n]&#x3D;[[a_1,a_2],a_3,\dots,a_n]$。进而 $\forall 1&lt;k&lt;n-1,~[a_1,\dots,a_n]&#x3D;[[a_1,\dots,a_k],[a_{k+1},\dots,a_n]]$；</li>
+<li>若 $a_i\mid m,~\forall 1\leq i\leq n$，则 $[a_1,\dots,a_n]\mid m$；</li>
+<li>$[ma_1,\dots,ma_n]&#x3D;|m|[a_1,\dots,a_n]$；</li>
+<li>$[a,b,c][ab,bc,ca]&#x3D;[a,b][b,c][c,a]$；</li>
+<li>$[a^n,b^n]&#x3D;[a,b]^n$。</li>
+</ul>
+<p>最大公约数和最小公倍数可以组合出很多奇妙的等式，如：</p>
+<ul>
+<li>$(a,b)[a,b]&#x3D;|ab|$；</li>
+<li>$(ab,bc,ca)[a,b,c]&#x3D;|abc|$；</li>
+<li>$\dfrac{(a,b,c)^2}{(a,b)(b,c)(a,c)}&#x3D;\dfrac{[a,b,c]^2}{[a,b][b,c][a,c]}$。</li>
+</ul>
+<p>这些性质均可通过定义或 <a href="#%E7%AE%97%E6%9C%AF%E5%9F%BA%E6%9C%AC%E5%AE%9A%E7%90%86">唯一分解定理</a> 证明，其中使用唯一分解定理的证明更容易理解。</p>
+<h5 id="欧几里得算法"><a href="#欧几里得算法" class="headerlink" title="欧几里得算法"></a>欧几里得算法</h5><h6 id="过程"><a href="#过程" class="headerlink" title="过程"></a>过程</h6><p>如果我们已知两个数 $a$ 和 $b$，如何求出二者的最大公约数呢？不妨设 $a &gt; b$。我们发现如果 $b$ 是 $a$ 的约数，那么 $b$ 就是二者的最大公约数。</p>
+<p>下面讨论不能整除的情况，即 $a &#x3D; b \times q + r$，其中 $r &lt; b$。</p>
+<p>我们通过证明可以得到 $\gcd(a,b)&#x3D;\gcd(b,a \bmod b)$，过程如下：</p>
+<h6 id="证明"><a href="#证明" class="headerlink" title="证明"></a>证明</h6><p>​    设 $a&#x3D;bk+c$，显然有 $c&#x3D;a \bmod b$。设 $d \mid a,~d \mid b$，则 $c&#x3D;a-bk,<br>​    \frac{c}{d}&#x3D;\frac{a}{d}-\frac{b}{d}k$。<br>​    </p>
+<p>由右边的式子可知 $\frac{c}{d}$ 为整数，即 $d \mid c$，所以对于 $a,b$ 的公约数，它也会是 $b,a \bmod b$ 的公约数。</p>
+<p>反过来也需要证明：</p>
+<p>设 $d \mid b,d\mid (a \bmod b)$，我们还是可以像之前一样得到以下式子<br>$$<br>\frac{a\bmod b}{d}&#x3D;\frac{a}{d}-\frac{b}{d}k,\frac{a\bmod b}<br>{d}+\frac{b}{d}k&#x3D;\frac{a}{d}<br>$$<br>因为左边式子显然为整数，所以 $\frac{a}{d}$ 也为整数，即 $d \mid a$，所以 $b,a\bmod b$ 的公约数也是 $a,b$ 的公约数。</p>
+<p>既然两式公约数都是相同的，那么最大公约数也会相同。</p>
+<p>所以得到式子 $\gcd(a,b)&#x3D;\gcd(b,a\bmod b)$</p>
+<p>既然得到了 $\gcd(a, b) &#x3D; \gcd(b, r)$，这里两个数的大小是不会增大的，那么我们也就得到了关于两个数的最大公约数的一个递归求法。</p>
+<h4 id="扩展的欧几里得算法"><a href="#扩展的欧几里得算法" class="headerlink" title="扩展的欧几里得算法"></a>扩展的欧几里得算法</h4><h5 id="最大公约数表示公理"><a href="#最大公约数表示公理" class="headerlink" title="最大公约数表示公理"></a>最大公约数表示公理</h5><p>设$a, b \in \mathbb{Z}$，$d &#x3D; \gcd(a,b)$，则$\exists s,t \in \mathbb{z}$，使得 $as+bt&#x3D;d$</p>
+<p>特别的：$\gcd(a,b)&#x3D;1 \iff as+bt&#x3D;1$</p>
+<p>推论：$d \mid v \iff as+bt&#x3D;v$</p>
+<h5 id="扩展的欧几里得算法-1"><a href="#扩展的欧几里得算法-1" class="headerlink" title="扩展的欧几里得算法"></a>扩展的欧几里得算法</h5><p>扩展欧几里得算法（Extended Euclidean algorithm, EXGCD），常用于求 $ax+by&#x3D;\gcd(a,b)$ 的一组可行解。</p>
+<h6 id="过程-1"><a href="#过程-1" class="headerlink" title="过程"></a>过程</h6><p>设</p>
+<p>$ax_1+by_1&#x3D;\gcd(a,b)$</p>
+<p>$bx_2+(a\bmod b)y_2&#x3D;\gcd(b,a\bmod b)$</p>
+<p>由欧几里得定理可知：$\gcd(a,b)&#x3D;\gcd(b,a\bmod b)$</p>
+<p>所以 $ax_1+by_1&#x3D;bx_2+(a\bmod b)y_2$</p>
+<p>又因为 $a\bmod b&#x3D;a-(\lfloor\frac{a}{b}\rfloor\times b)$</p>
+<p>所以 $ax_1+by_1&#x3D;bx_2+(a-(\lfloor\frac{a}{b}\rfloor\times b))y_2$</p>
+<p>$ax_1+by_1&#x3D;ay_2+bx_2-\lfloor\frac{a}{b}\rfloor\times by_2&#x3D;ay_2+b(x_2-\lfloor\frac{a}{b}\rfloor y_2)$</p>
+<p>因为 $a&#x3D;a,b&#x3D;b$，所以 $x_1&#x3D;y_2,y_1&#x3D;x_2-\lfloor\frac{a}{b}\rfloor y_2$</p>
+<p>将 $x_2,y_2$ 不断代入递归求解直至 $\gcd$（最大公约数，下同）为 $0$ 递归 $x&#x3D;1,y&#x3D;0$ 回去求解。</p>
+<p><img src="ExtendedEuclidean1.png" loading="lazy"></p>
+<h4 id="最小公倍数"><a href="#最小公倍数" class="headerlink" title="最小公倍数"></a>最小公倍数</h4><h5 id="定义-4"><a href="#定义-4" class="headerlink" title="定义"></a>定义</h5><p>一组整数的公倍数，是指同时是这组数中每一个数的倍数的数。0 是任意一组整数的公倍数。</p>
+<p>一组整数的最小公倍数，是指所有正的公倍数里面，最小的一个数。</p>
+<p>对整数 $a,b$，将其最小公倍数记为 $\operatorname{lcm}(a,b)$，不引起歧义时可简写为 $[a,b]$。</p>
+<p>对整数 $a_1,\dots,a_n$，将其最小公倍数记为 $\operatorname{lcm}(a_1,\dots,a_n)$，不引起歧义时可简写为 $[a_1,\dots,a_n]$。</p>
+<h5 id="两个数"><a href="#两个数" class="headerlink" title="两个数"></a>两个数</h5><p>设 $a &#x3D; p_1^{k_{a_1}}p_2^{k_{a_2}} \cdots p_s^{k_{a_s}}$，$b &#x3D; p_1^{k_{b_1}}p_2^{k_{b_2}} \cdots p_s^{k_{b_s}}$</p>
+<p>我们发现，对于 $a$ 和 $b$ 的情况，二者的最大公约数等于</p>
+<p>$p_1^{\min(k_{a_1}, k_{b_1})}p_2^{\min(k_{a_2}, k_{b_2})} \cdots p_s^{\min(k_{a_s}, k_{b_s})}$</p>
+<p>最小公倍数等于</p>
+<p>$p_1^{\max(k_{a_1}, k_{b_1})}p_2^{\max(k_{a_2}, k_{b_2})} \cdots p_s^{\max(k_{a_s}, k_{b_s})}$</p>
+<p>由于 $k_a + k_b &#x3D; \max(k_a, k_b) + \min(k_a, k_b)$</p>
+<p>所以得到结论是 $\gcd(a, b) \times \operatorname{lcm}(a, b) &#x3D; a \times b$</p>
+<p>要求两个数的最小公倍数，先求出最大公约数即可。</p>
+<h5 id="多个数"><a href="#多个数" class="headerlink" title="多个数"></a>多个数</h5><p>可以发现，当我们求出两个数的 $\gcd$ 时，求最小公倍数是 $O(1)$ 的复杂度。那么对于多个数，我们其实没有必要求一个共同的最大公约数再去处理，最直接的方法就是，当我们算出两个数的 $\gcd$，或许在求多个数的 $\gcd$ 时候，我们将它放入序列对后面的数继续求解，那么，我们转换一下，直接将最小公倍数放入序列即可。</p>
+<h3 id="同余关系"><a href="#同余关系" class="headerlink" title="同余关系"></a>同余关系</h3><h4 id="同余"><a href="#同余" class="headerlink" title="同余"></a>同余</h4><h5 id="定义-5"><a href="#定义-5" class="headerlink" title="定义"></a>定义</h5><p>​    设整数 $m\ne0$。若 $m\mid(a-b)$，称 $m$ 为 <strong>模数</strong>（<strong>模</strong>），$a$ 同余于 $b$ 模 $m$，$b$ 是 $a$ 对模 $m$ 的 <strong>剩余</strong>。记作 $a\equiv b\pmod m$。<br>​    </p>
+<p>否则，$a$ 不同余于 $b$ 模 $m$，$b$ 不是 $a$ 对模 $m$ 的剩余。记作 $a\not\equiv b\pmod m$。</p>
+<p>这样的等式，称为模 $m$ 的同余式，简称 <strong>同余式</strong>。</p>
+<p>根据整除的性质，上述同余式也等价于 $a\equiv b\pmod{(-m)}$。</p>
+<p><strong>如果没有特别说明，模数总是正整数。</strong></p>
+<p>式中的 $b$ 是 $a$ 对模 $m$ 的剩余，这个概念与余数完全一致。通过限定 $b$ 的范围，相应的有 $a$ 对模 $m$ 的最小非负剩余、绝对最小剩余、最小正剩余。</p>
+<h5 id="同余的性质"><a href="#同余的性质" class="headerlink" title="同余的性质"></a>同余的性质</h5><ul>
+<li>同余是 <a target="_blank" rel="noopener" href="https://oi-wiki.org/math/order-theory/#%E4%BA%8C%E5%85%83%E5%85%B3%E7%B3%BB">等价关系</a>，即同余具有<ul>
+<li>自反性：$a\equiv a\pmod m$。</li>
+<li>对称性：若 $a\equiv b\pmod m$，则 $b\equiv a\pmod m$。</li>
+<li>传递性：若 $a\equiv b\pmod m,b\equiv c\pmod m$，则 $a\equiv c\pmod m$。</li>
+</ul>
+</li>
+<li>线性运算：若 $a,b,c,d\in\mathbf{Z},m\in\mathbf{N}^*,a\equiv b\pmod m,c\equiv d\pmod m$ 则有：<ul>
+<li>$a\pm c\equiv b\pm d\pmod m$。</li>
+<li>$a\times c\equiv b\times d\pmod m$。</li>
+</ul>
+</li>
+<li>设 $f(x)&#x3D;\sum_{i&#x3D;0}^n a_ix^i$ 和 $g(x)&#x3D;\sum_{i&#x3D;0}^n b_ix^i$ 是两个整系数多项式，$m\in\mathbf{N}^*$，且 $a_i\equiv b_i\pmod m,~0\leq i\leq n$，则对任意整数 $x$ 均有 $f(x)\equiv g(x)\pmod m$。进而若 $s\equiv t\pmod m$，则 $f(s)\equiv g(t)\pmod m$。</li>
+<li>若 $a,b\in\mathbf{Z},k,m\in\mathbf{N}^*,a\equiv b\pmod m$, 则 $ak\equiv bk\pmod{mk}$。</li>
+<li>若 $a,b\in\mathbf{Z},d,m\in\mathbf{N}^*,d\mid a,d\mid b,d\mid m$，则当 $a\equiv b\pmod m$ 成立时，有 $\dfrac{a}{d}\equiv\dfrac{b}{d}\left(\bmod;{\dfrac{m}{d}}\right)$。</li>
+<li>若 $a,b\in\mathbf{Z},d,m\in\mathbf{N}^*,d\mid m$，则当 $a\equiv b\pmod m$ 成立时，有 $a\equiv b\pmod d$。</li>
+<li>若 $a,b\in\mathbf{Z},d,m\in\mathbf{N}^*$，则当 $a\equiv b\pmod m$ 成立时，有 $(a,m)&#x3D;(b,m)$。若 $d$ 能整除 $m$ 及 $a,b$ 中的一个，则 $d$ 必定能整除 $a,b$ 中的另一个。</li>
+</ul>
+<h4 id="乘法逆元"><a href="#乘法逆元" class="headerlink" title="乘法逆元"></a>乘法逆元</h4><p>介绍模意义下乘法运算的逆元（Modular Multiplicative Inverse），并介绍如何使用扩展欧几里德算法（Extended Euclidean algorithm）求解乘法逆元。</p>
+<h5 id="定义-6"><a href="#定义-6" class="headerlink" title="定义"></a>定义</h5><p>如果一个线性同余方程 $ax \equiv 1 \pmod b$，则 $x$ 称为 $a \bmod b$ 的逆元，记作 $a^{-1}$。</p>
+<h5 id="如何求逆元"><a href="#如何求逆元" class="headerlink" title="如何求逆元"></a>如何求逆元</h5><h6 id="扩展欧几里得法"><a href="#扩展欧几里得法" class="headerlink" title="扩展欧几里得法"></a>扩展欧几里得法</h6><p>设 $\gcd(a, n) &#x3D; 1$ 根据最大公约数表示定理，有$as + tn &#x3D; 1$等式两边同时模 $n$，得$as \equiv 1 \pmod{n}$</p>
+<p>易知，模 $n$ 下 $a$ 的逆元是 $s$</p>
+<h4 id="一次同余方程"><a href="#一次同余方程" class="headerlink" title="一次同余方程"></a>一次同余方程</h4><h5 id="同余方程"><a href="#同余方程" class="headerlink" title="同余方程"></a>同余方程</h5><p>​    对正整数 $m$ 和一元整系数多项式 $f(x)&#x3D;\sum_{i&#x3D;0}^n a_ix^i$，其中未知数 $x\in\mathbf{Z}_m$，称形如<br>​<br>$$<br>f(x)\equiv 0\pmod m\tag{1}<br>$$</p>
+<p>的方程为关于未知数 $x$ 的模 $m$ 的一元 <strong>同余方程</strong>（Congruence Equation）。</p>
+<p>若 $a_n\not\equiv 0\pmod m$，则称上式为 $n$ 次同余方程。</p>
+<p>类似可定义同余方程组。</p>
+<p>关于一次同余方程与方程组的相关内容请参见 <a target="_blank" rel="noopener" href="https://oi-wiki.org/math/number-theory/linear-equation/">线性同余方程</a> 与 <a target="_blank" rel="noopener" href="https://oi-wiki.org/math/number-theory/crt/">中国剩余定理</a>。</p>
+<h5 id="同余下的消去律"><a href="#同余下的消去律" class="headerlink" title="同余下的消去律"></a>同余下的消去律</h5><p>设$a,n \in {Z},n &gt; 0$，如果$\gcd(a,n)&#x3D;d$，有<br>$$<br>az \equiv az’ \pmod n \implies z \equiv z’ \pmod {n&#x2F;d}<br>$$</p>
+<h5 id="一次同余方程有解的条件"><a href="#一次同余方程有解的条件" class="headerlink" title="一次同余方程有解的条件"></a>一次同余方程有解的条件</h5><p>若$\gcd(a,n)&#x3D;d$，则$ax \equiv b \pmod n 有解 \iff d \mid b$</p>
+<h4 id="中国剩余定理"><a href="#中国剩余定理" class="headerlink" title="中国剩余定理"></a>中国剩余定理</h4><h5 id="引入"><a href="#引入" class="headerlink" title="引入"></a>引入</h5><blockquote>
+<p>「物不知数」问题：有物不知其数，三三数之剩二，五五数之剩三，七七数之剩二。问物几何？</p>
+</blockquote>
+<p>即求满足以下条件的整数：除以 $3$ 余 $2$，除以 $5$ 余 $3$，除以 $7$ 余 $2$。</p>
+<p>该问题最早见于《孙子算经》中，并有该问题的具体解法。宋朝数学家秦九韶于 1247 年《数书九章》卷一、二《大衍类》对「物不知数」问题做出了完整系统的解答。上面具体问题的解答口诀由明朝数学家程大位在《算法统宗》中给出：</p>
+<blockquote>
+<p>三人同行七十希，五树梅花廿一支，七子团圆正半月，除百零五便得知。</p>
+</blockquote>
+<p>$2\times 70+3\times 21+2\times 15&#x3D;233&#x3D;2\times 105+23$，故答案为 $23$。</p>
+<h5 id="定义-7"><a href="#定义-7" class="headerlink" title="定义"></a>定义</h5><p>中国剩余定理 (Chinese Remainder Theorem, CRT) 可求解如下形式的一元线性同余方程组（其中 $n_1, n_2, \cdots, n_k$ 两两互质）：</p>
+<p>$$<br>\begin{cases}<br>x &amp;\equiv a_1 \pmod {n_1} \<br>x &amp;\equiv a_2 \pmod {n_2} \<br>  &amp;\vdots \<br>x &amp;\equiv a_k \pmod {n_k} \<br>\end{cases}<br>$$</p>
+<p>上面的「物不知数」问题就是一元线性同余方程组的一个实例。</p>
+<h5 id="过程-2"><a href="#过程-2" class="headerlink" title="过程"></a>过程</h5><ol>
+<li>计算所有模数的积 $n$；</li>
+<li>对于第 $i$ 个方程：<ol>
+<li>计算 $m_i&#x3D;\frac{n}{n_i}$；</li>
+<li>计算 $m_i$ 在模 $n_i$ 意义下的 <strong>逆元</strong>  $m_i^{-1}$；</li>
+<li>计算 $c_i&#x3D;m_im_i^{-1}$（<strong>不要对 $n_i$ 取模</strong>）。</li>
+</ol>
+</li>
+<li>方程组在模 $n$ 意义下的唯一解为：$x&#x3D;\sum_{i&#x3D;1}^k a_ic_i \pmod n$。</li>
+</ol>
+<h5 id="证明-1"><a href="#证明-1" class="headerlink" title="证明"></a>证明</h5><p>我们需要证明上面算法计算所得的 $x$ 对于任意 $i&#x3D;1,2,\cdots,k$ 满足 $x\equiv a_i \pmod {n_i}$。</p>
+<p>当 $i\neq j$ 时，有 $m_j \equiv 0 \pmod {n_i}$，故 $c_j \equiv m_j \equiv 0 \pmod {n_i}$。又有 $c_i \equiv m_i \cdot (m_i^{-1} \bmod {n_i}) \equiv 1 \pmod {n_i}$，所以我们有：</p>
+<p>$$<br>\begin{aligned}<br>x&amp;\equiv \sum_{j&#x3D;1}^k a_jc_j                      &amp;\pmod {n_i} \<br> &amp;\equiv a_ic_i                                   &amp;\pmod {n_i} \<br> &amp;\equiv a_i \cdot m_i \cdot (m^{-1}_i \bmod n_i) &amp;\pmod {n_i} \<br> &amp;\equiv a_i                                      &amp;\pmod {n_i}<br>\end{aligned}<br>$$</p>
+<p><strong>即对于任意 $i&#x3D;1,2,\cdots,k$，上面算法得到的 $x$ 总是满足 $x\equiv a_i \pmod{n_i}$，即证明了解同余方程组的算法的正确性。</strong></p>
+<p>因为我们没有对输入的 $a_i$ 作特殊限制，所以任何一组输入 ${a_i}$ 都对应一个解 $x$。</p>
+<p>另外，若 $x\neq y$，则总存在 $i$ 使得 $x$ 和 $y$ 在模 $n_i$ 下不同余。</p>
+<p><strong>故系数列表 ${a_i}$ 与解 $x$ 之间是一一映射关系，方程组总是有唯一解。</strong></p>
+<h5 id="解释"><a href="#解释" class="headerlink" title="解释"></a>解释</h5><p>下面演示 CRT 如何解「物不知数」问题。</p>
+<ol>
+<li>$n&#x3D;3\times 5\times 7&#x3D;105$；</li>
+<li>三人同行 <strong>七十</strong> 希：$n_1&#x3D;3, m_1&#x3D;n&#x2F;n_1&#x3D;35, m_1^{-1}\equiv 2\pmod 3$，故 $c_1&#x3D;35\times 2&#x3D;70$；</li>
+<li>五树梅花 <strong>廿一</strong> 支：$n_2&#x3D;5, m_2&#x3D;n&#x2F;n_2&#x3D;21, m_2^{-1}\equiv 1\pmod 5$，故 $c_2&#x3D;21\times 1&#x3D;21$；</li>
+<li>七子团圆正 <strong>半月</strong>：$n_3&#x3D;7, m_3&#x3D;n&#x2F;n_3&#x3D;15, m_3^{-1}\equiv 1\pmod 7$，故 $c_3&#x3D;15\times 1&#x3D;15$；</li>
+<li>所以方程组的唯一解为 $x\equiv 2\times 70+3\times 21+2\times 15\equiv 233\equiv 23 \pmod {105}$。（除 <strong>百零五</strong> 便得知）</li>
+</ol>
+<h4 id="欧拉函数"><a href="#欧拉函数" class="headerlink" title="欧拉函数"></a>欧拉函数</h4><h5 id="定义-8"><a href="#定义-8" class="headerlink" title="定义"></a>定义</h5><p>欧拉函数（Euler’s totient function），即 $\varphi(n)$，表示的是小于等于 $n$ 和 $n$ 互质的数的个数。</p>
+<p>比如说 $\varphi(1) &#x3D; 1$。</p>
+<p>当 $n$ 是质数的时候，显然有 $\varphi(n) &#x3D; n - 1$。</p>
+<h5 id="性质"><a href="#性质" class="headerlink" title="性质"></a>性质</h5><ul>
+<li><p>欧拉函数是 <a target="_blank" rel="noopener" href="https://oi-wiki.org/math/number-theory/basic/#%E7%A7%AF%E6%80%A7%E5%87%BD%E6%95%B0">积性函数</a>。</p>
+<p>即对任意满足 $\gcd(a, b) &#x3D; 1$ 的整数 $a,b$，有 $\varphi(ab) &#x3D; \varphi(a)\varphi(b)$。</p>
+<p>特别地，当 $n$ 是奇数时 $\varphi(2n) &#x3D; \varphi(n)$。</p>
+<p>证明参见 <a target="_blank" rel="noopener" href="https://oi-wiki.org/math/number-theory/basic/#%E5%89%A9%E4%BD%99%E7%B3%BB%E7%9A%84%E5%A4%8D%E5%90%88">剩余系的复合</a>。</p>
+</li>
+<li><p>$n &#x3D; \sum_{d \mid n}{\varphi(d)}$。</p>
+</li>
+<li><p>设两两互素的正整数$n_1,\cdots,n_m \in {N}$，并设$n &#x3D; \prod_{i&#x3D;1}^m \varphi(n_i)$，$\varphi(n) &#x3D; \prod_{i&#x3D;1}^m \varphi(n_i)$</p>
+</li>
+<li><p>$\varphi(p^k)&#x3D;p^{k-1} \varphi(p)$</p>
+</li>
+</ul>
+<h5 id="证明-2"><a href="#证明-2" class="headerlink" title="证明"></a>证明</h5><p>利用 <a target="_blank" rel="noopener" href="https://oi-wiki.org/math/number-theory/mobius/">莫比乌斯反演</a> 相关知识可以得出。</p>
+<p>也可以这样考虑：如果 $\gcd(k, n) &#x3D; d$，那么 $\gcd(\dfrac{k}{d},\dfrac{n}{d}) &#x3D; 1, ( k &lt; n )$。</p>
+<p>如果我们设 $f(x)$ 表示 $\gcd(k, n) &#x3D; x$ 的数的个数，那么 $n &#x3D; \sum_{i &#x3D; 1}^n{f(i)}$。</p>
+<p>根据上面的证明，我们发现，$f(x) &#x3D; \varphi(\dfrac{n}{x})$，从而 $n &#x3D; \sum_{d \mid n}\varphi(\dfrac{n}{d})$。注意到约数 $d$ 和 $\dfrac{n}{d}$ 具有对称性，所以上式化为 $n &#x3D; \sum_{d \mid n}\varphi(d)$。</p>
+<ul>
+<li><p>若 $n &#x3D; p^k$，其中 $p$ 是质数，那么 $\varphi(n) &#x3D; p^k - p^{k - 1}$。<br>（根据定义可知）</p>
+</li>
+<li><p>由唯一分解定理，设 $n &#x3D; \prod_{i&#x3D;1}^{s}p_i^{k_i}$，其中 $p_i$ 是质数，有 $\varphi(n) &#x3D; n \times \prod_{i &#x3D; 1}^s{\dfrac{p_i - 1}{p_i}}$。</p>
+<p>证明<br>-   引理：设 $p$ 为任意质数，那么 $\varphi(p^k)&#x3D;p^{k-1}\times(p-1)$。<br>​    证明：显然对于从 1 到 $p^k$ 的所有数中，除了 $p^{k-1}$ 个 $p$ 的倍数以外其它数都与 $p^k$ 互素，故 $\varphi(p^k)&#x3D;p^k-p^{k-1}&#x3D;p^{k-1}\times(p-1)$，证毕。</p>
+<p>​    接下来我们证明 $\varphi(n) &#x3D; n \times \prod_{i &#x3D; 1}^s{\dfrac{p_i - 1}{p_i}}$。由唯一分解定理与 $\varphi(x)$ 函数的积性</p>
+<p>$$<br>\begin{aligned}<br>    \varphi(n) &amp;&#x3D; \prod_{i&#x3D;1}^{s} \varphi(p_i^{k_i}) \<br>    &amp;&#x3D; \prod_{i&#x3D;1}^{s} (p_i-1)\times {p_i}^{k_i-1}\<br>    &amp;&#x3D;\prod_{i&#x3D;1}^{s} {p_i}^{k_i} \times(1 - \frac{1}{p_i})\<br>    &amp;&#x3D;n \prod_{i&#x3D;1}^{s} (1- \frac{1}{p_i})<br>\end{aligned}<br>$$</p>
+</li>
+<li><p>对任意不全为 $0$ 的整数 $m,n$，$\varphi(mn)\varphi(\gcd(m,n))&#x3D;\varphi(m)\varphi(n)\gcd(m,n)$。</p>
+<p>可由上一条直接计算得出。</p>
+</li>
+</ul>
+<h5 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h5><p>法一：<br>$$<br>\begin{aligned}<br>\varphi(30000) &amp;&#x3D; \varphi(3 \times 2^4 \times 5^4)\<br>&amp;&#x3D; \varphi(3) \times \varphi(2^4) \times \varphi(5^4) \<br>&amp;&#x3D; \varphi(3) \times 2^3\varphi(2) \times 5^3\varphi(5) \<br>&amp;&#x3D; 2 \times 2^3 \times 1 \times 5^3 \times 4 \<br>&amp;&#x3D; 8000<br>\end{aligned}<br>$$<br>法二：</p>
+<p>30000 &#x3D; 30 × 1000<br>30 &#x3D; 2 × 3 × 5<br>1000 &#x3D; 10 × 100 &#x3D; 2 × 5 × 100 &#x3D; 2 × 5 × 10 × 10 &#x3D; 2 × 5 × 2 × 5 × 2 × 5 &#x3D; 2³ × 5³<br>所以，30000 &#x3D; 2³ × 3 × 5³ × 5 &#x3D; 2³ × 3 × 5⁴</p>
+<p>接下来用欧拉函数的公式来计算 <em>φ</em>(30000)。<br>$$<br>\varphi(n) &#x3D; n \prod_{i&#x3D;1}^{s} (1- \frac{1}{p_i})<br>$$<br>其中 <em>p</em> 是 <em>n</em> 的不同质因数。对于 30000，质因数是 2、3 和 5。代入公式：<br>$$<br>\begin{aligned}<br>\varphi(30000) &amp;&#x3D; 30000 \times (1-\frac{1}{2}) \times (1-\frac{1}{3}) \times (1-\frac{1}{5}) \<br>&amp;&#x3D; 30000 \times \frac{1}{2} \times \frac{2}{3} \times \frac{4}{5} \<br>&amp;&#x3D; 30000 \times \frac{4}{15} \<br>&amp;&#x3D; 8000<br>\end{aligned}<br>$$</p>
+<h4 id="欧拉定理-费马小定理"><a href="#欧拉定理-费马小定理" class="headerlink" title="欧拉定理 费马小定理"></a>欧拉定理 费马小定理</h4><h5 id="欧拉定理"><a href="#欧拉定理" class="headerlink" title="欧拉定理"></a>欧拉定理</h5><h6 id="定义-9"><a href="#定义-9" class="headerlink" title="定义"></a>定义</h6><p>若 $\gcd(a, m) &#x3D; 1$，则 $a^{\varphi(m)} \equiv 1 \pmod{m}$。</p>
+<h6 id="证明-3"><a href="#证明-3" class="headerlink" title="证明"></a>证明</h6><p>实际上这个证明过程跟下文费马小定理的证明过程是非常相似的：<strong>构造一个与 $m$ 互质的数列</strong>，再进行操作。</p>
+<p>设 $r_1, r_2, \cdots, r_{\varphi(m)}$ 为模 $m$ 意义下的一个简化剩余系，则 $ar_1, ar_2, \cdots, ar_{\varphi(m)}$ 也为模 $m$ 意义下的一个简化剩余系。所以 $r_1r_2 \cdots r_{\varphi(m)} \equiv ar_1 \cdot ar_2 \cdots ar_{\varphi(m)} \equiv a^{\varphi(m)}r_1r_2 \cdots r_{\varphi(m)} \pmod{m}$，可约去 $r_1r_2 \cdots r_{\varphi(m)}$，即得 $a^{\varphi(m)} \equiv 1 \pmod{m}$。</p>
+<p>当 $m$ 为素数时，由于 $\varphi(m) &#x3D; m - 1$，代入欧拉定理可立即得到费马小定理。</p>
+<h5 id="费马小定理"><a href="#费马小定理" class="headerlink" title="费马小定理"></a>费马小定理</h5><h6 id="定义-10"><a href="#定义-10" class="headerlink" title="定义"></a>定义</h6><p>若 $p$ 为素数，$\gcd(a, p) &#x3D; 1$，则 $a^{p - 1} \equiv 1 \pmod{p}$。</p>
+<p>另一个形式：对于任意整数 $a$，有 $a^p \equiv a \pmod{p}$。</p>
+<h6 id="证明-4"><a href="#证明-4" class="headerlink" title="证明"></a>证明</h6><p>设一个质数为 $p$，我们取一个不为 $p$ 倍数的数 $a$。</p>
+<p>构造一个序列：$A&#x3D;{1,2,3\dots,p-1}$，这个序列有着这样一个性质：</p>
+<p>$$<br>\prod_{i&#x3D;1}^{p-1}\space A_i\equiv\prod_{i&#x3D;1}^{p-1} (A_i\times a) \pmod p<br>$$</p>
+<p>证明：</p>
+<p>$$<br>\because (A_i,p)&#x3D;1,(A_i\times a,p)&#x3D;1<br>$$</p>
+<p>又因为每一个 $A_i\times a \pmod p$ 都是独一无二的，且 $A_i\times a \pmod p &lt; p$</p>
+<p>得证（每一个 $A_i\times a$ 都对应了一个 $A_i$）</p>
+<p>设 $f&#x3D;(p-1)!$, 则 $f\equiv a\times A_1\times a\times A_2\times a \times A_3 \dots \times  A_{p-1} \pmod p$</p>
+<p>$$<br>\begin{aligned}<br>a^{p-1}\times f &amp;\equiv f \pmod p \<br>a^{p-1} &amp;\equiv 1 \pmod p<br>\end{aligned}<br>$$</p>
+<p>证毕。</p>
+<p>也可用归纳法证明：</p>
+<p>显然 $1^p\equiv 1\pmod p$，假设 $a^p\equiv a\pmod p$ 成立，那么通过二项式定理有</p>
+<p>$$<br>(a+1)^p&#x3D;a^p+\binom{p}{1}a^{p-1}+\binom{p}{2}a^{p-2}+\cdots +\binom{p}{p-1}a+1<br>$$</p>
+<p>因为 $\binom{p}{k}&#x3D;\frac{p(p-1)\cdots (p-k+1)}{k!}$ 对于 $1\leq k\leq p-1$ 成立，在模 $p$ 意义下 $\binom{p}{1}\equiv \binom{p}{2}\equiv \cdots \equiv \binom{p}{p-1}\equiv 0\pmod p$，那么 $(a+1)^p \equiv a^p +1\pmod p$，将 $a^p\equiv a\pmod p$ 带入得 $(a+1)^p\equiv a+1\pmod p$ 得证。</p>
+</div></section><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>Hsad</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="https://hsad.xyz/2025/02/11/%E5%AF%86%E7%A0%81%E5%AD%A6%E7%9A%84%E6%95%B0%E8%AE%BA%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E2%80%94%E2%80%94%E6%95%B4%E9%99%A4%E6%80%A7%E5%92%8C%E5%90%8C%E4%BD%99/" title="密码学的数论基础知识——整除性和同余">https://hsad.xyz/2025/02/11/%E5%AF%86%E7%A0%81%E5%AD%A6%E7%9A%84%E6%95%B0%E8%AE%BA%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E2%80%94%E2%80%94%E6%95%B4%E9%99%A4%E6%80%A7%E5%92%8C%E5%90%8C%E4%BD%99/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 "><span class="icon iconify" data-icon="ri:creative-commons-line"></span><span class="icon iconify" data-icon="ri:creative-commons-by-line"></span><span class="icon iconify" data-icon="ri:creative-commons-nc-line"></span><span class="icon iconify" data-icon="ri:creative-commons-sa-line"></span></a> 许可协议。</li></ul></article><div class="post-nav"><div class="post-nav-item"><a class="post-nav-prev" href="/2025/02/13/%E5%AF%86%E7%A0%81%E5%AD%A6%E7%9A%84%E6%95%B0%E8%AE%BA%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E2%80%94%E2%80%94%E4%BA%8C%E6%AC%A1%E5%89%A9%E4%BD%99%E5%92%8C%E8%BF%9E%E5%88%86%E6%95%B0/" rel="prev" title="密码学的数论基础知识——二次剩余和连分数"><span class="icon iconify" data-icon="ri:arrow-left-s-line"></span><span class="post-nav-text">密码学的数论基础知识——二次剩余和连分数</span></a></div><div class="post-nav-item"><a class="post-nav-next" href="/2025/01/25/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96Commons-Collections%E7%AF%8703-CC3%E9%93%BE/" rel="next" title="Java反序列化Commons-Collections篇03-CC3链"><span class="post-nav-text">Java反序列化Commons-Collections篇03-CC3链</span><span class="icon iconify" data-icon="ri:arrow-right-s-line"></span></a></div></div></div><div class="hty-card" id="comment"></div></main><footer class="sidebar-translate" id="footer"><div class="copyright"><span>&copy; 2019 – 2025 </span><span class="with-love" id="animate"><span class="icon iconify" data-icon="ri:cloud-line"></span></span><span class="author"> Hsad</span></div><div class="powered"><span>由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v7.2.0</span><span class="footer-separator">|</span><span>主题 - <a rel="noopener" href="https://github.com/YunYouJun/hexo-theme-yun" target="_blank"><span>Yun</span></a> v1.10.11</span></div><div class="footer-support"><span>本网站由</span><a class="footer-support-logo" href="https://www.dkdun.cn/" target="blank" title="林枫云"><img height="30" src="https://www.dkdun.cn/themes/web/www/upload/local673d5fc9c789c.png" alt="林枫云"></a><span>提供赞助</span></div></footer></div><a class="hty-icon-button" id="back-to-top" aria-label="back-to-top" href="#"><span class="icon iconify" data-icon="ri:arrow-up-s-line"></span><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#0078E7" stroke-width="2" stroke-linecap="round"></circle></svg></a><script src="https://fastly.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script><script>const images = [...document.querySelectorAll('.markdown-body img')]
+mediumZoom(images)</script><style>.medium-zoom-image {
+  z-index: 99;
+}</style></body></html>
