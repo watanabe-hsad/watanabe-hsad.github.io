@@ -1,0 +1,160 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#0078E7"><meta name="author" content="Hsad"><meta name="copyright" content="Hsad"><meta name="generator" content="Hexo 7.2.0"><meta name="theme" content="hexo-theme-yun"><title>一些安全面试经验 | Hsad's Blog</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;display=swap" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/star-markdown-css@0.4.1/dist/yun/yun-markdown.min.css"><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/prism-theme-vars/base.css"><script src="https://fastly.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><script>function initScrollReveal() {
+  [".post-card",".markdown-body img"].forEach((target)=> {
+    ScrollReveal().reveal(target);
+  })
+}
+document.addEventListener("DOMContentLoaded", initScrollReveal);
+document.addEventListener("pjax:success", initScrollReveal);
+</script><link rel="icon" type="image/png" href="/favicon.ico"><link rel="mask-icon" href="/favicon.ico" color="#0078E7"><link rel="preload" href="/css/hexo-theme-yun.css" as="style"><link rel="prefetch" href="/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="preconnect" href="https://fastly.jsdelivr.net/npm/" crossorigin><script id="yun-config">
+    window.Yun = {}
+    window.CONFIG = {"hostname":"hsad.xyz","root":"/","title":["watanabe","Blog"],"version":"1.10.11","mode":"auto","copycode":true,"page":{"isPost":true},"i18n":{"placeholder":"搜索...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）"},"anonymous_image":"https://cdn.yunyoujun.cn/img/avatar/none.jpg","say":{"api":"https://el-bot-api.vercel.app/api/words/young"},"fireworks":{"colors":null},"vendors":{"host":"https://fastly.jsdelivr.net/npm/","darken":"https://fastly.jsdelivr.net/npm/darken@1.5.0"}};
+  </script><link rel="stylesheet" href="/css/hexo-theme-yun.css"><script src="/js/hexo-theme-yun.js" type="module"></script><meta name="description" content="很多细节已经记不清了，就把还能回忆起来的面试流程简单汇总一下，供后续同学参考。   一、长亭安服 - 一面 自我介绍常规开场，重点突出项目与挖洞经历。  SQL 注入    原理、分类（Union &#x2F; Blind &#x2F; Time &#x2F; Error &#x2F; Stacked …）   常见修复：预编译、ORM、WAF、最小权限、输入校验。   SSRF    业务场景">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一些安全面试经验">
+<meta property="og:url" content="https://hsad.xyz/2025/09/04/%E4%B8%80%E4%BA%9B%E5%AE%89%E5%85%A8%E9%9D%A2%E8%AF%95%E7%BB%8F%E9%AA%8C/index.html">
+<meta property="og:site_name" content="Hsad&#39;s Blog">
+<meta property="og:description" content="很多细节已经记不清了，就把还能回忆起来的面试流程简单汇总一下，供后续同学参考。   一、长亭安服 - 一面 自我介绍常规开场，重点突出项目与挖洞经历。  SQL 注入    原理、分类（Union &#x2F; Blind &#x2F; Time &#x2F; Error &#x2F; Stacked …）   常见修复：预编译、ORM、WAF、最小权限、输入校验。   SSRF    业务场景">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-09-04T15:23:31.000Z">
+<meta property="article:modified_time" content="2025-09-04T15:41:00.818Z">
+<meta property="article:author" content="Hsad">
+<meta property="article:tag" content="面试">
+<meta name="twitter:card" content="summary"><script>(function() {
+  if (CONFIG.mode !== 'auto') return
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+  const setting = localStorage.getItem('darken-mode') || 'auto'
+  if (setting === 'dark' || (prefersDark && setting !== 'light'))
+    document.documentElement.classList.toggle('dark', true)
+})()</script></head><body><script src="https://code.iconify.design/2/2.1.1/iconify.min.js"></script><script>// Define global variable
+IconifyProviders = {
+  // Empty prefix: overwrite default API provider configuration
+  '': {
+    // Use custom API first, use Iconify public API as backup
+    resources: [
+        'https://api.iconify.design',
+    ],
+    // Wait for 1 second before switching API hosts
+    rotate: 1000,
+  },
+};</script><script defer src="https://fastly.jsdelivr.net/npm/animejs@latest"></script><script defer src="/js/ui/fireworks.js" type="module"></script><canvas class="fireworks"></canvas><div class="container"><a class="sidebar-toggle hty-icon-button" id="menu-btn"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><div class="sidebar-toggle sidebar-overlay"></div><aside class="sidebar"><script src="/js/sidebar.js" type="module"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button sidebar-nav-active" data-target="post-toc-wrap" title="文章目录"><span class="icon iconify" data-icon="ri:list-ordered"></span></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button" data-target="site-overview-wrap" title="站点概览"><span class="icon iconify" data-icon="ri:passport-line"></span></li></ul><div class="sidebar-panel" id="site-overview-wrap"><div class="site-info fix-top"><a class="site-author-avatar" href="/about/" title="Hsad"><img width="96" loading="lazy" src="/images/avatar.jpg" alt="Hsad"><span class="site-author-status" title="凉">☺️</span></a><div class="site-author-name"><a href="/about/">Hsad</a></div><span class="site-name">Hsad's Blog</span><sub class="site-subtitle">一个人的世界</sub><div class="site-description">翻着我们的照片 想念若隐若现</div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/" title="首页"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:home-4-line"></span></span></a><div class="site-state-item"><a href="/archives/" title="归档"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:archive-line"></span></span><span class="site-state-item-count">57</span></a></div><div class="site-state-item"><a href="/categories/" title="分类"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:folder-2-line"></span></span><span class="site-state-item-count">8</span></a></div><div class="site-state-item"><a href="/tags/" title="标签"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:price-tag-3-line"></span></span><span class="site-state-item-count">48</span></a></div><a class="site-state-item hty-icon-button" target="_blank" rel="noopener" href="https://yun.yunyoujun.cn" title="文档"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:settings-line"></span></span></a></nav><hr style="margin-bottom:0.5rem"><div class="links-of-author"><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://qm.qq.com/cgi-bin/qm/qr?k=EYiK7-b5ur1mWxbX7aV2AEBsuoW9c732" title="QQ" target="_blank" style="color:orange"><span class="icon iconify" data-icon="ri:qq-line"></span></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://github.com/watanabe-hsad" title="GitHub" target="_blank" style="color:#181717"><span class="icon iconify" data-icon="ri:github-line"></span></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="mailto:dubian.zzy@outlook.com" title="E-Mail" target="_blank" style="color:#8E71C1"><span class="icon iconify" data-icon="ri:mail-line"></span></a></div><hr style="margin:0.5rem 1rem"><div class="links"><a class="links-item hty-icon-button" href="/links/" title="我的小伙伴们" style="color:dodgerblue"><span class="icon iconify" data-icon="ri:genderless-line"></span></a></div><br><a class="links-item hty-icon-button" id="toggle-mode-btn" href="javascript:;" title="Mode" style="color: #f1cb64"><span class="icon iconify" data-icon="ri:contrast-2-line"></span></a></div><div class="sidebar-panel sidebar-panel-active" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E9%95%BF%E4%BA%AD%E5%AE%89%E6%9C%8D-%E4%B8%80%E9%9D%A2"><span class="toc-number">1.</span> <span class="toc-text">一、长亭安服 - 一面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E9%95%BF%E4%BA%AD%E5%AE%89%E6%9C%8D-%E4%BA%8C%E9%9D%A2%EF%BC%88%E6%B7%B1%E6%8C%96%E7%AE%80%E5%8E%86%EF%BC%89"><span class="toc-number">2.</span> <span class="toc-text">二、长亭安服 - 二面（深挖简历）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E5%A5%87%E5%AE%89%E4%BF%A1%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6-%E4%B8%80%E9%9D%A2"><span class="toc-number">3.</span> <span class="toc-text">三、奇安信安全研究 - 一面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E4%B8%8A%E6%B5%B7%E7%9F%A2%E5%AE%89%E7%A7%91%E6%8A%80-%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6%EF%BC%88%E7%BA%A2%E9%98%9F%E6%96%B9%E5%90%91%EF%BC%89%E4%B8%80%E9%9D%A2"><span class="toc-number">4.</span> <span class="toc-text">四、上海矢安科技 - 安全研究（红队方向）一面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9D%A2%E8%AF%95%E5%B0%8F%E7%BB%93"><span class="toc-number">5.</span> <span class="toc-text">面试小结</span></a></li></ol></div></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="hty-card post-block" itemscope itemtype="https://schema.org/Article" style="--smc-primary:#0078E7;"><link itemprop="mainEntityOfPage" href="https://hsad.xyz/2025/09/04/%E4%B8%80%E4%BA%9B%E5%AE%89%E5%85%A8%E9%9D%A2%E8%AF%95%E7%BB%8F%E9%AA%8C/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="Hsad"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="Hsad's Blog"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">一些安全面试经验</h1><div class="post-meta"><div class="post-time"><span class="post-meta-item-icon"><span class="icon iconify" data-icon="ri:calendar-line"></span></span> <time title="创建时间：2025-09-04 23:23:31" itemprop="dateCreated datePublished" datetime="2025-09-04T23:23:31+08:00">2025-09-04</time></div><div class="post-classify"><span class="post-category"> <span class="post-meta-item-icon" style="margin-right:3px;"><span class="icon iconify" data-icon="ri:folder-line"></span></span><span itemprop="about" itemscope itemtype="https://schema.org/Thing"><a class="category-item" href="/categories/%E5%AE%89%E5%85%A8%E7%9B%B8%E5%85%B3/" style="--text-color:var(--hty-text-color)" itemprop="url" rel="index"><span itemprop="text">安全相关</span></a></span></span><span class="post-tag"><span class="post-meta-divider">-</span><a class="tag-item" href="/tags/%E9%9D%A2%E8%AF%95/" style="--text-color:var(--hty-text-color)"><span class="post-meta-item-icon"><span class="icon iconify" data-icon="ri:price-tag-3-line"></span></span><span class="tag-name">面试</span></a></span></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content markdown-body"><blockquote>
+<p>很多细节已经记不清了，就把还能回忆起来的面试流程简单汇总一下，供后续同学参考。</p>
+</blockquote>
+<hr>
+<h2 id="一、长亭安服-一面"><a href="#一、长亭安服-一面" class="headerlink" title="一、长亭安服 - 一面"></a>一、长亭安服 - 一面</h2><ol>
+<li><p><strong>自我介绍</strong><br>常规开场，重点突出项目与挖洞经历。</p>
+</li>
+<li><p><strong>SQL 注入</strong>  </p>
+<ul>
+<li>原理、分类（Union &#x2F; Blind &#x2F; Time &#x2F; Error &#x2F; Stacked …）  </li>
+<li>常见修复：预编译、ORM、WAF、最小权限、输入校验。</li>
+</ul>
+</li>
+<li><p><strong>SSRF</strong>  </p>
+<ul>
+<li>业务场景：内网扫描、云 metadata、PDF&#x2F;图片渲染、WebHook 等  </li>
+<li>利用思路：gopher&#x2F;file&#x2F;http 协议组合拳、DNS rebinding、BLIND SSRF 回显。</li>
+</ul>
+</li>
+<li><p><strong>条件竞争</strong>  </p>
+<ul>
+<li>典型场景：优惠券重复领取、文件上传覆盖、余额提现并发。  </li>
+<li>检测：Burp Turbo Intruder、自定义脚本打时间差。</li>
+</ul>
+</li>
+<li><p><strong>印象深刻的洞</strong><br>挑一个能体现“思路”或“影响力”的讲，最好量化危害（如可横向移动、可 getshell）。</p>
+</li>
+<li><p><strong>其他 Web 漏洞速答</strong><br>XSS、CSRF、XXE、反序列化、文件上传、逻辑绕过…… 把 OWASP Top10 快速过一遍即可。</p>
+</li>
+</ol>
+<hr>
+<h2 id="二、长亭安服-二面（深挖简历）"><a href="#二、长亭安服-二面（深挖简历）" class="headerlink" title="二、长亭安服 - 二面（深挖简历）"></a>二、长亭安服 - 二面（深挖简历）</h2><ol>
+<li><p><strong>自我介绍</strong><br>一面侧重“广度”，二面侧重“深度”，提前把简历上每条经历准备 STAR 模板。</p>
+</li>
+<li><p><strong>代码审计</strong>  </p>
+<ul>
+<li>如何定位入口（路由、过滤器、控制器）  </li>
+<li>如何追踪危险函数（exec、unserialize、eval、FileUtils…）  </li>
+<li>如何写 PoC、如何验证无回显 RCE。</li>
+</ul>
+</li>
+<li><p><strong>PHP 魔术方法</strong><br><code>__construct/__destruct/__toString/__call/__callStatic/__get/__set/__wakeup/__invoke</code><br>结合 POP 链构造，现场画一张简单的调用图。</p>
+</li>
+<li><p><strong>免杀</strong>  </p>
+<ul>
+<li>静态：变量拆分、花指令、加密壳、等价替换  </li>
+<li>动态：Syscall、API 混淆、父进程欺骗、Sleep 延迟  </li>
+<li>对抗：VT 打分、EDR 日志、人工回看。</li>
+</ul>
+</li>
+<li><p><strong>Cobalt Strike</strong>  </p>
+<ul>
+<li>基本流程：Beacon 生成 → staging → 流量特征（checksum8、metasploit 默认证书）  </li>
+<li>二次开发：自定义 C2 Profile、Malleable C2、Sleep_mask、SPAWN&#x2F;INJECT 过程。</li>
+</ul>
+</li>
+<li><p><strong>印象深刻的 CTF 经历</strong><br>选一道体现“思路”或“非预期”解法的题，最好能把赛题环境&#x2F;源码&#x2F;补丁讲清楚。</p>
+</li>
+<li><p><strong>印象深刻的挖洞经历</strong><br>同 1.5，但要比一面更细：资产收集 → 攻击面分析 → 漏洞利用 → 后渗透 → 修复建议。</p>
+</li>
+</ol>
+<hr>
+<h2 id="三、奇安信安全研究-一面"><a href="#三、奇安信安全研究-一面" class="headerlink" title="三、奇安信安全研究 - 一面"></a>三、奇安信安全研究 - 一面</h2><ol>
+<li><p><strong>自我介绍</strong><br>研究岗更看重“产出”，提前把 CVE&#x2F;CNVD&#x2F;公开演讲&#x2F;论文&#x2F;工具亮出来。</p>
+</li>
+<li><p><strong>漏洞挖掘方法论</strong>  </p>
+<ul>
+<li>黑盒：资产测绘 → 业务梳理 → 异常点 fuzz  </li>
+<li>白盒：静态污点分析 → 人工 review → 自动化扫描  </li>
+<li>灰盒：插桩 + fuzz（AFL&#x2F;QEMU&#x2F;WinAFL）。</li>
+</ul>
+</li>
+<li><p><strong>OWASP Top10 2021</strong><br>快速背一遍新榜单，重点准备 A03（Injection）与 A01（Broken Access Control）案例。</p>
+</li>
+<li><p><strong>越权</strong>  </p>
+<ul>
+<li>IDOR：&#x2F;api&#x2F;user&#x2F;123 → 124  </li>
+<li>横向越权：Cookie 只鉴权未鉴角色  </li>
+<li>纵向越权：低权 token 直接调用高权接口  </li>
+<li>批量检测：Burp Autorize、自写 Python + 协程。</li>
+</ul>
+</li>
+<li><p><strong>JWT 常见加密&#x2F;攻击</strong>  </p>
+<ul>
+<li>加密算法：HS256&#x2F;RS256&#x2F;ES256&#x2F;PS256  </li>
+<li>攻击面：算法混淆（none&#x2F;HS256→RS256）、密钥爆破、kid 伪造、jwk 注入、信息泄露。</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="四、上海矢安科技-安全研究（红队方向）一面"><a href="#四、上海矢安科技-安全研究（红队方向）一面" class="headerlink" title="四、上海矢安科技 - 安全研究（红队方向）一面"></a>四、上海矢安科技 - 安全研究（红队方向）一面</h2><ol>
+<li><p><strong>C2 通信原理</strong><br>Beacon ←→ Team Server，DNS&#x2F;HTTP&#x2F;HTTPS&#x2F;SMB 通道，心跳抖动，流量分片。</p>
+</li>
+<li><p><strong>是否自己写过 Beacon</strong><br>如有，把 GitHub 地址或实现思路（加密、任务队列、异步回传）准备好。</p>
+</li>
+<li><p><strong>Shellcode 加载方式</strong>  </p>
+<ul>
+<li>经典：CreateThread、CreateRemoteThread、SetThreadContext、EnumTimeFormatsEx  </li>
+<li>进阶：SRDI、Donut、Syscall、Early Bird、Thread Hijacking、HWBP 绕过。</li>
+</ul>
+</li>
+<li><p><strong>免杀实战</strong><br>静态杀软 0&#x2F;70 → 动态 EDR 绕过 → AMSI&#x2F;ETW 补丁 → 最终 CS 上线截图。</p>
+</li>
+<li><p><strong>C2 隐匿</strong>  </p>
+<ul>
+<li>前置：CDN 域前置、CloudFlare Workers、DNS-over-HTTPS  </li>
+<li>后置：流量伪装（JA3&#x2F;JA3S 随机化）、证书固定、重定向器、数据压缩&#x2F;加密。</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="面试小结"><a href="#面试小结" class="headerlink" title="面试小结"></a>面试小结</h2><ol>
+<li><strong>广度靠总结</strong>：把 OWASP、ATT&amp;CK、CVE 高频考点整理成脑图。  </li>
+<li><strong>深度靠项目</strong>：简历上的每个洞、每段代码、每场 CTF 都要能自圆其说。  </li>
+<li><strong>表达靠演练</strong>：自己计时 3-5 分钟把“最有含金量”的经历讲给同事&#x2F;镜子听。  </li>
+<li><strong>心态靠复盘</strong>：面完立刻记录问题→查资料→写博客，下次遇到同岗直接秒答。</li>
+</ol>
+<p>祝大家都能收获心仪的 offer，面试顺利！</p>
+</div></section><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>Hsad</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="https://hsad.xyz/2025/09/04/%E4%B8%80%E4%BA%9B%E5%AE%89%E5%85%A8%E9%9D%A2%E8%AF%95%E7%BB%8F%E9%AA%8C/" title="一些安全面试经验">https://hsad.xyz/2025/09/04/%E4%B8%80%E4%BA%9B%E5%AE%89%E5%85%A8%E9%9D%A2%E8%AF%95%E7%BB%8F%E9%AA%8C/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 "><span class="icon iconify" data-icon="ri:creative-commons-line"></span><span class="icon iconify" data-icon="ri:creative-commons-by-line"></span><span class="icon iconify" data-icon="ri:creative-commons-nc-line"></span><span class="icon iconify" data-icon="ri:creative-commons-sa-line"></span></a> 许可协议。</li></ul></article><div class="post-nav"><div class="post-nav-item"></div><div class="post-nav-item"><a class="post-nav-next" href="/2025/08/06/GoPhantom/" rel="next" title="GoPhantom - 一款专为渗透测试打造的Go语言钓鱼捆绑工具"><span class="post-nav-text">GoPhantom - 一款专为渗透测试打造的Go语言钓鱼捆绑工具</span><span class="icon iconify" data-icon="ri:arrow-right-s-line"></span></a></div></div></div><div class="hty-card" id="comment"></div></main><footer class="sidebar-translate" id="footer"><div class="copyright"><span>&copy; 2019 – 2025 </span><span class="with-love" id="animate"><span class="icon iconify" data-icon="ri:cloud-line"></span></span><span class="author"> Hsad</span></div><div class="powered"><span>由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v7.2.0</span><span class="footer-separator">|</span><span>主题 - <a rel="noopener" href="https://github.com/YunYouJun/hexo-theme-yun" target="_blank"><span>Yun</span></a> v1.10.11</span></div><div class="footer-support"><span>本网站由</span><a class="footer-support-logo" href="https://www.dkdun.cn/" target="blank" title="林枫云"><img height="30" src="https://www.dkdun.cn/themes/web/www/upload/local673d5fc9c789c.png" alt="林枫云"></a><span>提供赞助</span></div></footer></div><a class="hty-icon-button" id="back-to-top" aria-label="back-to-top" href="#"><span class="icon iconify" data-icon="ri:arrow-up-s-line"></span><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#0078E7" stroke-width="2" stroke-linecap="round"></circle></svg></a><script src="https://fastly.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script><script>const images = [...document.querySelectorAll('.markdown-body img')]
+mediumZoom(images)</script><style>.medium-zoom-image {
+  z-index: 99;
+}</style></body></html>
