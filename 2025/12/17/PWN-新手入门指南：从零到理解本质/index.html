@@ -1,0 +1,865 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#0078E7"><meta name="author" content="Hsad"><meta name="copyright" content="Hsad"><meta name="generator" content="Hexo 7.2.0"><meta name="theme" content="hexo-theme-yun"><title>PWN 新手入门指南：从零到理解本质 | Hsad's Blog</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;display=swap" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/star-markdown-css@0.4.1/dist/yun/yun-markdown.min.css"><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/prism-theme-vars/base.css"><script src="https://fastly.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><script>function initScrollReveal() {
+  [".post-card",".markdown-body img"].forEach((target)=> {
+    ScrollReveal().reveal(target);
+  })
+}
+document.addEventListener("DOMContentLoaded", initScrollReveal);
+document.addEventListener("pjax:success", initScrollReveal);
+</script><link rel="icon" type="image/png" href="/favicon.ico"><link rel="mask-icon" href="/favicon.ico" color="#0078E7"><link rel="preload" href="/css/hexo-theme-yun.css" as="style"><link rel="prefetch" href="/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="preconnect" href="https://fastly.jsdelivr.net/npm/" crossorigin><script id="yun-config">
+    window.Yun = {}
+    window.CONFIG = {"hostname":"hsad.xyz","root":"/","title":["watanabe","Blog"],"version":"1.10.11","mode":"auto","copycode":true,"page":{"isPost":true},"i18n":{"placeholder":"搜索...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）"},"anonymous_image":"https://cdn.yunyoujun.cn/img/avatar/none.jpg","say":{"api":"https://el-bot-api.vercel.app/api/words/young"},"fireworks":{"colors":null},"vendors":{"host":"https://fastly.jsdelivr.net/npm/","darken":"https://fastly.jsdelivr.net/npm/darken@1.5.0"}};
+  </script><link rel="stylesheet" href="/css/hexo-theme-yun.css"><script src="/js/hexo-theme-yun.js" type="module"></script><meta name="description" content="PWN 新手入门指南：从零到理解本质 写在前面：这份指南的目标是让你真正理解 PWN 是什么，而不是让你背诵一堆技术名词。当你读完这份文档，你应该能回答：我在学什么？为什么要学这些？学完能做什么？   目录 第一章：PWN 的本质——你到底在学什么 第二章：计算机的真相——程序是如何运行的 第三章：漏洞的本质——为什么程序会被攻击 第四章：学习路线图——你的升级打怪之路 第五章：核心知识点详解 第">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PWN 新手入门指南：从零到理解本质">
+<meta property="og:url" content="https://hsad.xyz/2025/12/17/PWN-%E6%96%B0%E6%89%8B%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97%EF%BC%9A%E4%BB%8E%E9%9B%B6%E5%88%B0%E7%90%86%E8%A7%A3%E6%9C%AC%E8%B4%A8/index.html">
+<meta property="og:site_name" content="Hsad&#39;s Blog">
+<meta property="og:description" content="PWN 新手入门指南：从零到理解本质 写在前面：这份指南的目标是让你真正理解 PWN 是什么，而不是让你背诵一堆技术名词。当你读完这份文档，你应该能回答：我在学什么？为什么要学这些？学完能做什么？   目录 第一章：PWN 的本质——你到底在学什么 第二章：计算机的真相——程序是如何运行的 第三章：漏洞的本质——为什么程序会被攻击 第四章：学习路线图——你的升级打怪之路 第五章：核心知识点详解 第">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-12-17T15:01:39.000Z">
+<meta property="article:modified_time" content="2025-12-17T15:04:13.217Z">
+<meta property="article:author" content="Hsad">
+<meta property="article:tag" content="pwn">
+<meta name="twitter:card" content="summary"><script>(function() {
+  if (CONFIG.mode !== 'auto') return
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+  const setting = localStorage.getItem('darken-mode') || 'auto'
+  if (setting === 'dark' || (prefersDark && setting !== 'light'))
+    document.documentElement.classList.toggle('dark', true)
+})()</script></head><body><script src="https://code.iconify.design/2/2.1.1/iconify.min.js"></script><script>// Define global variable
+IconifyProviders = {
+  // Empty prefix: overwrite default API provider configuration
+  '': {
+    // Use custom API first, use Iconify public API as backup
+    resources: [
+        'https://api.iconify.design',
+    ],
+    // Wait for 1 second before switching API hosts
+    rotate: 1000,
+  },
+};</script><script defer src="https://fastly.jsdelivr.net/npm/animejs@latest"></script><script defer src="/js/ui/fireworks.js" type="module"></script><canvas class="fireworks"></canvas><div class="container"><a class="sidebar-toggle hty-icon-button" id="menu-btn"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><div class="sidebar-toggle sidebar-overlay"></div><aside class="sidebar"><script src="/js/sidebar.js" type="module"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button sidebar-nav-active" data-target="post-toc-wrap" title="文章目录"><span class="icon iconify" data-icon="ri:list-ordered"></span></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button" data-target="site-overview-wrap" title="站点概览"><span class="icon iconify" data-icon="ri:passport-line"></span></li></ul><div class="sidebar-panel" id="site-overview-wrap"><div class="site-info fix-top"><a class="site-author-avatar" href="/about/" title="Hsad"><img width="96" loading="lazy" src="/images/avatar.jpg" alt="Hsad"><span class="site-author-status" title="凉">☺️</span></a><div class="site-author-name"><a href="/about/">Hsad</a></div><span class="site-name">Hsad's Blog</span><sub class="site-subtitle">一个人的世界</sub><div class="site-description">翻着我们的照片 想念若隐若现</div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/" title="首页"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:home-4-line"></span></span></a><div class="site-state-item"><a href="/archives/" title="归档"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:archive-line"></span></span><span class="site-state-item-count">59</span></a></div><div class="site-state-item"><a href="/categories/" title="分类"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:folder-2-line"></span></span><span class="site-state-item-count">8</span></a></div><div class="site-state-item"><a href="/tags/" title="标签"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:price-tag-3-line"></span></span><span class="site-state-item-count">49</span></a></div><a class="site-state-item hty-icon-button" target="_blank" rel="noopener" href="https://yun.yunyoujun.cn" title="文档"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:settings-line"></span></span></a></nav><hr style="margin-bottom:0.5rem"><div class="links-of-author"><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://qm.qq.com/cgi-bin/qm/qr?k=EYiK7-b5ur1mWxbX7aV2AEBsuoW9c732" title="QQ" target="_blank" style="color:orange"><span class="icon iconify" data-icon="ri:qq-line"></span></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://github.com/watanabe-hsad" title="GitHub" target="_blank" style="color:#181717"><span class="icon iconify" data-icon="ri:github-line"></span></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="mailto:dubian.zzy@outlook.com" title="E-Mail" target="_blank" style="color:#8E71C1"><span class="icon iconify" data-icon="ri:mail-line"></span></a></div><hr style="margin:0.5rem 1rem"><div class="links"><a class="links-item hty-icon-button" href="/links/" title="我的小伙伴们" style="color:dodgerblue"><span class="icon iconify" data-icon="ri:genderless-line"></span></a></div><br><a class="links-item hty-icon-button" id="toggle-mode-btn" href="javascript:;" title="Mode" style="color: #f1cb64"><span class="icon iconify" data-icon="ri:contrast-2-line"></span></a></div><div class="sidebar-panel sidebar-panel-active" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#PWN-%E6%96%B0%E6%89%8B%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97%EF%BC%9A%E4%BB%8E%E9%9B%B6%E5%88%B0%E7%90%86%E8%A7%A3%E6%9C%AC%E8%B4%A8"><span class="toc-number">1.</span> <span class="toc-text">PWN 新手入门指南：从零到理解本质</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%AE%E5%BD%95"><span class="toc-number">1.1.</span> <span class="toc-text">目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E7%AB%A0%EF%BC%9APWN-%E7%9A%84%E6%9C%AC%E8%B4%A8%E2%80%94%E2%80%94%E4%BD%A0%E5%88%B0%E5%BA%95%E5%9C%A8%E5%AD%A6%E4%BB%80%E4%B9%88"><span class="toc-number">1.2.</span> <span class="toc-text">第一章：PWN 的本质——你到底在学什么</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E4%B8%80%E5%8F%A5%E8%AF%9D%E5%AE%9A%E4%B9%89"><span class="toc-number">1.2.1.</span> <span class="toc-text">1.1 一句话定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E4%B8%BA%E4%BB%80%E4%B9%88%E5%8F%AB-%E2%80%9CPWN%E2%80%9D%EF%BC%9F"><span class="toc-number">1.2.2.</span> <span class="toc-text">1.2 为什么叫 “PWN”？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-PWN-%E7%9A%84%E6%9C%AC%E8%B4%A8%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">1.2.3.</span> <span class="toc-text">1.3 PWN 的本质是什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-4-PWN-%E7%9A%84%E6%9C%80%E7%BB%88%E7%9B%AE%E6%A0%87"><span class="toc-number">1.2.4.</span> <span class="toc-text">1.4 PWN 的最终目标</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E7%AB%A0%EF%BC%9A%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%9A%84%E7%9C%9F%E7%9B%B8%E2%80%94%E2%80%94%E7%A8%8B%E5%BA%8F%E6%98%AF%E5%A6%82%E4%BD%95%E8%BF%90%E8%A1%8C%E7%9A%84"><span class="toc-number">1.3.</span> <span class="toc-text">第二章：计算机的真相——程序是如何运行的</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E7%A8%8B%E5%BA%8F%E7%9A%84%E4%B8%80%E7%94%9F"><span class="toc-number">1.3.1.</span> <span class="toc-text">2.1 程序的一生</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E8%BF%9B%E7%A8%8B%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80%E2%80%94%E2%80%94PWN-%E7%9A%84%E6%88%98%E5%9C%BA"><span class="toc-number">1.3.2.</span> <span class="toc-text">2.2 进程内存布局——PWN 的战场</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E7%9A%84%E7%A7%98%E5%AF%86%E2%80%94%E2%80%94%E6%A0%88%E5%B8%A7"><span class="toc-number">1.3.3.</span> <span class="toc-text">2.3 函数调用的秘密——栈帧</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-%E5%AF%84%E5%AD%98%E5%99%A8%E2%80%94%E2%80%94CPU-%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8F%B0"><span class="toc-number">1.3.4.</span> <span class="toc-text">2.4 寄存器——CPU 的工作台</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-5-%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E2%80%94%E2%80%94%E4%B8%8E%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AF%B9%E8%AF%9D"><span class="toc-number">1.3.5.</span> <span class="toc-text">2.5 系统调用——与操作系统对话</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E7%AB%A0%EF%BC%9A%E6%BC%8F%E6%B4%9E%E7%9A%84%E6%9C%AC%E8%B4%A8%E2%80%94%E2%80%94%E4%B8%BA%E4%BB%80%E4%B9%88%E7%A8%8B%E5%BA%8F%E4%BC%9A%E8%A2%AB%E6%94%BB%E5%87%BB"><span class="toc-number">1.4.</span> <span class="toc-text">第三章：漏洞的本质——为什么程序会被攻击</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E6%BC%8F%E6%B4%9E%E4%BB%8E%E4%BD%95%E8%80%8C%E6%9D%A5%EF%BC%9F"><span class="toc-number">1.4.1.</span> <span class="toc-text">3.1 漏洞从何而来？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E6%BC%8F%E6%B4%9E%E7%9A%84%E5%88%86%E7%B1%BB"><span class="toc-number">1.4.2.</span> <span class="toc-text">3.2 漏洞的分类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8%E7%9A%84%E9%80%9A%E7%94%A8%E6%A8%A1%E5%9E%8B"><span class="toc-number">1.4.3.</span> <span class="toc-text">3.3 漏洞利用的通用模型</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E7%AB%A0%EF%BC%9A%E5%AD%A6%E4%B9%A0%E8%B7%AF%E7%BA%BF%E5%9B%BE%E2%80%94%E2%80%94%E4%BD%A0%E7%9A%84%E5%8D%87%E7%BA%A7%E6%89%93%E6%80%AA%E4%B9%8B%E8%B7%AF"><span class="toc-number">1.5.</span> <span class="toc-text">第四章：学习路线图——你的升级打怪之路</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E5%AE%8C%E6%95%B4%E8%B7%AF%E7%BA%BF%E5%9B%BE"><span class="toc-number">1.5.1.</span> <span class="toc-text">4.1 完整路线图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E5%9F%BA%E7%A1%80%E9%98%B6%E6%AE%B5%E8%AF%A6%E8%A7%A3%EF%BC%881-3%E4%B8%AA%E6%9C%88%EF%BC%89"><span class="toc-number">1.5.2.</span> <span class="toc-text">4.2 基础阶段详解（1-3个月）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#4-2-1-C-%E8%AF%AD%E8%A8%80%EF%BC%881-2-%E5%91%A8%EF%BC%89"><span class="toc-number">1.5.2.1.</span> <span class="toc-text">4.2.1 C 语言（1-2 周）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-2-2-Linux-%E5%9F%BA%E7%A1%80%EF%BC%881-%E5%91%A8%EF%BC%89"><span class="toc-number">1.5.2.2.</span> <span class="toc-text">4.2.2 Linux 基础（1 周）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-2-3-%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%EF%BC%882-3-%E5%91%A8%EF%BC%89"><span class="toc-number">1.5.2.3.</span> <span class="toc-text">4.2.3 汇编语言（2-3 周）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-2-4-GDB-%E8%B0%83%E8%AF%95%EF%BC%881-%E5%91%A8%EF%BC%89"><span class="toc-number">1.5.2.4.</span> <span class="toc-text">4.2.4 GDB 调试（1 周）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-2-5-%E6%A0%88%E6%BA%A2%E5%87%BA%E5%9F%BA%E7%A1%80%EF%BC%882-3-%E5%91%A8%EF%BC%89"><span class="toc-number">1.5.2.5.</span> <span class="toc-text">4.2.5 栈溢出基础（2-3 周）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-%E8%BF%9B%E9%98%B6%E9%98%B6%E6%AE%B5%E8%AF%A6%E8%A7%A3%EF%BC%883-6%E4%B8%AA%E6%9C%88%EF%BC%89"><span class="toc-number">1.5.3.</span> <span class="toc-text">4.3 进阶阶段详解（3-6个月）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#4-3-1-%E4%BF%9D%E6%8A%A4%E6%9C%BA%E5%88%B6"><span class="toc-number">1.5.3.1.</span> <span class="toc-text">4.3.1 保护机制</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-3-2-ROP-%E6%8A%80%E6%9C%AF%EF%BC%88Return-Oriented-Programming%EF%BC%89"><span class="toc-number">1.5.3.2.</span> <span class="toc-text">4.3.2 ROP 技术（Return Oriented Programming）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-3-3-%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E"><span class="toc-number">1.5.3.3.</span> <span class="toc-text">4.3.3 格式化字符串漏洞</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-3-4-%E5%A0%86%E5%88%A9%E7%94%A8%E5%9F%BA%E7%A1%80"><span class="toc-number">1.5.3.4.</span> <span class="toc-text">4.3.4 堆利用基础</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-4-%E9%AB%98%E7%BA%A7%E9%98%B6%E6%AE%B5%EF%BC%886%E4%B8%AA%E6%9C%88-%EF%BC%89"><span class="toc-number">1.5.4.</span> <span class="toc-text">4.4 高级阶段（6个月+）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E7%AB%A0%EF%BC%9A%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86%E7%82%B9%E8%AF%A6%E8%A7%A3"><span class="toc-number">1.6.</span> <span class="toc-text">第五章：核心知识点详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-%E6%A0%88%E6%BA%A2%E5%87%BA%E2%80%94%E2%80%94PWN-%E7%9A%84%E5%85%A5%E9%97%A8%E4%B9%8B%E9%81%93"><span class="toc-number">1.6.1.</span> <span class="toc-text">5.1 栈溢出——PWN 的入门之道</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E5%8F%91%E7%94%9F%E6%A0%88%E6%BA%A2%E5%87%BA%EF%BC%9F"><span class="toc-number">1.6.1.1.</span> <span class="toc-text">为什么会发生栈溢出？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E5%8E%9F%E7%90%86"><span class="toc-number">1.6.1.2.</span> <span class="toc-text">利用原理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%81%8F%E7%A7%BB%E8%AE%A1%E7%AE%97%E6%96%B9%E6%B3%95"><span class="toc-number">1.6.1.3.</span> <span class="toc-text">偏移计算方法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-ROP-%E6%8A%80%E6%9C%AF%E2%80%94%E2%80%94%E7%BB%95%E8%BF%87-NX-%E7%9A%84%E8%89%BA%E6%9C%AF"><span class="toc-number">1.6.2.</span> <span class="toc-text">5.2 ROP 技术——绕过 NX 的艺术</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-Gadget%EF%BC%9F"><span class="toc-number">1.6.2.1.</span> <span class="toc-text">什么是 Gadget？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ROP-Chain-%E6%9E%84%E9%80%A0"><span class="toc-number">1.6.2.2.</span> <span class="toc-text">ROP Chain 构造</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E2%80%94%E2%80%94%E8%AF%BB%E5%86%99%E4%BB%BB%E6%84%8F%E5%86%85%E5%AD%98"><span class="toc-number">1.6.3.</span> <span class="toc-text">5.3 格式化字符串——读写任意内存</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86"><span class="toc-number">1.6.3.1.</span> <span class="toc-text">基本原理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E6%8A%80%E5%B7%A7"><span class="toc-number">1.6.3.2.</span> <span class="toc-text">利用技巧</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-4-SROP%E2%80%94%E2%80%94Sigreturn-Oriented-Programming"><span class="toc-number">1.6.4.</span> <span class="toc-text">5.4 SROP——Sigreturn Oriented Programming</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8E%9F%E7%90%86"><span class="toc-number">1.6.4.1.</span> <span class="toc-text">原理</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-5-%E5%A0%86%E5%88%A9%E7%94%A8%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5"><span class="toc-number">1.6.5.</span> <span class="toc-text">5.5 堆利用基础概念</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Chunk-%E7%BB%93%E6%9E%84"><span class="toc-number">1.6.5.1.</span> <span class="toc-text">Chunk 结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E6%94%BB%E5%87%BB%E6%89%8B%E6%B3%95"><span class="toc-number">1.6.5.2.</span> <span class="toc-text">常见攻击手法</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%85%AD%E7%AB%A0%EF%BC%9A%E5%B7%A5%E5%85%B7%E9%93%BE%E2%80%94%E2%80%94%E4%BD%A0%E7%9A%84%E6%AD%A6%E5%99%A8%E5%BA%93"><span class="toc-number">1.7.</span> <span class="toc-text">第六章：工具链——你的武器库</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-%E5%BF%85%E5%A4%87%E5%B7%A5%E5%85%B7"><span class="toc-number">1.7.1.</span> <span class="toc-text">6.1 必备工具</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-pwntools-%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8"><span class="toc-number">1.7.2.</span> <span class="toc-text">6.2 pwntools 快速入门</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-3-GDB-pwndbg-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-number">1.7.3.</span> <span class="toc-text">6.3 GDB + pwndbg 常用命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%83%E7%AB%A0%EF%BC%9A%E4%BB%8E-CTF-%E5%88%B0%E7%9C%9F%E5%AE%9E%E4%B8%96%E7%95%8C"><span class="toc-number">1.8.</span> <span class="toc-text">第七章：从 CTF 到真实世界</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#7-1-CTF-PWN-vs-%E7%9C%9F%E5%AE%9E%E6%BC%8F%E6%B4%9E"><span class="toc-number">1.8.1.</span> <span class="toc-text">7.1 CTF PWN vs 真实漏洞</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-2-%E5%AD%A6%E4%B9%A0-CTF-PWN-%E7%9A%84%E6%84%8F%E4%B9%89"><span class="toc-number">1.8.2.</span> <span class="toc-text">7.2 学习 CTF PWN 的意义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-3-%E8%BF%9B%E9%98%B6%E6%96%B9%E5%90%91"><span class="toc-number">1.8.3.</span> <span class="toc-text">7.3 进阶方向</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%85%AB%E7%AB%A0%EF%BC%9A%E5%BF%83%E6%80%81%E4%B8%8E%E6%96%B9%E6%B3%95%E8%AE%BA"><span class="toc-number">1.9.</span> <span class="toc-text">第八章：心态与方法论</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#8-1-%E6%96%B0%E6%89%8B%E5%B8%B8%E8%A7%81%E8%AF%AF%E5%8C%BA"><span class="toc-number">1.9.1.</span> <span class="toc-text">8.1 新手常见误区</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-2-%E9%AB%98%E6%95%88%E5%AD%A6%E4%B9%A0%E6%96%B9%E6%B3%95"><span class="toc-number">1.9.2.</span> <span class="toc-text">8.2 高效学习方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-3-%E6%8E%A8%E8%8D%90%E8%B5%84%E6%BA%90"><span class="toc-number">1.9.3.</span> <span class="toc-text">8.3 推荐资源</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">1.10.</span> <span class="toc-text">结语</span></a></li></ol></li></ol></div></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="hty-card post-block" itemscope itemtype="https://schema.org/Article" style="--smc-primary:#0078E7;"><link itemprop="mainEntityOfPage" href="https://hsad.xyz/2025/12/17/PWN-%E6%96%B0%E6%89%8B%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97%EF%BC%9A%E4%BB%8E%E9%9B%B6%E5%88%B0%E7%90%86%E8%A7%A3%E6%9C%AC%E8%B4%A8/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="Hsad"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="Hsad's Blog"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">PWN 新手入门指南：从零到理解本质</h1><div class="post-meta"><div class="post-time"><span class="post-meta-item-icon"><span class="icon iconify" data-icon="ri:calendar-line"></span></span> <time title="创建时间：2025-12-17 23:01:39" itemprop="dateCreated datePublished" datetime="2025-12-17T23:01:39+08:00">2025-12-17</time></div><div class="post-classify"><span class="post-category"> <span class="post-meta-item-icon" style="margin-right:3px;"><span class="icon iconify" data-icon="ri:folder-line"></span></span><span itemprop="about" itemscope itemtype="https://schema.org/Thing"><a class="category-item" href="/categories/%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B0/" style="--text-color:var(--hty-text-color)" itemprop="url" rel="index"><span itemprop="text">技术笔记</span></a></span></span><span class="post-tag"><span class="post-meta-divider">-</span><a class="tag-item" href="/tags/pwn/" style="--text-color:var(--hty-text-color)"><span class="post-meta-item-icon"><span class="icon iconify" data-icon="ri:price-tag-3-line"></span></span><span class="tag-name">pwn</span></a></span></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content markdown-body"><h1 id="PWN-新手入门指南：从零到理解本质"><a href="#PWN-新手入门指南：从零到理解本质" class="headerlink" title="PWN 新手入门指南：从零到理解本质"></a>PWN 新手入门指南：从零到理解本质</h1><blockquote>
+<p><strong>写在前面</strong>：这份指南的目标是让你真正理解 PWN 是什么，而不是让你背诵一堆技术名词。当你读完这份文档，你应该能回答：我在学什么？为什么要学这些？学完能做什么？</p>
+</blockquote>
+<hr>
+<h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><ul>
+<li><a href="#%E7%AC%AC%E4%B8%80%E7%AB%A0pwn-%E7%9A%84%E6%9C%AC%E8%B4%A8%E4%BD%A0%E5%88%B0%E5%BA%95%E5%9C%A8%E5%AD%A6%E4%BB%80%E4%B9%88">第一章：PWN 的本质——你到底在学什么</a></li>
+<li><a href="#%E7%AC%AC%E4%BA%8C%E7%AB%A0%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%9A%84%E7%9C%9F%E7%9B%B8%E7%A8%8B%E5%BA%8F%E6%98%AF%E5%A6%82%E4%BD%95%E8%BF%90%E8%A1%8C%E7%9A%84">第二章：计算机的真相——程序是如何运行的</a></li>
+<li><a href="#%E7%AC%AC%E4%B8%89%E7%AB%A0%E6%BC%8F%E6%B4%9E%E7%9A%84%E6%9C%AC%E8%B4%A8%E4%B8%BA%E4%BB%80%E4%B9%88%E7%A8%8B%E5%BA%8F%E4%BC%9A%E8%A2%AB%E6%94%BB%E5%87%BB">第三章：漏洞的本质——为什么程序会被攻击</a></li>
+<li><a href="#%E7%AC%AC%E5%9B%9B%E7%AB%A0%E5%AD%A6%E4%B9%A0%E8%B7%AF%E7%BA%BF%E5%9B%BE%E4%BD%A0%E7%9A%84%E5%8D%87%E7%BA%A7%E6%89%93%E6%80%AA%E4%B9%8B%E8%B7%AF">第四章：学习路线图——你的升级打怪之路</a></li>
+<li><a href="#%E7%AC%AC%E4%BA%94%E7%AB%A0%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86%E7%82%B9%E8%AF%A6%E8%A7%A3">第五章：核心知识点详解</a></li>
+<li><a href="#%E7%AC%AC%E5%85%AD%E7%AB%A0%E5%B7%A5%E5%85%B7%E9%93%BE%E4%BD%A0%E7%9A%84%E6%AD%A6%E5%99%A8%E5%BA%93">第六章：工具链——你的武器库</a></li>
+<li><a href="#%E7%AC%AC%E4%B8%83%E7%AB%A0%E4%BB%8E-ctf-%E5%88%B0%E7%9C%9F%E5%AE%9E%E4%B8%96%E7%95%8C">第七章：从 CTF 到真实世界</a></li>
+<li><a href="#%E7%AC%AC%E5%85%AB%E7%AB%A0%E5%BF%83%E6%80%81%E4%B8%8E%E6%96%B9%E6%B3%95%E8%AE%BA">第八章：心态与方法论</a></li>
+</ul>
+<hr>
+<h2 id="第一章：PWN-的本质——你到底在学什么"><a href="#第一章：PWN-的本质——你到底在学什么" class="headerlink" title="第一章：PWN 的本质——你到底在学什么"></a>第一章：PWN 的本质——你到底在学什么</h2><h3 id="1-1-一句话定义"><a href="#1-1-一句话定义" class="headerlink" title="1.1 一句话定义"></a>1.1 一句话定义</h3><p><strong>PWN &#x3D; 利用程序的漏洞，让程序执行它本不应该执行的操作。</strong></p>
+<p>最常见的目标是：<strong>获取 Shell</strong>（也就是获得命令行控制权，可以在目标机器上执行任意命令）。</p>
+<h3 id="1-2-为什么叫-“PWN”？"><a href="#1-2-为什么叫-“PWN”？" class="headerlink" title="1.2 为什么叫 “PWN”？"></a>1.2 为什么叫 “PWN”？</h3><p>“PWN” 来自游戏圈的俚语 “own”（拥有&#x2F;控制），表示完全控制了对方。在安全领域，PWN 一台机器意味着你获得了它的控制权。</p>
+<h3 id="1-3-PWN-的本质是什么？"><a href="#1-3-PWN-的本质是什么？" class="headerlink" title="1.3 PWN 的本质是什么？"></a>1.3 PWN 的本质是什么？</h3><p>让我用一个比喻来解释：</p>
+<p>想象一个银行金库，有一套严格的安全流程：</p>
+<ol>
+<li>验证身份</li>
+<li>检查权限</li>
+<li>打开特定的保险箱</li>
+<li>取出&#x2F;存入物品</li>
+<li>关闭保险箱</li>
+<li>记录日志</li>
+</ol>
+<p><strong>正常情况</strong>：员工按流程操作，一切井然有序。</p>
+<p><strong>PWN 做的事</strong>：找到流程中的漏洞，比如：</p>
+<ul>
+<li>发现身份验证可以被绕过（认证绕过）</li>
+<li>发现可以让系统”忘记”关闭保险箱（内存泄漏）</li>
+<li>发现可以修改”下一步操作”的指示牌，让员工走向金库总控室（控制流劫持）</li>
+</ul>
+<p><strong>在计算机中</strong>：</p>
+<ul>
+<li>银行 &#x3D; 程序</li>
+<li>安全流程 &#x3D; 程序的执行流程</li>
+<li>保险箱 &#x3D; 内存中的数据</li>
+<li>金库总控室 &#x3D; 系统权限</li>
+</ul>
+<h3 id="1-4-PWN-的最终目标"><a href="#1-4-PWN-的最终目标" class="headerlink" title="1.4 PWN 的最终目标"></a>1.4 PWN 的最终目标</h3><pre class="language-none"><code class="language-none">┌─────────────────────────────────────────────────────────────┐
+│                      PWN 的目标层次                           │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│   Level 1: 信息泄露                                          │
+│   └── 读取本不应该读取的数据（密码、密钥、地址）                   │
+│                                                             │
+│   Level 2: 拒绝服务                                          │
+│   └── 让程序崩溃，无法正常服务                                  │
+│                                                             │
+│   Level 3: 任意代码执行 ⭐ (这是 PWN 的核心目标)                │
+│   └── 让程序执行你指定的代码（通常是获取 Shell）                  │
+│                                                             │
+│   Level 4: 权限提升                                          │
+│   └── 从普通用户变成 root&#x2F;管理员                               │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘</code></pre>
+
+<p><strong>在 CTF 比赛中</strong>，最常见的目标是：</p>
+<ol>
+<li>获取 Shell，然后读取 flag 文件</li>
+<li>或者直接利用漏洞读取 flag</li>
+</ol>
+<hr>
+<h2 id="第二章：计算机的真相——程序是如何运行的"><a href="#第二章：计算机的真相——程序是如何运行的" class="headerlink" title="第二章：计算机的真相——程序是如何运行的"></a>第二章：计算机的真相——程序是如何运行的</h2><blockquote>
+<p><strong>为什么要学这些？</strong> 因为 PWN 的本质是”欺骗”计算机。要欺骗它，你必须先理解它是如何工作的。</p>
+</blockquote>
+<h3 id="2-1-程序的一生"><a href="#2-1-程序的一生" class="headerlink" title="2.1 程序的一生"></a>2.1 程序的一生</h3><pre class="language-none"><code class="language-none">源代码 (.c)
+    │
+    ▼ [编译器 gcc]
+汇编代码 (.s)
+    │
+    ▼ [汇编器 as]
+目标文件 (.o)
+    │
+    ▼ [链接器 ld]
+可执行文件 (ELF)
+    │
+    ▼ [操作系统加载器]
+内存中运行的进程</code></pre>
+
+<p><strong>你需要理解</strong>：</p>
+<ul>
+<li>你写的 C 代码最终变成了什么？（机器指令）</li>
+<li>程序是如何被加载到内存的？（ELF 格式）</li>
+<li>程序运行时内存长什么样？（进程内存布局）</li>
+</ul>
+<h3 id="2-2-进程内存布局——PWN-的战场"><a href="#2-2-进程内存布局——PWN-的战场" class="headerlink" title="2.2 进程内存布局——PWN 的战场"></a>2.2 进程内存布局——PWN 的战场</h3><p>当一个程序运行时，操作系统会给它分配一块内存空间：</p>
+<pre class="language-none"><code class="language-none">高地址
+┌─────────────────────────┐
+│       内核空间           │  ← 用户程序不能直接访问
+├─────────────────────────┤
+│         栈 (Stack)       │  ← 局部变量、函数调用信息
+│           ↓             │     【PWN 重点攻击区域】
+│                         │
+│         ↑               │
+│         堆 (Heap)        │  ← 动态分配的内存 (malloc)
+├─────────────────────────┤     【PWN 重点攻击区域】
+│         BSS            │  ← 未初始化的全局变量
+├─────────────────────────┤
+│        Data            │  ← 已初始化的全局变量
+├─────────────────────────┤
+│        Text            │  ← 程序代码（只读）
+└─────────────────────────┘
+低地址</code></pre>
+
+<p><strong>关键概念</strong>：</p>
+<ul>
+<li><strong>栈 (Stack)</strong>：后进先出，存放局部变量和函数调用信息</li>
+<li><strong>堆 (Heap)</strong>：动态内存，malloc&#x2F;free 管理</li>
+<li><strong>这两个区域是 PWN 的主战场</strong></li>
+</ul>
+<h3 id="2-3-函数调用的秘密——栈帧"><a href="#2-3-函数调用的秘密——栈帧" class="headerlink" title="2.3 函数调用的秘密——栈帧"></a>2.3 函数调用的秘密——栈帧</h3><p>这是 <strong>PWN 最核心的知识点之一</strong>，请务必理解透彻。</p>
+<p>当你调用一个函数时，栈上会发生什么？</p>
+<pre class="language-c" data-language="c"><code class="language-c"><span class="token keyword">void</span> <span class="token function">func</span><span class="token punctuation">(</span><span class="token keyword">int</span> a<span class="token punctuation">,</span> <span class="token keyword">int</span> b<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">int</span> x <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+    <span class="token keyword">int</span> y <span class="token operator">=</span> <span class="token number">2</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span>
+
+<span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token function">func</span><span class="token punctuation">(</span><span class="token number">10</span><span class="token punctuation">,</span> <span class="token number">20</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<p><strong>调用 func 时的栈布局</strong>：</p>
+<pre class="language-none"><code class="language-none">高地址
+┌─────────────────────────┐
+│      main 的栈帧         │
+├─────────────────────────┤
+│   参数 b &#x3D; 20           │  ← 函数参数（x64 用寄存器传递）
+│   参数 a &#x3D; 10           │
+├─────────────────────────┤
+│   返回地址 (Return Addr) │  ← call 指令自动压入
+├─────────────────────────┤     【这是 PWN 的关键目标】
+│   保存的 rbp (Saved RBP) │  ← push rbp
+├─────────────────────────┤
+│   局部变量 x &#x3D; 1        │
+│   局部变量 y &#x3D; 2        │
+├─────────────────────────┤
+│      func 的栈帧         │
+└─────────────────────────┘
+低地址</code></pre>
+
+<p><strong>核心问题</strong>：</p>
+<ul>
+<li><strong>返回地址</strong>告诉 CPU “函数执行完后，下一条指令在哪里”</li>
+<li>如果我们能<strong>修改返回地址</strong>，函数返回时就会跳到我们指定的地方！</li>
+<li><strong>这就是栈溢出攻击的本质</strong></li>
+</ul>
+<h3 id="2-4-寄存器——CPU-的工作台"><a href="#2-4-寄存器——CPU-的工作台" class="headerlink" title="2.4 寄存器——CPU 的工作台"></a>2.4 寄存器——CPU 的工作台</h3><p>CPU 不直接操作内存，而是通过<strong>寄存器</strong>这个高速”工作台”。</p>
+<p><strong>x86-64 常用寄存器</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>寄存器</th>
+<th>用途</th>
+<th>PWN 中的意义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>RIP</strong></td>
+<td>指令指针，指向下一条要执行的指令</td>
+<td><strong>控制 RIP &#x3D; 控制程序流程</strong></td>
+</tr>
+<tr>
+<td><strong>RSP</strong></td>
+<td>栈指针，指向栈顶</td>
+<td>栈操作的基准</td>
+</tr>
+<tr>
+<td><strong>RBP</strong></td>
+<td>基址指针，指向当前栈帧的底部</td>
+<td>定位局部变量</td>
+</tr>
+<tr>
+<td><strong>RAX</strong></td>
+<td>返回值 &#x2F; 系统调用号</td>
+<td>函数返回值、syscall 编号</td>
+</tr>
+<tr>
+<td><strong>RDI</strong></td>
+<td>第 1 个参数</td>
+<td>函数&#x2F;syscall 的第 1 个参数</td>
+</tr>
+<tr>
+<td><strong>RSI</strong></td>
+<td>第 2 个参数</td>
+<td>函数&#x2F;syscall 的第 2 个参数</td>
+</tr>
+<tr>
+<td><strong>RDX</strong></td>
+<td>第 3 个参数</td>
+<td>函数&#x2F;syscall 的第 3 个参数</td>
+</tr>
+</tbody></table>
+<p><strong>最重要的一句话</strong>：</p>
+<blockquote>
+<p><strong>PWN 的核心目标之一就是控制 RIP（指令指针），让程序跳转到我们想要的地方。</strong></p>
+</blockquote>
+<h3 id="2-5-系统调用——与操作系统对话"><a href="#2-5-系统调用——与操作系统对话" class="headerlink" title="2.5 系统调用——与操作系统对话"></a>2.5 系统调用——与操作系统对话</h3><p>用户程序不能直接操作硬件，必须通过<strong>系统调用 (syscall)</strong> 请求操作系统帮忙。</p>
+<pre class="language-none"><code class="language-none">用户程序                    内核
+   │                         │
+   │  syscall (rax&#x3D;59,       │
+   │   rdi&#x3D;&quot;&#x2F;bin&#x2F;sh&quot;,        │
+   │   rsi&#x3D;0, rdx&#x3D;0)         │
+   │ ───────────────────────&gt;│
+   │                         │  执行 execve(&quot;&#x2F;bin&#x2F;sh&quot;, 0, 0)
+   │                         │
+   │     返回 Shell          │
+   │ &lt;───────────────────────│</code></pre>
+
+<p><strong>关键系统调用</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>syscall</th>
+<th>编号</th>
+<th>作用</th>
+<th>PWN 中的用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>read</td>
+<td>0</td>
+<td>读取输入</td>
+<td>读取 payload</td>
+</tr>
+<tr>
+<td>write</td>
+<td>1</td>
+<td>输出</td>
+<td>泄露信息</td>
+</tr>
+<tr>
+<td>execve</td>
+<td>59</td>
+<td>执行程序</td>
+<td><strong>获取 Shell 的关键</strong></td>
+</tr>
+<tr>
+<td>mprotect</td>
+<td>10</td>
+<td>修改内存权限</td>
+<td>绕过 NX 保护</td>
+</tr>
+</tbody></table>
+<p><strong>获取 Shell 的本质</strong>：</p>
+<pre class="language-none"><code class="language-none">让程序执行 execve(&quot;&#x2F;bin&#x2F;sh&quot;, NULL, NULL)</code></pre>
+
+<hr>
+<h2 id="第三章：漏洞的本质——为什么程序会被攻击"><a href="#第三章：漏洞的本质——为什么程序会被攻击" class="headerlink" title="第三章：漏洞的本质——为什么程序会被攻击"></a>第三章：漏洞的本质——为什么程序会被攻击</h2><h3 id="3-1-漏洞从何而来？"><a href="#3-1-漏洞从何而来？" class="headerlink" title="3.1 漏洞从何而来？"></a>3.1 漏洞从何而来？</h3><pre class="language-none"><code class="language-none">┌─────────────────────────────────────────────────────────────┐
+│                      漏洞的根源                              │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  1. 程序员的错误                                             │
+│     └── 忘记检查边界、错误的类型转换、逻辑错误               │
+│                                                             │
+│  2. 语言的特性                                               │
+│     └── C&#x2F;C++ 不检查数组边界，允许直接操作内存               │
+│                                                             │
+│  3. 复杂性                                                   │
+│     └── 代码越复杂，越容易出错                               │
+│                                                             │
+│  4. 信任边界问题                                             │
+│     └── 程序信任了不应该信任的输入                           │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘</code></pre>
+
+<h3 id="3-2-漏洞的分类"><a href="#3-2-漏洞的分类" class="headerlink" title="3.2 漏洞的分类"></a>3.2 漏洞的分类</h3><pre class="language-none"><code class="language-none">漏洞类型
+├── 内存破坏类 (Memory Corruption) 【PWN 主战场】
+│   ├── 栈溢出 (Stack Overflow)
+│   ├── 堆溢出 (Heap Overflow)
+│   ├── 格式化字符串 (Format String)
+│   ├── Use-After-Free
+│   ├── 整数溢出 (Integer Overflow)
+│   └── 越界读写 (Out-of-Bounds)
+│
+├── 逻辑漏洞
+│   ├── 条件竞争 (Race Condition)
+│   └── 权限检查不当
+│
+└── 其他
+    ├── 信息泄露
+    └── 拒绝服务</code></pre>
+
+<h3 id="3-3-漏洞利用的通用模型"><a href="#3-3-漏洞利用的通用模型" class="headerlink" title="3.3 漏洞利用的通用模型"></a>3.3 漏洞利用的通用模型</h3><p>无论什么漏洞，利用的本质都是：</p>
+<pre class="language-none"><code class="language-none">┌─────────────────────────────────────────────────────────────┐
+│                                                             │
+│   输入恶意数据  ───&gt;  触发漏洞  ───&gt;  改变程序状态  ───&gt;  达成目标  │
+│                                                             │
+│   (Payload)         (Bug)        (Corruption)      (Shell)  │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘</code></pre>
+
+<p><strong>具体到栈溢出</strong>：</p>
+<pre class="language-none"><code class="language-none">输入超长字符串 ──&gt; 覆盖返回地址 ──&gt; 函数返回时跳转到恶意代码 ──&gt; 获取 Shell</code></pre>
+
+<hr>
+<h2 id="第四章：学习路线图——你的升级打怪之路"><a href="#第四章：学习路线图——你的升级打怪之路" class="headerlink" title="第四章：学习路线图——你的升级打怪之路"></a>第四章：学习路线图——你的升级打怪之路</h2><h3 id="4-1-完整路线图"><a href="#4-1-完整路线图" class="headerlink" title="4.1 完整路线图"></a>4.1 完整路线图</h3><pre class="language-none"><code class="language-none">                        ╔═══════════════════════════════╗
+                        ║     PWN 学习路线图             ║
+                        ╚═══════════════════════════════╝
+                                      │
+        ┌─────────────────────────────┼─────────────────────────────┐
+        │                             │                             │
+        ▼                             ▼                             ▼
+╔═══════════════╗           ╔═══════════════╗           ╔═══════════════╗
+║   基础阶段     ║           ║   进阶阶段     ║           ║   高级阶段     ║
+║   (1-3个月)    ║ ────────&gt; ║   (3-6个月)    ║ ────────&gt; ║   (6个月+)     ║
+╚═══════════════╝           ╚═══════════════╝           ╚═══════════════╝
+        │                             │                             │
+        │                             │                             │
+        ▼                             ▼                             ▼
+┌───────────────┐           ┌───────────────┐           ┌───────────────┐
+│ • C 语言基础   │           │ • ROP 技术     │           │ • 内核 PWN     │
+│ • Linux 基础   │           │ • 格式化字符串  │           │ • 浏览器 PWN   │
+│ • 汇编语言     │           │ • 堆利用基础   │           │ • 虚拟化逃逸   │
+│ • GDB 调试     │           │ • 保护机制绕过  │           │ • 真实漏洞分析 │
+│ • 栈溢出基础   │           │ • ret2libc     │           │ • 漏洞挖掘     │
+└───────────────┘           └───────────────┘           └───────────────┘</code></pre>
+
+<h3 id="4-2-基础阶段详解（1-3个月）"><a href="#4-2-基础阶段详解（1-3个月）" class="headerlink" title="4.2 基础阶段详解（1-3个月）"></a>4.2 基础阶段详解（1-3个月）</h3><p><strong>目标</strong>：能够独立完成简单的栈溢出题目</p>
+<h4 id="4-2-1-C-语言（1-2-周）"><a href="#4-2-1-C-语言（1-2-周）" class="headerlink" title="4.2.1 C 语言（1-2 周）"></a>4.2.1 C 语言（1-2 周）</h4><p>你需要掌握：</p>
+<ul>
+<li>指针的概念和使用</li>
+<li>数组与内存的关系</li>
+<li>结构体</li>
+<li>常见的危险函数：<code>gets</code>, <code>strcpy</code>, <code>sprintf</code>, <code>scanf</code></li>
+</ul>
+<p><strong>为什么重要</strong>：大部分 PWN 题目的目标程序是 C 写的，你需要能看懂代码。</p>
+<h4 id="4-2-2-Linux-基础（1-周）"><a href="#4-2-2-Linux-基础（1-周）" class="headerlink" title="4.2.2 Linux 基础（1 周）"></a>4.2.2 Linux 基础（1 周）</h4><p>你需要掌握：</p>
+<ul>
+<li>基本命令：<code>ls</code>, <code>cd</code>, <code>cat</code>, <code>chmod</code>, <code>file</code></li>
+<li>文件权限概念</li>
+<li>进程概念</li>
+<li>管道和重定向</li>
+</ul>
+<p><strong>为什么重要</strong>：PWN 的目标通常是获取 Linux Shell。</p>
+<h4 id="4-2-3-汇编语言（2-3-周）"><a href="#4-2-3-汇编语言（2-3-周）" class="headerlink" title="4.2.3 汇编语言（2-3 周）"></a>4.2.3 汇编语言（2-3 周）</h4><p>你需要掌握：</p>
+<ul>
+<li>常见指令：<code>mov</code>, <code>push</code>, <code>pop</code>, <code>call</code>, <code>ret</code>, <code>lea</code>, <code>cmp</code>, <code>jmp</code></li>
+<li>函数调用约定</li>
+<li>能读懂简单的汇编代码</li>
+</ul>
+<p><strong>为什么重要</strong>：程序最终以汇编&#x2F;机器码运行，你需要理解程序真正在做什么。</p>
+<p><strong>推荐学习方式</strong>：</p>
+<pre class="language-none"><code class="language-none">不要背指令！通过 GDB 调试实际程序来学习。
+看到 mov rax, rbx，就在 GDB 里执行，观察寄存器变化。</code></pre>
+
+<h4 id="4-2-4-GDB-调试（1-周）"><a href="#4-2-4-GDB-调试（1-周）" class="headerlink" title="4.2.4 GDB 调试（1 周）"></a>4.2.4 GDB 调试（1 周）</h4><p>你需要掌握：</p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token comment"># 基本命令</span>
+r <span class="token punctuation">(</span>run<span class="token punctuation">)</span>           <span class="token comment"># 运行程序</span>
+b *地址 <span class="token punctuation">(</span>break<span class="token punctuation">)</span>   <span class="token comment"># 设置断点</span>
+c <span class="token punctuation">(</span>continue<span class="token punctuation">)</span>      <span class="token comment"># 继续执行</span>
+si <span class="token punctuation">(</span>stepi<span class="token punctuation">)</span>        <span class="token comment"># 单步执行（进入函数）</span>
+ni <span class="token punctuation">(</span>nexti<span class="token punctuation">)</span>        <span class="token comment"># 单步执行（跳过函数）</span>
+x/格式 地址       <span class="token comment"># 查看内存</span>
+p 表达式          <span class="token comment"># 打印值</span>
+info registers    <span class="token comment"># 查看寄存器</span>
+bt <span class="token punctuation">(</span>backtrace<span class="token punctuation">)</span>    <span class="token comment"># 查看调用栈</span></code></pre>
+
+<p><strong>为什么重要</strong>：调试是 PWN 的核心技能，你需要观察程序的实际行为。</p>
+<h4 id="4-2-5-栈溢出基础（2-3-周）"><a href="#4-2-5-栈溢出基础（2-3-周）" class="headerlink" title="4.2.5 栈溢出基础（2-3 周）"></a>4.2.5 栈溢出基础（2-3 周）</h4><p><strong>学习路径</strong>：</p>
+<pre class="language-none"><code class="language-none">Step 1: 理解栈的结构
+        └── 画出函数调用时的栈布局
+
+Step 2: 手动触发崩溃
+        └── 输入超长字符串，观察程序崩溃
+
+Step 3: 控制返回地址
+        └── 精确计算偏移，覆盖返回地址为特定值
+
+Step 4: ret2text
+        └── 跳转到程序中已有的函数（如 system）
+
+Step 5: ret2shellcode (无 NX)
+        └── 跳转到自己注入的代码</code></pre>
+
+<h3 id="4-3-进阶阶段详解（3-6个月）"><a href="#4-3-进阶阶段详解（3-6个月）" class="headerlink" title="4.3 进阶阶段详解（3-6个月）"></a>4.3 进阶阶段详解（3-6个月）</h3><p><strong>目标</strong>：能够绕过常见保护机制，完成中等难度题目</p>
+<h4 id="4-3-1-保护机制"><a href="#4-3-1-保护机制" class="headerlink" title="4.3.1 保护机制"></a>4.3.1 保护机制</h4><table>
+<thead>
+<tr>
+<th>保护</th>
+<th>全称</th>
+<th>作用</th>
+<th>绕过方法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Canary</strong></td>
+<td>Stack Canary</td>
+<td>检测栈溢出</td>
+<td>泄露 canary 值</td>
+</tr>
+<tr>
+<td><strong>NX</strong></td>
+<td>No-Execute</td>
+<td>栈不可执行</td>
+<td>ROP 技术</td>
+</tr>
+<tr>
+<td><strong>PIE</strong></td>
+<td>Position Independent Executable</td>
+<td>地址随机化</td>
+<td>泄露地址</td>
+</tr>
+<tr>
+<td><strong>ASLR</strong></td>
+<td>Address Space Layout Randomization</td>
+<td>内存布局随机化</td>
+<td>泄露 + 计算偏移</td>
+</tr>
+<tr>
+<td><strong>RELRO</strong></td>
+<td>Relocation Read-Only</td>
+<td>GOT 表只读</td>
+<td>改用其他攻击面</td>
+</tr>
+</tbody></table>
+<h4 id="4-3-2-ROP-技术（Return-Oriented-Programming）"><a href="#4-3-2-ROP-技术（Return-Oriented-Programming）" class="headerlink" title="4.3.2 ROP 技术（Return Oriented Programming）"></a>4.3.2 ROP 技术（Return Oriented Programming）</h4><p><strong>核心思想</strong>：既然不能执行自己的代码（NX），就利用程序中已有的代码片段（gadget）。</p>
+<pre class="language-none"><code class="language-none">传统攻击：
+  返回地址 ──&gt; 你的 shellcode
+
+ROP 攻击：
+  返回地址 ──&gt; gadget1 ──&gt; gadget2 ──&gt; gadget3 ──&gt; ... ──&gt; 目标函数
+                │           │           │
+             pop rdi      pop rsi     syscall</code></pre>
+
+<p><strong>学习路径</strong>：</p>
+<pre class="language-none"><code class="language-none">ret2text      → 最简单，跳转到程序自身函数
+    ↓
+ret2syscall   → 利用 gadget 构造系统调用
+    ↓
+ret2libc      → 跳转到 libc 中的函数
+    ↓
+ret2csu       → 利用 __libc_csu_init 的 gadget
+    ↓
+SROP          → 利用 sigreturn 控制所有寄存器</code></pre>
+
+<h4 id="4-3-3-格式化字符串漏洞"><a href="#4-3-3-格式化字符串漏洞" class="headerlink" title="4.3.3 格式化字符串漏洞"></a>4.3.3 格式化字符串漏洞</h4><p><strong>漏洞代码</strong>：</p>
+<pre class="language-c" data-language="c"><code class="language-c"><span class="token function">printf</span><span class="token punctuation">(</span>user_input<span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">// 危险！</span>
+<span class="token comment">// 应该是 printf("%s", user_input);</span></code></pre>
+
+<p><strong>能做什么</strong>：</p>
+<ul>
+<li>读取栈上的数据：<code>%x</code>, <code>%p</code>, <code>%s</code></li>
+<li>读取任意地址：<code>%n$s</code> (n 是偏移)</li>
+<li>写入任意地址：<code>%n</code></li>
+</ul>
+<h4 id="4-3-4-堆利用基础"><a href="#4-3-4-堆利用基础" class="headerlink" title="4.3.4 堆利用基础"></a>4.3.4 堆利用基础</h4><p><strong>堆的特点</strong>：</p>
+<ul>
+<li>动态分配（malloc&#x2F;free）</li>
+<li>复杂的管理结构（chunk、bins）</li>
+<li>更多的攻击面</li>
+</ul>
+<p><strong>学习路径</strong>：</p>
+<pre class="language-none"><code class="language-none">理解 glibc malloc 结构
+    ↓
+fastbin attack
+    ↓
+unsorted bin attack
+    ↓
+tcache attack (新版本 glibc)
+    ↓
+house of 系列</code></pre>
+
+<h3 id="4-4-高级阶段（6个月-）"><a href="#4-4-高级阶段（6个月-）" class="headerlink" title="4.4 高级阶段（6个月+）"></a>4.4 高级阶段（6个月+）</h3><ul>
+<li><strong>内核 PWN</strong>：攻击操作系统内核</li>
+<li><strong>浏览器 PWN</strong>：攻击 Chrome&#x2F;Firefox 等</li>
+<li><strong>真实漏洞分析</strong>：CVE 复现</li>
+<li><strong>漏洞挖掘</strong>：自己发现新漏洞</li>
+</ul>
+<hr>
+<h2 id="第五章：核心知识点详解"><a href="#第五章：核心知识点详解" class="headerlink" title="第五章：核心知识点详解"></a>第五章：核心知识点详解</h2><h3 id="5-1-栈溢出——PWN-的入门之道"><a href="#5-1-栈溢出——PWN-的入门之道" class="headerlink" title="5.1 栈溢出——PWN 的入门之道"></a>5.1 栈溢出——PWN 的入门之道</h3><h4 id="为什么会发生栈溢出？"><a href="#为什么会发生栈溢出？" class="headerlink" title="为什么会发生栈溢出？"></a>为什么会发生栈溢出？</h4><pre class="language-c" data-language="c"><code class="language-c"><span class="token keyword">void</span> <span class="token function">vulnerable</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">char</span> buffer<span class="token punctuation">[</span><span class="token number">64</span><span class="token punctuation">]</span><span class="token punctuation">;</span>   <span class="token comment">// 只分配了 64 字节</span>
+    <span class="token function">gets</span><span class="token punctuation">(</span>buffer<span class="token punctuation">)</span><span class="token punctuation">;</span>      <span class="token comment">// 但 gets 不检查长度，可以无限读取</span>
+<span class="token punctuation">&#125;</span></code></pre>
+
+<h4 id="利用原理"><a href="#利用原理" class="headerlink" title="利用原理"></a>利用原理</h4><pre class="language-none"><code class="language-none">正常情况：
+┌─────────────┐
+│ return addr │ &#x3D; 0x401234 (正常返回地址)
+├─────────────┤
+│ saved rbp   │
+├─────────────┤
+│             │
+│   buffer    │ ← 用户输入 &quot;Hello&quot;
+│   [64字节]   │
+└─────────────┘
+
+溢出后：
+┌─────────────┐
+│ return addr │ &#x3D; 0xdeadbeef (被覆盖！)
+├─────────────┤
+│ saved rbp   │ &#x3D; &quot;AAAAAAAA&quot;
+├─────────────┤
+│             │
+│   buffer    │ ← 用户输入 &quot;A&quot;*72 + p64(0xdeadbeef)
+│   [64字节]   │
+└─────────────┘</code></pre>
+
+<h4 id="偏移计算方法"><a href="#偏移计算方法" class="headerlink" title="偏移计算方法"></a>偏移计算方法</h4><p><strong>方法 1：手动计算</strong></p>
+<pre class="language-none"><code class="language-none">偏移 &#x3D; buffer大小 + saved_rbp大小
+     &#x3D; 64 + 8 &#x3D; 72 字节</code></pre>
+
+<p><strong>方法 2：使用 pattern（推荐）</strong></p>
+<pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token comment"># 生成特征字符串</span>
+$ cyclic <span class="token number">100</span>
+aaaabaaacaaadaaaeaaafaaagaaahaaaiaaajaaakaaalaaamaaanaaaoaaapaaaqaaaraaasaaataaauaaavaaawaaaxaaayaaa
+
+<span class="token comment"># 找到崩溃时 RIP 的值，计算偏移</span>
+$ cyclic <span class="token parameter variable">-l</span> 0x6161616c
+<span class="token number">72</span></code></pre>
+
+<h3 id="5-2-ROP-技术——绕过-NX-的艺术"><a href="#5-2-ROP-技术——绕过-NX-的艺术" class="headerlink" title="5.2 ROP 技术——绕过 NX 的艺术"></a>5.2 ROP 技术——绕过 NX 的艺术</h3><h4 id="什么是-Gadget？"><a href="#什么是-Gadget？" class="headerlink" title="什么是 Gadget？"></a>什么是 Gadget？</h4><p>Gadget 是以 <code>ret</code> 结尾的短代码片段：</p>
+<pre class="language-asm" data-language="asm"><code class="language-asm">; gadget 1: pop rdi; ret
+pop rdi
+ret
+
+; gadget 2: pop rsi; ret  
+pop rsi
+ret</code></pre>
+
+<h4 id="ROP-Chain-构造"><a href="#ROP-Chain-构造" class="headerlink" title="ROP Chain 构造"></a>ROP Chain 构造</h4><p><strong>目标</strong>：执行 <code>system(&quot;/bin/sh&quot;)</code></p>
+<pre class="language-python" data-language="python"><code class="language-python"><span class="token comment"># 栈布局</span>
+payload <span class="token operator">=</span> <span class="token string">b'A'</span> <span class="token operator">*</span> offset        <span class="token comment"># 填充</span>
+payload <span class="token operator">+=</span> p64<span class="token punctuation">(</span>pop_rdi_ret<span class="token punctuation">)</span>    <span class="token comment"># gadget: pop rdi; ret</span>
+payload <span class="token operator">+=</span> p64<span class="token punctuation">(</span>binsh_addr<span class="token punctuation">)</span>     <span class="token comment"># "/bin/sh" 的地址，会被 pop 到 rdi</span>
+payload <span class="token operator">+=</span> p64<span class="token punctuation">(</span>system_addr<span class="token punctuation">)</span>    <span class="token comment"># system 函数地址</span></code></pre>
+
+<p><strong>执行流程</strong>：</p>
+<pre class="language-none"><code class="language-none">1. 函数返回，RIP &#x3D; pop_rdi_ret
+2. 执行 pop rdi，rdi &#x3D; binsh_addr
+3. 执行 ret，RIP &#x3D; system_addr  
+4. 执行 system(rdi)，即 system(&quot;&#x2F;bin&#x2F;sh&quot;)
+5. 获得 Shell！</code></pre>
+
+<h3 id="5-3-格式化字符串——读写任意内存"><a href="#5-3-格式化字符串——读写任意内存" class="headerlink" title="5.3 格式化字符串——读写任意内存"></a>5.3 格式化字符串——读写任意内存</h3><h4 id="基本原理"><a href="#基本原理" class="headerlink" title="基本原理"></a>基本原理</h4><p><code>printf</code> 的参数通过栈&#x2F;寄存器传递：</p>
+<pre class="language-c" data-language="c"><code class="language-c"><span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"%d %d %d"</span><span class="token punctuation">,</span> a<span class="token punctuation">,</span> b<span class="token punctuation">,</span> c<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">// a, b, c 依次在 rsi, rdx, rcx (x64)</span></code></pre>
+
+<p>如果只写 <code>printf(user_input)</code>，printf 会从栈上读取”参数”：</p>
+<pre class="language-c" data-language="c"><code class="language-c"><span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"%p %p %p"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">// 会打印栈上的值</span></code></pre>
+
+<h4 id="利用技巧"><a href="#利用技巧" class="headerlink" title="利用技巧"></a>利用技巧</h4><p><strong>泄露栈数据</strong>：</p>
+<pre class="language-none"><code class="language-none">%p              → 打印一个栈上的值
+%n$p            → 打印第 n 个&quot;参数&quot;
+%s              → 把栈上的值当地址，打印该地址的字符串</code></pre>
+
+<p><strong>写入数据</strong>：</p>
+<pre class="language-none"><code class="language-none">%n              → 把已打印字符数写入地址
+%hn             → 写入 2 字节
+%hhn            → 写入 1 字节</code></pre>
+
+<h3 id="5-4-SROP——Sigreturn-Oriented-Programming"><a href="#5-4-SROP——Sigreturn-Oriented-Programming" class="headerlink" title="5.4 SROP——Sigreturn Oriented Programming"></a>5.4 SROP——Sigreturn Oriented Programming</h3><h4 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h4><p>Linux 信号处理机制：</p>
+<ol>
+<li>信号到来时，内核将所有寄存器保存到用户栈（Signal Frame）</li>
+<li>执行信号处理函数</li>
+<li>调用 <code>sigreturn</code> 系统调用，从栈上恢复寄存器</li>
+</ol>
+<p><strong>攻击思路</strong>：伪造 Signal Frame，调用 sigreturn，控制所有寄存器！</p>
+<pre class="language-python" data-language="python"><code class="language-python">frame <span class="token operator">=</span> SigreturnFrame<span class="token punctuation">(</span><span class="token punctuation">)</span>
+frame<span class="token punctuation">.</span>rax <span class="token operator">=</span> <span class="token number">59</span>          <span class="token comment"># execve</span>
+frame<span class="token punctuation">.</span>rdi <span class="token operator">=</span> binsh_addr  <span class="token comment"># "/bin/sh"</span>
+frame<span class="token punctuation">.</span>rsi <span class="token operator">=</span> <span class="token number">0</span>
+frame<span class="token punctuation">.</span>rdx <span class="token operator">=</span> <span class="token number">0</span>
+frame<span class="token punctuation">.</span>rip <span class="token operator">=</span> syscall_addr</code></pre>
+
+<h3 id="5-5-堆利用基础概念"><a href="#5-5-堆利用基础概念" class="headerlink" title="5.5 堆利用基础概念"></a>5.5 堆利用基础概念</h3><h4 id="Chunk-结构"><a href="#Chunk-结构" class="headerlink" title="Chunk 结构"></a>Chunk 结构</h4><pre class="language-none"><code class="language-none">┌─────────────────┐
+│    prev_size    │  ← 前一个 chunk 的大小（如果前一个是 free 的）
+├─────────────────┤
+│      size       │  ← 当前 chunk 大小 + 标志位
+├─────────────────┤
+│                 │
+│    user data    │  ← malloc 返回的指针指向这里
+│                 │
+└─────────────────┘</code></pre>
+
+<h4 id="常见攻击手法"><a href="#常见攻击手法" class="headerlink" title="常见攻击手法"></a>常见攻击手法</h4><table>
+<thead>
+<tr>
+<th>攻击</th>
+<th>原理</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Fastbin Attack</td>
+<td>修改 fastbin 的 fd 指针</td>
+<td>分配到任意地址</td>
+</tr>
+<tr>
+<td>Unsorted Bin Attack</td>
+<td>利用 unsorted bin 的解链操作</td>
+<td>向目标地址写入大数</td>
+</tr>
+<tr>
+<td>Tcache Poisoning</td>
+<td>修改 tcache 的 next 指针</td>
+<td>分配到任意地址</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="第六章：工具链——你的武器库"><a href="#第六章：工具链——你的武器库" class="headerlink" title="第六章：工具链——你的武器库"></a>第六章：工具链——你的武器库</h2><h3 id="6-1-必备工具"><a href="#6-1-必备工具" class="headerlink" title="6.1 必备工具"></a>6.1 必备工具</h3><table>
+<thead>
+<tr>
+<th>工具</th>
+<th>用途</th>
+<th>重要程度</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>pwntools</strong></td>
+<td>Python 漏洞利用框架</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>GDB + pwndbg&#x2F;peda</strong></td>
+<td>调试</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>IDA Pro &#x2F; Ghidra</strong></td>
+<td>反汇编、反编译</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>checksec</strong></td>
+<td>检查保护机制</td>
+<td>⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>ROPgadget &#x2F; ropper</strong></td>
+<td>寻找 gadget</td>
+<td>⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>one_gadget</strong></td>
+<td>寻找 libc 中的 one gadget</td>
+<td>⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>LibcSearcher</strong></td>
+<td>根据泄露信息查找 libc 版本</td>
+<td>⭐⭐⭐</td>
+</tr>
+</tbody></table>
+<h3 id="6-2-pwntools-快速入门"><a href="#6-2-pwntools-快速入门" class="headerlink" title="6.2 pwntools 快速入门"></a>6.2 pwntools 快速入门</h3><pre class="language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> pwn <span class="token keyword">import</span> <span class="token operator">*</span>
+
+<span class="token comment"># 设置架构</span>
+context<span class="token punctuation">(</span>arch<span class="token operator">=</span><span class="token string">'amd64'</span><span class="token punctuation">,</span> os<span class="token operator">=</span><span class="token string">'linux'</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 连接目标</span>
+io <span class="token operator">=</span> process<span class="token punctuation">(</span><span class="token string">'./vuln'</span><span class="token punctuation">)</span>        <span class="token comment"># 本地</span>
+io <span class="token operator">=</span> remote<span class="token punctuation">(</span><span class="token string">'ip'</span><span class="token punctuation">,</span> port<span class="token punctuation">)</span>       <span class="token comment"># 远程</span>
+
+<span class="token comment"># 接收和发送</span>
+io<span class="token punctuation">.</span>recv<span class="token punctuation">(</span><span class="token punctuation">)</span>                     <span class="token comment"># 接收数据</span>
+io<span class="token punctuation">.</span>recvuntil<span class="token punctuation">(</span><span class="token string">b'>'</span><span class="token punctuation">)</span>            <span class="token comment"># 接收直到某字符串</span>
+io<span class="token punctuation">.</span>send<span class="token punctuation">(</span><span class="token string">b'data'</span><span class="token punctuation">)</span>              <span class="token comment"># 发送数据</span>
+io<span class="token punctuation">.</span>sendline<span class="token punctuation">(</span><span class="token string">b'data'</span><span class="token punctuation">)</span>          <span class="token comment"># 发送数据 + 换行</span>
+
+<span class="token comment"># 打包数据</span>
+p64<span class="token punctuation">(</span><span class="token number">0xdeadbeef</span><span class="token punctuation">)</span>               <span class="token comment"># 64位小端打包</span>
+p32<span class="token punctuation">(</span><span class="token number">0xdeadbeef</span><span class="token punctuation">)</span>               <span class="token comment"># 32位小端打包</span>
+u64<span class="token punctuation">(</span><span class="token string">b'\xef\xbe\xad\xde'</span><span class="token punctuation">)</span>      <span class="token comment"># 解包</span>
+
+<span class="token comment"># 获取 Shell</span>
+io<span class="token punctuation">.</span>interactive<span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+
+<h3 id="6-3-GDB-pwndbg-常用命令"><a href="#6-3-GDB-pwndbg-常用命令" class="headerlink" title="6.3 GDB + pwndbg 常用命令"></a>6.3 GDB + pwndbg 常用命令</h3><pre class="language-bash" data-language="bash"><code class="language-bash"><span class="token comment"># 启动</span>
+gdb ./binary
+gdb <span class="token parameter variable">-p</span> PID                    <span class="token comment"># 附加到进程</span>
+
+<span class="token comment"># pwndbg 特有命令</span>
+vmmap                         <span class="token comment"># 查看内存映射</span>
+heap                          <span class="token comment"># 查看堆状态</span>
+bins                          <span class="token comment"># 查看 bins</span>
+canary                        <span class="token comment"># 显示 canary 值</span>
+telescope 地址               <span class="token comment"># 智能显示内存</span>
+cyclic <span class="token number">100</span>                    <span class="token comment"># 生成特征字符串</span>
+cyclic <span class="token parameter variable">-l</span> 0x61616166          <span class="token comment"># 计算偏移</span></code></pre>
+
+<hr>
+<h2 id="第七章：从-CTF-到真实世界"><a href="#第七章：从-CTF-到真实世界" class="headerlink" title="第七章：从 CTF 到真实世界"></a>第七章：从 CTF 到真实世界</h2><h3 id="7-1-CTF-PWN-vs-真实漏洞"><a href="#7-1-CTF-PWN-vs-真实漏洞" class="headerlink" title="7.1 CTF PWN vs 真实漏洞"></a>7.1 CTF PWN vs 真实漏洞</h3><table>
+<thead>
+<tr>
+<th>方面</th>
+<th>CTF</th>
+<th>真实世界</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>目标</td>
+<td>获取 flag</td>
+<td>获取权限&#x2F;数据</td>
+</tr>
+<tr>
+<td>程序</td>
+<td>简化的小程序</td>
+<td>复杂的大型软件</td>
+</tr>
+<tr>
+<td>漏洞</td>
+<td>明显且单一</td>
+<td>隐蔽且可能需要组合</td>
+</tr>
+<tr>
+<td>时间</td>
+<td>几小时到几天</td>
+<td>可能几周到几月</td>
+</tr>
+<tr>
+<td>环境</td>
+<td>已知且固定</td>
+<td>需要信息收集</td>
+</tr>
+</tbody></table>
+<h3 id="7-2-学习-CTF-PWN-的意义"><a href="#7-2-学习-CTF-PWN-的意义" class="headerlink" title="7.2 学习 CTF PWN 的意义"></a>7.2 学习 CTF PWN 的意义</h3><pre class="language-none"><code class="language-none">1. 建立基础知识体系
+   └── 理解程序运行原理、漏洞成因
+
+2. 锻炼逆向思维
+   └── 学会从攻击者角度思考
+
+3. 提升调试能力
+   └── 熟练使用调试工具
+
+4. 为进阶铺路
+   └── 真实漏洞研究、安全开发</code></pre>
+
+<h3 id="7-3-进阶方向"><a href="#7-3-进阶方向" class="headerlink" title="7.3 进阶方向"></a>7.3 进阶方向</h3><pre class="language-none"><code class="language-none">CTF PWN
+    │
+    ├──&gt; 漏洞研究
+    │    └── 分析 CVE、挖掘新漏洞
+    │
+    ├──&gt; 安全开发
+    │    └── 编写安全的代码、安全审计
+    │
+    ├──&gt; 红队&#x2F;渗透测试
+    │    └── 实战攻击、提权
+    │
+    └──&gt; 安全产品开发
+         └── 开发防护工具、检测系统</code></pre>
+
+<hr>
+<h2 id="第八章：心态与方法论"><a href="#第八章：心态与方法论" class="headerlink" title="第八章：心态与方法论"></a>第八章：心态与方法论</h2><h3 id="8-1-新手常见误区"><a href="#8-1-新手常见误区" class="headerlink" title="8.1 新手常见误区"></a>8.1 新手常见误区</h3><pre class="language-none"><code class="language-none">❌ 误区 1: 追求做题数量，不求理解
+   ✅ 正确: 一道题彻底理解，胜过十道题囫囵吞枣
+
+❌ 误区 2: 只看 WriteUp，不动手
+   ✅ 正确: WriteUp 是参考，必须亲手调试复现
+
+❌ 误区 3: 遇到困难就放弃
+   ✅ 正确: 卡住很正常，这是学习的一部分
+
+❌ 误区 4: 急于求成，跳过基础
+   ✅ 正确: 基础不牢，高级技术学了也用不好</code></pre>
+
+<h3 id="8-2-高效学习方法"><a href="#8-2-高效学习方法" class="headerlink" title="8.2 高效学习方法"></a>8.2 高效学习方法</h3><pre class="language-none"><code class="language-none">┌─────────────────────────────────────────────────────────────┐
+│                    PWN 学习循环                              │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│         学习理论 ──────&gt; 做题实践 ──────&gt; 总结记录           │
+│              ↑                              │               │
+│              └──────────────────────────────┘               │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘</code></pre>
+
+<p><strong>具体建议</strong>：</p>
+<ol>
+<li><p><strong>每道题都要调试</strong></p>
+<ul>
+<li>不要只运行 exp，要用 GDB 单步跟踪</li>
+<li>理解每一步发生了什么</li>
+</ul>
+</li>
+<li><p><strong>记录学习笔记</strong></p>
+<ul>
+<li>总结漏洞原理</li>
+<li>记录踩过的坑</li>
+<li>建立自己的 exp 模板库</li>
+</ul>
+</li>
+<li><p><strong>循序渐进</strong></p>
+<ul>
+<li>先做简单题，建立信心</li>
+<li>逐步增加难度</li>
+<li>不要一开始就挑战高难度</li>
+</ul>
+</li>
+<li><p><strong>善用社区</strong></p>
+<ul>
+<li>CTF Wiki、看雪论坛、CTF Time</li>
+<li>不懂就问，但先自己思考</li>
+</ul>
+</li>
+</ol>
+<h3 id="8-3-推荐资源"><a href="#8-3-推荐资源" class="headerlink" title="8.3 推荐资源"></a>8.3 推荐资源</h3><p><strong>入门书籍&#x2F;文档</strong>：</p>
+<ul>
+<li>《CTF 竞赛权威指南 PWN 篇》</li>
+<li>CTF Wiki: <a target="_blank" rel="noopener" href="https://ctf-wiki.org/">https://ctf-wiki.org/</a></li>
+<li>pwn.college: <a target="_blank" rel="noopener" href="https://pwn.college/">https://pwn.college/</a></li>
+</ul>
+<p><strong>练习平台</strong>：</p>
+<ul>
+<li>pwnable.kr</li>
+<li>pwnable.tw</li>
+<li>BUUCTF</li>
+<li>攻防世界</li>
+</ul>
+<p><strong>社区</strong>：</p>
+<ul>
+<li>CTF Time</li>
+<li>看雪论坛</li>
+<li>各大战队博客</li>
+</ul>
+<hr>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>PWN 的学习是一个漫长但有趣的过程。当你第一次成功获取 Shell 时，那种成就感是无与伦比的。</p>
+<p>记住：</p>
+<blockquote>
+<p><strong>理解原理比记忆技巧更重要。</strong><br><strong>每一次失败都是向成功迈进的一步。</strong><br><strong>保持好奇心，享受这个过程。</strong></p>
+</blockquote>
+<p>祝你在 PWN 的世界里玩得开心！🚀</p>
+<hr>
+</div></section><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>Hsad</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="https://hsad.xyz/2025/12/17/PWN-%E6%96%B0%E6%89%8B%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97%EF%BC%9A%E4%BB%8E%E9%9B%B6%E5%88%B0%E7%90%86%E8%A7%A3%E6%9C%AC%E8%B4%A8/" title="PWN 新手入门指南：从零到理解本质">https://hsad.xyz/2025/12/17/PWN-%E6%96%B0%E6%89%8B%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97%EF%BC%9A%E4%BB%8E%E9%9B%B6%E5%88%B0%E7%90%86%E8%A7%A3%E6%9C%AC%E8%B4%A8/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 "><span class="icon iconify" data-icon="ri:creative-commons-line"></span><span class="icon iconify" data-icon="ri:creative-commons-by-line"></span><span class="icon iconify" data-icon="ri:creative-commons-nc-line"></span><span class="icon iconify" data-icon="ri:creative-commons-sa-line"></span></a> 许可协议。</li></ul></article><div class="post-nav"><div class="post-nav-item"></div><div class="post-nav-item"><a class="post-nav-next" href="/2025/12/07/M-%E7%B3%BB%E5%88%97-Mac-%E4%B8%8A%E7%9A%84-Pwn-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" rel="next" title="M 系列 Mac 上的 Pwn 环境搭建"><span class="post-nav-text">M 系列 Mac 上的 Pwn 环境搭建</span><span class="icon iconify" data-icon="ri:arrow-right-s-line"></span></a></div></div></div><div class="hty-card" id="comment"></div></main><footer class="sidebar-translate" id="footer"><div class="copyright"><span>&copy; 2019 – 2025 </span><span class="with-love" id="animate"><span class="icon iconify" data-icon="ri:cloud-line"></span></span><span class="author"> Hsad</span></div><div class="powered"><span>由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v7.2.0</span><span class="footer-separator">|</span><span>主题 - <a rel="noopener" href="https://github.com/YunYouJun/hexo-theme-yun" target="_blank"><span>Yun</span></a> v1.10.11</span></div><div class="footer-support"><span>本网站由</span><a class="footer-support-logo" href="https://www.dkdun.cn/" target="blank" title="林枫云"><img height="30" src="https://www.dkdun.cn/themes/web/www/upload/local673d5fc9c789c.png" alt="林枫云"></a><span>提供赞助</span></div></footer></div><a class="hty-icon-button" id="back-to-top" aria-label="back-to-top" href="#"><span class="icon iconify" data-icon="ri:arrow-up-s-line"></span><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#0078E7" stroke-width="2" stroke-linecap="round"></circle></svg></a><script src="https://fastly.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script><script>const images = [...document.querySelectorAll('.markdown-body img')]
+mediumZoom(images)</script><style>.medium-zoom-image {
+  z-index: 99;
+}</style></body></html>
