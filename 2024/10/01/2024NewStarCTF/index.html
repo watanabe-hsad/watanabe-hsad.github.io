@@ -1,8 +1,8 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#496b8c"><meta name="description" content="翻着我们的照片 想念若隐若现"><meta name="author" content="Hsad"><meta name="generator" content="Hexo 7.2.0"><title>2024NewStarCTF-web | hsad</title><style>:root {
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#496b8c"><meta name="description" content="robots.txt得到提示 在响应包中发现了Location Location 首部指定的是需要将页面重新定向至的地址。一般在响应码为 3xx 的响应中才会有意义。 于是直接访问，得到了新的cookie解密发现为level2"><meta name="author" content="Hsad"><meta name="generator" content="Hexo 7.3.0"><title>2024NewStarCTF-web | hsad</title><style>:root {
   --accent: #496b8c;
   --accent-strong: color-mix(in srgb, #496b8c 62%, #223142);
   --accent-soft: #dce8f0;
-}</style><link rel="stylesheet" href="/css/hsad-theme.css"><script src="/js/hsad-theme.js" defer></script></head><body class="view-inner view-post"><div class="reading-progress" aria-hidden="true"><span class="reading-progress__bar" data-reading-progress></span></div><div class="page-aura page-aura--one"></div><div class="page-aura page-aura--two"></div><div class="site-shell"><aside class="site-sidebar"><section class="sidebar sidebar--desktop"><div class="sidebar__backdrop" style="background-image:url(/images/background.png)"></div><div class="sidebar__overlay"></div><div class="sidebar__content"><a class="sidebar__brand" href="/"><img class="sidebar__avatar" src="/images/avatar.jpg" alt="Hsad"><div class="sidebar__identity"><h2 class="sidebar__title">hsad</h2><p class="sidebar__subtitle">翻着我们的照片 想念若隐若现</p></div></a><p class="sidebar__description">只是一些写下来的瞬间。</p><nav class="sidebar__nav" aria-label="Primary"><a href="/">首页</a><a href="/archives/">归档</a><a href="/categories/">分类</a><a href="/tags/">标签</a><a href="/links/">友链</a><a href="/about/">关于</a></nav><div class="sidebar__social"><a href="https://github.com/watanabe-hsad" target="_blank" rel="noopener">GitHub</a><a href="mailto:dubian.zzy@outlook.com" target="_blank" rel="noopener">E-Mail</a><a href="https://qm.qq.com/cgi-bin/qm/qr?k=EYiK7-b5ur1mWxbX7aV2AEBsuoW9c732" target="_blank" rel="noopener">QQ</a></div></div></section></aside><div class="mobile-topbar"><button class="mobile-topbar__toggle js-drawer-toggle" type="button" aria-label="Open navigation"><span></span><span></span><span></span></button><a class="mobile-topbar__title" href="/">hsad</a><a class="mobile-topbar__avatar" href="/"><img src="/images/avatar.jpg" alt="Hsad"></a></div><div class="mobile-drawer" data-drawer aria-hidden="true"><div class="mobile-drawer__panel"><section class="sidebar sidebar--mobile"><div class="sidebar__backdrop" style="background-image:url(/images/background.png)"></div><div class="sidebar__overlay"></div><div class="sidebar__content"><a class="sidebar__brand" href="/"><img class="sidebar__avatar" src="/images/avatar.jpg" alt="Hsad"><div class="sidebar__identity"><h2 class="sidebar__title">hsad</h2><p class="sidebar__subtitle">翻着我们的照片 想念若隐若现</p></div></a><p class="sidebar__description">只是一些写下来的瞬间。</p><nav class="sidebar__nav" aria-label="Primary"><a href="/">首页</a><a href="/archives/">归档</a><a href="/categories/">分类</a><a href="/tags/">标签</a><a href="/links/">友链</a><a href="/about/">关于</a></nav><div class="sidebar__social"><a href="https://github.com/watanabe-hsad" target="_blank" rel="noopener">GitHub</a><a href="mailto:dubian.zzy@outlook.com" target="_blank" rel="noopener">E-Mail</a><a href="https://qm.qq.com/cgi-bin/qm/qr?k=EYiK7-b5ur1mWxbX7aV2AEBsuoW9c732" target="_blank" rel="noopener">QQ</a></div></div></section></div></div><div class="mobile-backdrop js-drawer-close"></div><main class="site-main"><div class="article-layout article-layout--with-toc"><article class="article"><header class="article__header"><div class="article__eyebrow"><a href="/categories/%E5%AE%89%E5%85%A8%E7%9B%B8%E5%85%B3/">安全相关</a><span class="article__divider">/</span><a href="/categories/%E5%AE%89%E5%85%A8%E7%9B%B8%E5%85%B3/CTF/">CTF</a></div><h1 class="article__title">2024NewStarCTF-web</h1><div class="article__meta"><time datetime="2024-10-01T02:07:21.000Z">2024-10-01</time><span class="article__divider">/</span><span>更新于 2025-07-13</span></div><div class="article__tags"><a class="article__tag" href="/tags/NewStarCTF/">NewStarCTF</a></div></header><details class="post-outline post-outline--mobile"><summary class="post-outline__summary"><span>本文导航</span><small>按标题快速定位</small></summary><nav class="post-toc" data-post-toc><ol class="post-toc__list"><li class="post-toc__list-item post-toc__list-level-2"><a class="post-toc__list-link" href="#Week1"><span class="post-toc__list-text">Week1</span></a><ol class="post-toc__list-child"><li class="post-toc__list-item post-toc__list-level-3"><a class="post-toc__list-link" href="#web"><span class="post-toc__list-text">web</span></a></li></ol></li><li class="post-toc__list-item post-toc__list-level-2"><a class="post-toc__list-link" href="#Week2"><span class="post-toc__list-text">Week2</span></a><ol class="post-toc__list-child"><li class="post-toc__list-item post-toc__list-level-3"><a class="post-toc__list-link" href="#web-1"><span class="post-toc__list-text">web</span></a></li></ol></li><li class="post-toc__list-item post-toc__list-level-2"><a class="post-toc__list-link" href="#Week3"><span class="post-toc__list-text">Week3</span></a><ol class="post-toc__list-child"><li class="post-toc__list-item post-toc__list-level-3"><a class="post-toc__list-link" href="#web-2"><span class="post-toc__list-text">web</span></a></li></ol></li></ol></nav></details><div class="article__content"><h2 id="Week1"><a href="#Week1" class="headerlink" title="Week1"></a>Week1</h2><h3 id="web"><a href="#web" class="headerlink" title="web"></a>web</h3><h4 id="智械危机-decrypt"><a href="#智械危机-decrypt" class="headerlink" title="智械危机(decrypt)"></a>智械危机(decrypt)</h4><p>robots.txt得到提示</p>
+}</style><link rel="stylesheet" href="/css/hsad-theme.css"><script src="/js/hsad-theme.js" defer></script></head><body class="view-inner view-post"><div class="reading-progress" aria-hidden="true"><span class="reading-progress__bar" data-reading-progress></span></div><div class="page-aura page-aura--one"></div><div class="page-aura page-aura--two"></div><div class="site-shell"><aside class="site-sidebar"><section class="sidebar sidebar--desktop"><div class="sidebar__backdrop" style="background-image:url(/images/background.png)"></div><div class="sidebar__overlay"></div><div class="sidebar__content"><a class="sidebar__brand" href="/"><img class="sidebar__avatar" src="/images/avatar.jpg" alt="Hsad"><div class="sidebar__identity"><h2 class="sidebar__title">hsad</h2><p class="sidebar__subtitle">翻着我们的照片 想念若隐若现</p></div></a><p class="sidebar__description">只是一些写下来的瞬间。</p><nav class="sidebar__nav" aria-label="Primary"><a href="/">首页</a><a href="/archives/">归档</a><a href="/categories/">分类</a><a href="/tags/">标签</a><a href="/search/">搜索</a><a href="/links/">友链</a><a href="/about/">关于</a></nav><div class="sidebar__social"><a href="https://github.com/watanabe-hsad" target="_blank" rel="noopener">GitHub</a><a href="mailto:dubian.zzy@outlook.com" target="_blank" rel="noopener">E-Mail</a><a href="https://qm.qq.com/cgi-bin/qm/qr?k=EYiK7-b5ur1mWxbX7aV2AEBsuoW9c732" target="_blank" rel="noopener">QQ</a></div></div></section></aside><div class="mobile-topbar"><button class="mobile-topbar__toggle js-drawer-toggle" type="button" aria-label="打开导航" aria-controls="mobile-navigation" aria-expanded="false"><span></span><span></span><span></span></button><a class="mobile-topbar__title" href="/">hsad</a><a class="mobile-topbar__avatar" href="/"><img src="/images/avatar.jpg" alt="Hsad"></a></div><div class="mobile-drawer" id="mobile-navigation" data-drawer aria-hidden="true" inert><div class="mobile-drawer__panel"><section class="sidebar sidebar--mobile"><div class="sidebar__backdrop" style="background-image:url(/images/background.png)"></div><div class="sidebar__overlay"></div><div class="sidebar__content"><a class="sidebar__brand" href="/"><img class="sidebar__avatar" src="/images/avatar.jpg" alt="Hsad"><div class="sidebar__identity"><h2 class="sidebar__title">hsad</h2><p class="sidebar__subtitle">翻着我们的照片 想念若隐若现</p></div></a><p class="sidebar__description">只是一些写下来的瞬间。</p><nav class="sidebar__nav" aria-label="Primary"><a href="/">首页</a><a href="/archives/">归档</a><a href="/categories/">分类</a><a href="/tags/">标签</a><a href="/search/">搜索</a><a href="/links/">友链</a><a href="/about/">关于</a></nav><div class="sidebar__social"><a href="https://github.com/watanabe-hsad" target="_blank" rel="noopener">GitHub</a><a href="mailto:dubian.zzy@outlook.com" target="_blank" rel="noopener">E-Mail</a><a href="https://qm.qq.com/cgi-bin/qm/qr?k=EYiK7-b5ur1mWxbX7aV2AEBsuoW9c732" target="_blank" rel="noopener">QQ</a></div></div></section></div></div><button class="mobile-backdrop js-drawer-close" type="button" aria-label="关闭导航" tabindex="-1"></button><main class="site-main"><div class="article-layout article-layout--with-toc"><article class="article"><header class="article__header"><div class="article__eyebrow"><a href="/categories/%E5%AE%89%E5%85%A8%E7%9B%B8%E5%85%B3/">安全相关</a><span class="article__divider">/</span><a href="/categories/%E5%AE%89%E5%85%A8%E7%9B%B8%E5%85%B3/CTF/">CTF</a></div><h1 class="article__title">2024NewStarCTF-web</h1><div class="article__meta"><time datetime="2024-10-01T02:07:21.000Z">2024-10-01</time><span class="article__divider">/</span><span>更新于 2026-07-17</span></div><div class="article__tags"><a class="article__tag" href="/tags/NewStarCTF/">NewStarCTF</a></div></header><details class="post-outline post-outline--mobile"><summary class="post-outline__summary"><span>本文导航</span><small>按标题快速定位</small></summary><nav class="post-toc" data-post-toc><ol class="post-toc__list"><li class="post-toc__list-item post-toc__list-level-2"><a class="post-toc__list-link" href="#Week1"><span class="post-toc__list-text">Week1</span></a><ol class="post-toc__list-child"><li class="post-toc__list-item post-toc__list-level-3"><a class="post-toc__list-link" href="#web"><span class="post-toc__list-text">web</span></a></li></ol></li><li class="post-toc__list-item post-toc__list-level-2"><a class="post-toc__list-link" href="#Week2"><span class="post-toc__list-text">Week2</span></a><ol class="post-toc__list-child"><li class="post-toc__list-item post-toc__list-level-3"><a class="post-toc__list-link" href="#web-1"><span class="post-toc__list-text">web</span></a></li></ol></li><li class="post-toc__list-item post-toc__list-level-2"><a class="post-toc__list-link" href="#Week3"><span class="post-toc__list-text">Week3</span></a><ol class="post-toc__list-child"><li class="post-toc__list-item post-toc__list-level-3"><a class="post-toc__list-link" href="#web-2"><span class="post-toc__list-text">web</span></a></li></ol></li></ol></nav></details><div class="article__content"><h2 id="Week1"><a href="#Week1" class="headerlink" title="Week1"></a>Week1</h2><h3 id="web"><a href="#web" class="headerlink" title="web"></a>web</h3><h4 id="智械危机-decrypt"><a href="#智械危机-decrypt" class="headerlink" title="智械危机(decrypt)"></a>智械危机(decrypt)</h4><p>robots.txt得到提示</p>
 <pre class="language-php" data-language="php"><code class="language-php"> <span class="token php language-php"><span class="token delimiter important">&lt;?php</span>
 
 <span class="token keyword">function</span> <span class="token function-definition function">execute_cmd</span><span class="token punctuation">(</span><span class="token variable">$cmd</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
@@ -71,7 +71,7 @@
         console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"你似乎对这门叫做4cqu1siti0n的课很好奇？那就来看看控制台吧！"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
     <span class="token operator">&lt;</span><span class="token operator">/</span>script<span class="token operator">></span></code></pre>
 
-<p><img src="js.png"></p>
+<p><img src="/2024/10/01/2024NewStarCTF/js.png"></p>
 <pre class="language-json" data-language="json"><code class="language-json"><span class="token punctuation">&#123;</span><span class="token property">"flag"</span><span class="token operator">:</span><span class="token string">"IV95NF9yM2Fs"</span><span class="token punctuation">,</span><span class="token property">"nextLevel"</span><span class="token operator">:</span><span class="token string">"s34l"</span><span class="token punctuation">&#125;</span></code></pre>
 
 <pre class="language-javascript" data-language="javascript"><code class="language-javascript"><span class="token operator">&lt;</span>script<span class="token operator">></span>
@@ -111,10 +111,10 @@
        <span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
    <span class="token operator">&lt;</span><span class="token operator">/</span>script<span class="token operator">></span></code></pre>
 
-<p><img src="js2.png"></p>
+<p><img src="/2024/10/01/2024NewStarCTF/js2.png"></p>
 <pre class="language-json" data-language="json"><code class="language-json"><span class="token punctuation">&#123;</span><span class="token property">"flag"</span><span class="token operator">:</span><span class="token string">"MXlfR3I0c1B"</span><span class="token punctuation">,</span><span class="token property">"nextLevel"</span><span class="token operator">:</span><span class="token string">"Ap3x"</span><span class="token punctuation">&#125;</span></code></pre>
 
-<p><img src="js3.png"></p>
+<p><img src="/2024/10/01/2024NewStarCTF/js3.png"></p>
 <pre class="language-json" data-language="json"><code class="language-json"><span class="token punctuation">&#123;</span><span class="token property">"flag"</span><span class="token operator">:</span><span class="token string">"fSkpKcyF9"</span><span class="token punctuation">,</span><span class="token property">"nextLevel"</span><span class="token operator">:</span><span class="token null keyword">null</span><span class="token punctuation">&#125;</span></code></pre>
 
 <pre class="language-php" data-language="php"><code class="language-php">flag<span class="token punctuation">&#123;</span>WA0w<span class="token operator">!</span>_y4_r3al1y_Gr4sP_JJJs<span class="token operator">!</span><span class="token punctuation">&#125;</span></code></pre>
@@ -133,20 +133,20 @@
 <span class="token comment">#getflag</span>
 <span class="token operator">-</span><span class="token number">1</span> <span class="token keyword">union</span> <span class="token keyword">select</span> des<span class="token punctuation">,</span><span class="token keyword">value</span> <span class="token keyword">from</span> Fl4g<span class="token comment">#</span></code></pre>
 
-<h4 id="PangBai-过家家（1）"><a href="#PangBai-过家家（1）" class="headerlink" title="PangBai 过家家（1）"></a>PangBai 过家家（1）</h4><p><img src="location.png"></p>
+<h4 id="PangBai-过家家（1）"><a href="#PangBai-过家家（1）" class="headerlink" title="PangBai 过家家（1）"></a>PangBai 过家家（1）</h4><p><img src="/2024/10/01/2024NewStarCTF/location.png"></p>
 <p>在响应包中发现了Location</p>
 <p><strong><code>Location</code></strong> 首部指定的是需要将页面重新定向至的地址。一般在响应码为 3xx 的响应中才会有意义。</p>
 <p>于是直接访问，得到了新的cookie解密发现为level2</p>
-<p><img src="/2024NewStarCTF/http2.png"></p>
+<p><img src="/2024/10/01/2024NewStarCTF/http2.png"></p>
 <p>尝试GET请求ask&#x3D;miao，拿到下一关cookie</p>
-<p><img src="/2024NewStarCTF/http3.png"></p>
+<p><img src="/2024/10/01/2024NewStarCTF/http3.png"></p>
 <p>加上之前的GET请求后显示 用另一种方法（Method）打声招呼（<code>say=hello</code>）吧 ~ 那就POST请求</p>
 <p>来到第四关</p>
-<p><img src="/2024NewStarCTF/http4.png"></p>
+<p><img src="/2024/10/01/2024NewStarCTF/http4.png"></p>
 <p>修改UA头为<code>User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:46.0) Papa/20100101 Firefox/46.0</code></p>
 <p>你的话语似乎没有对 PangBai 起效，试着说「玛卡巴卡阿卡哇卡米卡玛卡呣」。</p>
 <p>修改post内容即可<code>say=玛卡巴卡阿卡哇卡米卡玛卡呣</code></p>
-<p><img src="/2024NewStarCTF/http5.png"></p>
+<p><img src="/2024/10/01/2024NewStarCTF/http5.png"></p>
 <p>这里便是 PangBai 的心境了呢！试着解开心结吧 ~<br>或许可以尝试用修改（PATCH）的方法提交一个补丁包（name&#x3D;”file”; filename&#x3D;”*.zip”)</p>
 <p>后面的不会了 看wp复现的</p>
 <p>PATCH 包的格式与 POST 无异，使用 <code>Content-Type: multipart/form-data</code> 发包即可，注意该 Header 的值后面需要加一个 <code>boundary</code> 表示界定符。例如<code>Content-Type: multipart/form-data; boundary=abc</code>，那么在 Body 中，以 <code>--abc</code> 表示一个查询字段的开始，当所有查询字段结束后，用 <code>--abc--</code> 表示结束。</p>
@@ -206,11 +206,11 @@ files<span class="token operator">=</span>files<span class="token punctuation">)
 files<span class="token punctuation">[</span><span class="token string">'file'</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">.</span>close<span class="token punctuation">(</span><span class="token punctuation">)</span>
 <span class="token keyword">print</span><span class="token punctuation">(</span>response<span class="token punctuation">.</span>text<span class="token punctuation">)</span></code></pre>
 
-<p><img src="/2024NewStarCTF/http6.png"></p>
+<p><img src="/2024/10/01/2024NewStarCTF/http6.png"></p>
 <p><strong>X-Forwarded-For: localhost</strong>即可</p>
 <p>PangBai 以一种难以形容的表情望着你——激动的、怀念的，却带着些不安与惊恐，像落单后归家的雏鸟，又宛若雷暴中遇难的船员。 你似乎无法抵御这种感觉的萦绕，像是一瞬间被推入到无法言喻的深渊。尽管你尽力摆脱，但即便今后夜间偶见酣眠，这一瞬间塑成的梦魇也成为了美梦的常客。 「像■■■■验体■■不可能■■■■ JWT 这种■■ <strong>Oga0tB4RryevSMSQ</strong> ■■■密钥，除非■■■■■走，难道■■■■■■吗？！」 「……」</p>
 <p>这里应该是jwt的密钥 进行加密 修改level为0即可</p>
-<p><img src="/2024NewStarCTF/http0.png"></p>
+<p><img src="/2024/10/01/2024NewStarCTF/http0.png"></p>
 <h2 id="Week2"><a href="#Week2" class="headerlink" title="Week2"></a>Week2</h2><h3 id="web-1"><a href="#web-1" class="headerlink" title="web"></a>web</h3><h4 id="你能在一秒内打出八句英文吗"><a href="#你能在一秒内打出八句英文吗" class="headerlink" title="你能在一秒内打出八句英文吗"></a>你能在一秒内打出八句英文吗</h4><pre class="language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> re
 <span class="token keyword">import</span> requests
 
@@ -268,10 +268,10 @@ payload <span class="token operator">=</span> re<span class="token punctuation">
 <span class="token function">git</span> log
 <span class="token function">git</span> reset <span class="token parameter variable">--hard</span> xxxx</code></pre>
 
-<p><img src="pangbai2_git.png"></p>
+<p><img src="/2024/10/01/2024NewStarCTF/pangbai2_git.png"></p>
 <p>切换了之前分支查看 多了些文件</p>
 <p>看了wp后  <code>git stash list</code></p>
-<p><img src="pangbai2_stash.png"></p>
+<p><img src="/2024/10/01/2024NewStarCTF/pangbai2_stash.png"></p>
 <blockquote>
 <p>Stash 的作用</p>
 <p>有时会遇到这样的情况，我们正在 dev 分支开发新功能，做到一半时有人过来反馈一个 bug，让马上解决，但是又不方便和现在已经更改的内容混杂在一起，这时就可以使用 <code>git stash</code> 命令先把当前进度保存起来。随后便可以即时处理当前要处理的内容。使用 <code>git stash pop</code> 则可以将之前存储的内容重新恢复到工作区。</p>
@@ -441,10 +441,10 @@ Traceback <span class="token punctuation">(</span>most recent call last<span cla
 TypeError<span class="token punctuation">:</span> <span class="token string">'NoneType'</span> <span class="token builtin">object</span> <span class="token keyword">is</span> <span class="token keyword">not</span> subscriptable</code></pre>
 
 <p>为什么呢？可以看 Python 解释器的 <code>builtins</code> 相关的代码：<a target="_blank" rel="noopener" href="https://github.com/python/cpython/blob/079875e39589eb0628b5883f7ffa387e7476ec06/Python/bltinmodule.c#L996-L1002"> bltinmodule.c</a>.</p>
-<p><img src="caicaibei_1.D2AU5_8T.png"></p>
+<p><img src="/2024/10/01/2024NewStarCTF/caicaibei_1.D2AU5_8T.png"></p>
 <p>可见，会检查 <code>globals</code> 中是否已经包含了 <code>builtins</code>，如果没有，则会通过 <code>PyEval_GetBuiltins()</code> 获取默认的内置函数，并将其添加到 <code>globals</code> 中。</p>
 <p>又因为<a target="_blank" rel="noopener" href="https://docs.python.org/3.10/library/functions.html#eval">官方文档中对 <code>eval</code> 函数的描述</a>：</p>
-<p><img src="caicaibei_2.DF8ath1m.png"></p>
+<p><img src="/2024/10/01/2024NewStarCTF/caicaibei_2.DF8ath1m.png"></p>
 <p>因此，报错的原因便是，我们在 <code>inp</code> 中的 <code>eval</code> 并没有指定 <code>globals</code>，因此 Python 会将<strong>当前调用处的上下文的 <code>globals</code></strong> 作为第二个参数，即使设定了第二个参数但没有指定 <code>__builtins__</code>，Python 也会自动注入<strong>当前上下文</strong>中的 <code>builtins</code>（也就是未指定则继承）。但当前上下文中的 <code>builtins</code> 是 <code>None</code>，因此会报错。</p>
 <p>绕过也很简单，显式指定即可：</p>
 <pre class="language-python" data-language="python"><code class="language-python"><span class="token operator">>></span><span class="token operator">></span> inp<span class="token operator">=</span><span class="token triple-quoted-string string">'''f.__globals__['__builtins__'].eval('print(1)', &#123; "__builtins__": f.__globals__['__builtins__'] &#125;)'''</span>
@@ -574,7 +574,7 @@ output_text <span class="token operator">=</span> half_to_full<span class="token
 <p><strong>TIP</strong></p>
 <p>若直接在浏览器中访问带 <code>../</code> 的路径，会先被浏览器按照网址路径规则解析一遍 <code>../</code>，最终发出的并不是含这个字符串的路径，因此需要用发包软件发送过去。</p>
 </blockquote>
-<p><img src="zhaopian_1.hT3DdUgs.png"></p>
+<p><img src="/2024/10/01/2024NewStarCTF/zhaopian_1.hT3DdUgs.png"></p>
 <p>本题的漏洞代码是 <code>send_file(&quot;./static/&quot; + file)</code>.</p>
 <p>与 SQL 注入一样，直接拼接用户可控制输入的字符串是大忌！</p>
 <p>很轻松的，我们获得了主程序的源代码。</p>
@@ -775,7 +775,7 @@ admin_pass <span class="token operator">=</span> <span class="token string">""</
 
 <p>通过本段代码我们可以知道一个有效账户 <code>amiya</code>，密码 <code>114514</code>，通过发包登录，我们可以获得一个有效的 <code>token</code>，据此能在本地认证签名 <code>secret_key</code> 的有效性（因为目标主机有认证次数限制）。</p>
 <p>用明文存密码也是大忌！安全的做法是存储哈希值，并且加入一定的盐值（Salt）。</p>
-<p><img src="choupi.png"></p>
+<p><img src="/2024/10/01/2024NewStarCTF/choupi.png"></p>
 <p>爆破出 <code>secret_key</code>，然后查看登录后的逻辑：</p>
 <p>前端请求 <code>/execute</code> 指定 <code>api_address</code>，而 <code>api_address</code> 可控且没有校验，存在 SSRF 漏洞。</p>
 <p>定位到源代码开头：</p>
@@ -837,7 +837,7 @@ req <span class="token operator">=</span> requests<span class="token punctuation
 
 <h4 id="blindsql1"><a href="#blindsql1" class="headerlink" title="blindsql1"></a>blindsql1</h4><p>能够根据姓名查询成绩  加入单引号时，查询失败，说明存在注入</p>
 <p>尝试 <code>Alice&#39; or 1=1#</code>（注意 <code>#</code> 要 URL 编码成 <code>%23</code>）时，提示空格被禁用了</p>
-<p><img src="blindsql1_3.Dp8IaYB9.png"></p>
+<p><img src="/2024/10/01/2024NewStarCTF/blindsql1_3.Dp8IaYB9.png"></p>
 <p>多次尝试，会发现 <code>union</code> <code>=</code> <code>/</code> 都被禁用了。</p>
 <p><code>union</code> 被禁用，说明此时该使用盲注，我们能够通过插入 <code>and 1</code> 或者 <code>and 0</code> 来控制是否返回数据，由此可以使用布尔盲注</p>
 <p><code>=</code> 的绕过可以使用 <code>like</code> 或者 <code>in</code> 代替</p>
@@ -873,4 +873,5 @@ url <span class="token operator">=</span> <span class="token string">"http://eci
             result <span class="token operator">+=</span> c
             <span class="token keyword">print</span><span class="token punctuation">(</span>result<span class="token punctuation">)</span>
             <span class="token keyword">break</span>
-</code></pre></div></article><aside class="post-outline post-outline--desktop" aria-label="文章目录"><p class="post-outline__eyebrow">本文导航</p><p class="post-outline__title">章节概览</p><nav class="post-toc" data-post-toc><ol class="post-toc__list"><li class="post-toc__list-item post-toc__list-level-2"><a class="post-toc__list-link" href="#Week1"><span class="post-toc__list-text">Week1</span></a></li><li class="post-toc__list-item post-toc__list-level-2"><a class="post-toc__list-link" href="#Week2"><span class="post-toc__list-text">Week2</span></a></li><li class="post-toc__list-item post-toc__list-level-2"><a class="post-toc__list-link" href="#Week3"><span class="post-toc__list-text">Week3</span></a></li></ol></nav></aside></div><nav class="post-nav"><a class="post-nav__item post-nav__item--prev" href="/2024/10/02/2024SHCTF-web/"><span class="post-nav__label">上一篇</span><strong>2024SHCTF-web</strong></a><a class="post-nav__item post-nav__item--next" href="/2024/09/21/PolarLab-web-Baby/"><span class="post-nav__label">下一篇</span><strong>PolarLab-web-Baby</strong></a></nav></main><footer class="site-footer"><p class="site-footer__text">有些话适合留在页面里。</p><a class="site-footer__support" href="https://www.dkdun.cn/" target="_blank" rel="noopener"><img class="site-footer__support-logo" src="https://www.dkdun.cn/themes/web/www/upload/local673d5fc9c789c.png" alt="林枫云"><span class="site-footer__support-copy"><span>本网站由 </span><strong>林枫云</strong><span> 提供赞助</span></span></a><p class="site-footer__license">本站内容采用<a href="https://creativecommons.org/licenses/by-nc/4.0/deed.zh-hans" target="_blank" rel="noopener"> CC BY-NC 4.0 </a>协议发布</p></footer></div></body></html>
+</code></pre>
+</div></article><aside class="post-outline post-outline--desktop" aria-label="文章目录"><p class="post-outline__eyebrow">本文导航</p><p class="post-outline__title">章节概览</p><nav class="post-toc" data-post-toc><ol class="post-toc__list"><li class="post-toc__list-item post-toc__list-level-2"><a class="post-toc__list-link" href="#Week1"><span class="post-toc__list-text">Week1</span></a></li><li class="post-toc__list-item post-toc__list-level-2"><a class="post-toc__list-link" href="#Week2"><span class="post-toc__list-text">Week2</span></a></li><li class="post-toc__list-item post-toc__list-level-2"><a class="post-toc__list-link" href="#Week3"><span class="post-toc__list-text">Week3</span></a></li></ol></nav></aside></div><nav class="post-nav"><a class="post-nav__item post-nav__item--prev" href="/2024/10/02/2024SHCTF-web/"><span class="post-nav__label">上一篇</span><strong>2024SHCTF-web</strong></a><a class="post-nav__item post-nav__item--next" href="/2024/09/21/PolarLab-web-Baby/"><span class="post-nav__label">下一篇</span><strong>PolarLab-web-Baby</strong></a></nav></main><footer class="site-footer"><p class="site-footer__text">有些话适合留在页面里。</p><a class="site-footer__support" href="https://www.dkdun.cn/" target="_blank" rel="noopener"><img class="site-footer__support-logo" src="https://www.dkdun.cn/themes/web/www/upload/local673d5fc9c789c.png" alt="林枫云"><span class="site-footer__support-copy"><span>本网站由 </span><strong>林枫云</strong><span> 提供赞助</span></span></a><p class="site-footer__license">本站内容采用<a href="https://creativecommons.org/licenses/by-nc/4.0/deed.zh-hans" target="_blank" rel="noopener"> CC BY-NC 4.0 </a>协议发布</p></footer></div></body></html>

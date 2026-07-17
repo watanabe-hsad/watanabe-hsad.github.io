@@ -1,13 +1,13 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#496b8c"><meta name="description" content="翻着我们的照片 想念若隐若现"><meta name="author" content="Hsad"><meta name="generator" content="Hexo 7.2.0"><title>Java反序列化Commons-Collections篇01-CC1链 | hsad</title><style>:root {
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#496b8c"><meta name="description" content="首先正常创建Java项目，这里使用maven管理工具，JDK要求8u_65（高版本会被修复），如下图。 maven添加CC1依赖 如果能成功导入以下包，则证明依赖安装成功 接下来修改 sun 包方便阅读源码，已有的JDK是 .class 文件，是已经编译完了的反编译代码，相对.java文件不太友好"><meta name="author" content="Hsad"><meta name="generator" content="Hexo 7.3.0"><title>Java反序列化Commons-Collections篇01-CC1链 | hsad</title><style>:root {
   --accent: #496b8c;
   --accent-strong: color-mix(in srgb, #496b8c 62%, #223142);
   --accent-soft: #dce8f0;
-}</style><link rel="stylesheet" href="/css/hsad-theme.css"><script src="/js/hsad-theme.js" defer></script></head><body class="view-inner view-post"><div class="reading-progress" aria-hidden="true"><span class="reading-progress__bar" data-reading-progress></span></div><div class="page-aura page-aura--one"></div><div class="page-aura page-aura--two"></div><div class="site-shell"><aside class="site-sidebar"><section class="sidebar sidebar--desktop"><div class="sidebar__backdrop" style="background-image:url(/images/background.png)"></div><div class="sidebar__overlay"></div><div class="sidebar__content"><a class="sidebar__brand" href="/"><img class="sidebar__avatar" src="/images/avatar.jpg" alt="Hsad"><div class="sidebar__identity"><h2 class="sidebar__title">hsad</h2><p class="sidebar__subtitle">翻着我们的照片 想念若隐若现</p></div></a><p class="sidebar__description">只是一些写下来的瞬间。</p><nav class="sidebar__nav" aria-label="Primary"><a href="/">首页</a><a href="/archives/">归档</a><a href="/categories/">分类</a><a href="/tags/">标签</a><a href="/links/">友链</a><a href="/about/">关于</a></nav><div class="sidebar__social"><a href="https://github.com/watanabe-hsad" target="_blank" rel="noopener">GitHub</a><a href="mailto:dubian.zzy@outlook.com" target="_blank" rel="noopener">E-Mail</a><a href="https://qm.qq.com/cgi-bin/qm/qr?k=EYiK7-b5ur1mWxbX7aV2AEBsuoW9c732" target="_blank" rel="noopener">QQ</a></div></div></section></aside><div class="mobile-topbar"><button class="mobile-topbar__toggle js-drawer-toggle" type="button" aria-label="Open navigation"><span></span><span></span><span></span></button><a class="mobile-topbar__title" href="/">hsad</a><a class="mobile-topbar__avatar" href="/"><img src="/images/avatar.jpg" alt="Hsad"></a></div><div class="mobile-drawer" data-drawer aria-hidden="true"><div class="mobile-drawer__panel"><section class="sidebar sidebar--mobile"><div class="sidebar__backdrop" style="background-image:url(/images/background.png)"></div><div class="sidebar__overlay"></div><div class="sidebar__content"><a class="sidebar__brand" href="/"><img class="sidebar__avatar" src="/images/avatar.jpg" alt="Hsad"><div class="sidebar__identity"><h2 class="sidebar__title">hsad</h2><p class="sidebar__subtitle">翻着我们的照片 想念若隐若现</p></div></a><p class="sidebar__description">只是一些写下来的瞬间。</p><nav class="sidebar__nav" aria-label="Primary"><a href="/">首页</a><a href="/archives/">归档</a><a href="/categories/">分类</a><a href="/tags/">标签</a><a href="/links/">友链</a><a href="/about/">关于</a></nav><div class="sidebar__social"><a href="https://github.com/watanabe-hsad" target="_blank" rel="noopener">GitHub</a><a href="mailto:dubian.zzy@outlook.com" target="_blank" rel="noopener">E-Mail</a><a href="https://qm.qq.com/cgi-bin/qm/qr?k=EYiK7-b5ur1mWxbX7aV2AEBsuoW9c732" target="_blank" rel="noopener">QQ</a></div></div></section></div></div><div class="mobile-backdrop js-drawer-close"></div><main class="site-main"><div class="article-layout article-layout--with-toc"><article class="article"><header class="article__header"><div class="article__eyebrow"><a href="/categories/%E5%AE%89%E5%85%A8%E7%9B%B8%E5%85%B3/">安全相关</a><span class="article__divider">/</span><a href="/categories/%E5%AE%89%E5%85%A8%E7%9B%B8%E5%85%B3/Java%E5%AE%89%E5%85%A8/">Java安全</a></div><h1 class="article__title">Java反序列化Commons-Collections篇01-CC1链</h1><div class="article__meta"><time datetime="2025-01-01T14:53:35.000Z">2025-01-01</time><span class="article__divider">/</span><span>更新于 2025-07-13</span></div><div class="article__tags"><a class="article__tag" href="/tags/Java/">Java</a></div></header><details class="post-outline post-outline--mobile"><summary class="post-outline__summary"><span>本文导航</span><small>按标题快速定位</small></summary><nav class="post-toc" data-post-toc><ol class="post-toc__list"><li class="post-toc__list-item post-toc__list-level-3"><a class="post-toc__list-link" href="#0x01-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="post-toc__list-text">0x01 环境搭建</span></a></li><li class="post-toc__list-item post-toc__list-level-3"><a class="post-toc__list-link" href="#0x02-Common-Collections-%E7%9B%B8%E5%85%B3%E4%BB%8B%E7%BB%8D"><span class="post-toc__list-text">0x02 Common-Collections 相关介绍</span></a></li><li class="post-toc__list-item post-toc__list-level-3"><a class="post-toc__list-link" href="#0x03-CC1%E6%94%BB%E5%87%BB%E9%93%BE%E5%88%86%E6%9E%90-TransformMap"><span class="post-toc__list-text">0x03 CC1攻击链分析(TransformMap)</span></a></li><li class="post-toc__list-item post-toc__list-level-3"><a class="post-toc__list-link" href="#0x04-CC1-Exp-TransformMap"><span class="post-toc__list-text">0x04 CC1 Exp(TransformMap)</span></a></li><li class="post-toc__list-item post-toc__list-level-3"><a class="post-toc__list-link" href="#0x05-Exploit"><span class="post-toc__list-text">0x05 Exploit</span></a></li></ol></nav></details><div class="article__content"><h3 id="0x01-环境搭建"><a href="#0x01-环境搭建" class="headerlink" title="0x01 环境搭建"></a>0x01 环境搭建</h3><ul>
+}</style><link rel="stylesheet" href="/css/hsad-theme.css"><script src="/js/hsad-theme.js" defer></script></head><body class="view-inner view-post"><div class="reading-progress" aria-hidden="true"><span class="reading-progress__bar" data-reading-progress></span></div><div class="page-aura page-aura--one"></div><div class="page-aura page-aura--two"></div><div class="site-shell"><aside class="site-sidebar"><section class="sidebar sidebar--desktop"><div class="sidebar__backdrop" style="background-image:url(/images/background.png)"></div><div class="sidebar__overlay"></div><div class="sidebar__content"><a class="sidebar__brand" href="/"><img class="sidebar__avatar" src="/images/avatar.jpg" alt="Hsad"><div class="sidebar__identity"><h2 class="sidebar__title">hsad</h2><p class="sidebar__subtitle">翻着我们的照片 想念若隐若现</p></div></a><p class="sidebar__description">只是一些写下来的瞬间。</p><nav class="sidebar__nav" aria-label="Primary"><a href="/">首页</a><a href="/archives/">归档</a><a href="/categories/">分类</a><a href="/tags/">标签</a><a href="/search/">搜索</a><a href="/links/">友链</a><a href="/about/">关于</a></nav><div class="sidebar__social"><a href="https://github.com/watanabe-hsad" target="_blank" rel="noopener">GitHub</a><a href="mailto:dubian.zzy@outlook.com" target="_blank" rel="noopener">E-Mail</a><a href="https://qm.qq.com/cgi-bin/qm/qr?k=EYiK7-b5ur1mWxbX7aV2AEBsuoW9c732" target="_blank" rel="noopener">QQ</a></div></div></section></aside><div class="mobile-topbar"><button class="mobile-topbar__toggle js-drawer-toggle" type="button" aria-label="打开导航" aria-controls="mobile-navigation" aria-expanded="false"><span></span><span></span><span></span></button><a class="mobile-topbar__title" href="/">hsad</a><a class="mobile-topbar__avatar" href="/"><img src="/images/avatar.jpg" alt="Hsad"></a></div><div class="mobile-drawer" id="mobile-navigation" data-drawer aria-hidden="true" inert><div class="mobile-drawer__panel"><section class="sidebar sidebar--mobile"><div class="sidebar__backdrop" style="background-image:url(/images/background.png)"></div><div class="sidebar__overlay"></div><div class="sidebar__content"><a class="sidebar__brand" href="/"><img class="sidebar__avatar" src="/images/avatar.jpg" alt="Hsad"><div class="sidebar__identity"><h2 class="sidebar__title">hsad</h2><p class="sidebar__subtitle">翻着我们的照片 想念若隐若现</p></div></a><p class="sidebar__description">只是一些写下来的瞬间。</p><nav class="sidebar__nav" aria-label="Primary"><a href="/">首页</a><a href="/archives/">归档</a><a href="/categories/">分类</a><a href="/tags/">标签</a><a href="/search/">搜索</a><a href="/links/">友链</a><a href="/about/">关于</a></nav><div class="sidebar__social"><a href="https://github.com/watanabe-hsad" target="_blank" rel="noopener">GitHub</a><a href="mailto:dubian.zzy@outlook.com" target="_blank" rel="noopener">E-Mail</a><a href="https://qm.qq.com/cgi-bin/qm/qr?k=EYiK7-b5ur1mWxbX7aV2AEBsuoW9c732" target="_blank" rel="noopener">QQ</a></div></div></section></div></div><button class="mobile-backdrop js-drawer-close" type="button" aria-label="关闭导航" tabindex="-1"></button><main class="site-main"><div class="article-layout article-layout--with-toc"><article class="article"><header class="article__header"><div class="article__eyebrow"><a href="/categories/%E5%AE%89%E5%85%A8%E7%9B%B8%E5%85%B3/">安全相关</a><span class="article__divider">/</span><a href="/categories/%E5%AE%89%E5%85%A8%E7%9B%B8%E5%85%B3/Java%E5%AE%89%E5%85%A8/">Java安全</a></div><h1 class="article__title">Java反序列化Commons-Collections篇01-CC1链</h1><div class="article__meta"><time datetime="2025-01-01T14:53:35.000Z">2025-01-01</time><span class="article__divider">/</span><span>更新于 2025-07-13</span></div><div class="article__tags"><a class="article__tag" href="/tags/Java/">Java</a></div></header><details class="post-outline post-outline--mobile"><summary class="post-outline__summary"><span>本文导航</span><small>按标题快速定位</small></summary><nav class="post-toc" data-post-toc><ol class="post-toc__list"><li class="post-toc__list-item post-toc__list-level-3"><a class="post-toc__list-link" href="#0x01-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="post-toc__list-text">0x01 环境搭建</span></a></li><li class="post-toc__list-item post-toc__list-level-3"><a class="post-toc__list-link" href="#0x02-Common-Collections-%E7%9B%B8%E5%85%B3%E4%BB%8B%E7%BB%8D"><span class="post-toc__list-text">0x02 Common-Collections 相关介绍</span></a></li><li class="post-toc__list-item post-toc__list-level-3"><a class="post-toc__list-link" href="#0x03-CC1%E6%94%BB%E5%87%BB%E9%93%BE%E5%88%86%E6%9E%90-TransformMap"><span class="post-toc__list-text">0x03 CC1攻击链分析(TransformMap)</span></a><ol class="post-toc__list-child"><li class="post-toc__list-item post-toc__list-level-4"><a class="post-toc__list-link" href="#%E5%AF%BB%E6%89%BE%E5%B0%BE%E9%83%A8%E5%8D%B1%E9%99%A9%E6%96%B9%E6%B3%95"><span class="post-toc__list-text">寻找尾部危险方法</span></a></li><li class="post-toc__list-item post-toc__list-level-4"><a class="post-toc__list-link" href="#%E5%AF%BB%E6%89%BE%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E9%93%BE"><span class="post-toc__list-text">寻找反序列化链</span></a></li><li class="post-toc__list-item post-toc__list-level-4"><a class="post-toc__list-link" href="#%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%85%A5%E5%8F%A3-readObject"><span class="post-toc__list-text">反序列化入口-readObject()</span></a></li></ol></li><li class="post-toc__list-item post-toc__list-level-3"><a class="post-toc__list-link" href="#0x04-CC1-Exp-TransformMap"><span class="post-toc__list-text">0x04 CC1 Exp(TransformMap)</span></a><ol class="post-toc__list-child"><li class="post-toc__list-item post-toc__list-level-4"><a class="post-toc__list-link" href="#%E7%90%86%E6%83%B3%E7%8A%B6%E6%80%81"><span class="post-toc__list-text">理想状态</span></a></li><li class="post-toc__list-item post-toc__list-level-4"><a class="post-toc__list-link" href="#Fix%EF%BC%9ARuntime%E5%AF%B9%E8%B1%A1%E4%B8%8D%E5%8F%AF%E5%BA%8F%E5%88%97%E5%8C%96"><span class="post-toc__list-text">Fix：Runtime对象不可序列化</span></a></li><li class="post-toc__list-item post-toc__list-level-4"><a class="post-toc__list-link" href="#Fix%EF%BC%9AmemberType%E4%B8%BAnull"><span class="post-toc__list-text">Fix：memberType为null</span></a></li><li class="post-toc__list-item post-toc__list-level-4"><a class="post-toc__list-link" href="#Fix%EF%BC%9AsetValue%E7%9A%84%E4%BC%A0%E5%8F%82"><span class="post-toc__list-text">Fix：setValue的传参</span></a></li></ol></li><li class="post-toc__list-item post-toc__list-level-3"><a class="post-toc__list-link" href="#0x05-Exploit"><span class="post-toc__list-text">0x05 Exploit</span></a></li></ol></nav></details><div class="article__content"><h3 id="0x01-环境搭建"><a href="#0x01-环境搭建" class="headerlink" title="0x01 环境搭建"></a>0x01 环境搭建</h3><ul>
 <li><a target="_blank" rel="noopener" href="https://www.oracle.com/cn/java/technologies/javase/javase8-archive-downloads.html">JDK8u65</a></li>
 <li><a target="_blank" rel="noopener" href="http://hg.openjdk.java.net/jdk8u/jdk8u/jdk/rev/af660750b2f4">openJDK 8u65（方便查看源码）</a></li>
 </ul>
 <p>首先正常创建Java项目，这里使用maven管理工具，JDK要求8u_65（高版本会被修复），如下图。</p>
-<p><img src="jdk8u_65.png"></p>
+<p><img src="/2025/01/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96Commons-Collections%E7%AF%8701-CC1%E9%93%BE/jdk8u_65.png"></p>
 <p>maven添加CC1依赖</p>
 <pre class="language-markup" data-language="markup"><code class="language-markup"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dependency</span><span class="token punctuation">></span></span>
     <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>groupId</span><span class="token punctuation">></span></span>commons-collections<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>groupId</span><span class="token punctuation">></span></span>
@@ -23,15 +23,15 @@
 <ol>
 <li>先解压之前的JDK中的<code>src.zip</code>，如下</li>
 </ol>
-<p><img src="OpenJDK-1.png"></p>
+<p><img src="/2025/01/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96Commons-Collections%E7%AF%8701-CC1%E9%93%BE/OpenJDK-1.png"></p>
 <ol start="2">
 <li>在刚刚下载的<code>OpenJDK\jdk-8u65\src\share\classes</code>目录下找到<code>sun</code>，放入上面的<code>src</code>里</li>
 </ol>
-<p><img src="OpenJDK-2.png"></p>
+<p><img src="/2025/01/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96Commons-Collections%E7%AF%8701-CC1%E9%93%BE/OpenJDK-2.png"></p>
 <ol start="3">
 <li>在IDEA-&gt;Project Structure-&gt;SDKs-&gt;1.8_65-&gt;Sourcepath加入该目录</li>
 </ol>
-<p><img src="OpenJDK-3.png"></p>
+<p><img src="/2025/01/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96Commons-Collections%E7%AF%8701-CC1%E9%93%BE/OpenJDK-3.png"></p>
 <h3 id="0x02-Common-Collections-相关介绍"><a href="#0x02-Common-Collections-相关介绍" class="headerlink" title="0x02 Common-Collections 相关介绍"></a>0x02 Common-Collections 相关介绍</h3><p><a target="_blank" rel="noopener" href="https://blinkfox.github.io/2018/09/13/hou-duan/java/commons/commons-collections-bao-he-jian-jie/">Apache Commons Collections包和简介 | 闪烁之狐</a></p>
 <p><a target="_blank" rel="noopener" href="http://commons.apache.org/">Apache Commons</a>是Apache软件基金会的项目，曾经隶属于<code>Jakarta</code>项目。<code>Commons</code>的目的是提供可重用的、解决各种实际的通用问题且开源的Java代码。Commons由三部分组成：<code>Proper</code>（是一些已发布的项目）、<code>Sandbox</code>（是一些正在开发的项目）和<code>Dormant</code>（是一些刚启动或者已经停止维护的项目）。</p>
 <p><a target="_blank" rel="noopener" href="http://commons.apache.org/proper/commons-collections/">Commons Collections</a>包为Java标准的<code>Collections API</code>提供了相当好的补充。在此基础上对其常用的数据结构操作进行了很好的封装、抽象和补充。让我们在开发应用程序的过程中，既保证了性能，同时也能大大简化代码。</p>
@@ -51,12 +51,12 @@
 <li><code>org.apache.commons.collections.set</code> – 实现Set系列接口的一组类</li>
 </ul>
 <h3 id="0x03-CC1攻击链分析-TransformMap"><a href="#0x03-CC1攻击链分析-TransformMap" class="headerlink" title="0x03 CC1攻击链分析(TransformMap)"></a>0x03 CC1攻击链分析(TransformMap)</h3><p>首先回顾复习一下反序列化攻击思路</p>
-<p><img src="CC1-1.png"></p>
+<p><img src="/2025/01/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96Commons-Collections%E7%AF%8701-CC1%E9%93%BE/CC1-1.png"></p>
 <h4 id="寻找尾部危险方法"><a href="#寻找尾部危险方法" class="headerlink" title="寻找尾部危险方法"></a>寻找尾部危险方法</h4><p>因为这里是学习，直接去看<code>Transformer</code>接口</p>
 <p>快捷键 ctrl + alt + B，查看实现接口的类。</p>
-<p><img src="exec-1.png"></p>
+<p><img src="/2025/01/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96Commons-Collections%E7%AF%8701-CC1%E9%93%BE/exec-1.png"></p>
 <p>这里跟着b站up白日梦组长看了几个实现类，最终在<code>InvokerTransformer</code>的<code>transform()</code>方法看到了反射调用，这里可以调用任意类任意方法，也就符合了我们攻击的要求。</p>
-<p><img src="exec-2.png"></p>
+<p><img src="/2025/01/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96Commons-Collections%E7%AF%8701-CC1%E9%93%BE/exec-2.png"></p>
 <p>这里尝试使用这个类简单<code>calc</code>一下</p>
 <p>这里是利用反射的简单demo小样</p>
 <pre class="language-java" data-language="java"><code class="language-java"> <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">&#123;</span>
@@ -68,7 +68,7 @@
     <span class="token punctuation">&#125;</span></code></pre>
 
 <p>接下来根据<code>InvokerTransformer</code>类来写</p>
-<p><img src="exec-3.png"></p>
+<p><img src="/2025/01/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96Commons-Collections%E7%AF%8701-CC1%E9%93%BE/exec-3.png"></p>
 <pre class="language-java" data-language="java"><code class="language-java"><span class="token keyword">package</span> <span class="token namespace">com<span class="token punctuation">.</span>hsad</span><span class="token punctuation">;</span>
 
 <span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>apache<span class="token punctuation">.</span>commons<span class="token punctuation">.</span>collections<span class="token punctuation">.</span>functors<span class="token punctuation">.</span></span><span class="token class-name">InvokerTransformer</span></span><span class="token punctuation">;</span>
@@ -86,12 +86,12 @@
 <h4 id="寻找反序列化链"><a href="#寻找反序列化链" class="headerlink" title="寻找反序列化链"></a>寻找反序列化链</h4><p>我们已经找到在<code>InvokerTransformer</code>类存在危险方法<code>transform()</code>，接下来寻找谁调用了这个方法</p>
 <p>跟进<code>transform()</code>方法，使用<code>Find usages</code></p>
 <p><code>Ctrl+Shift+Alt+F7</code>选择<code>All Places</code></p>
-<img src="chain-1.png" style="zoom:67%;">
+<img src="chain-1.png" style="zoom:67%;" />
 
 <p>这里就直接点出<code>TransformedMap</code>的<code>checkSetValue()</code>方法调用了<code>transform()</code>方法</p>
-<p><img src="chain-2.png"></p>
+<p><img src="/2025/01/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96Commons-Collections%E7%AF%8701-CC1%E9%93%BE/chain-2.png"></p>
 <p>先跟着看一下<code>valueTransformer</code>，这里找到了<code>TransformedMap</code>构造函数，这里为<code>protected</code>，但是上面有个静态方法调用了构造函数</p>
-<p><img src="chain-3.png"></p>
+<p><img src="/2025/01/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96Commons-Collections%E7%AF%8701-CC1%E9%93%BE/chain-3.png"></p>
 <p>因为<code>TransformedMap</code>类是<code>protected</code>的，无法直接获取到对象，可以借助<code>decorateTransform</code>这个静态方法来构造，然后利用反射来命令执行，来写一个demo小样</p>
 <pre class="language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">&#123;</span>
         <span class="token class-name">Runtime</span> rt <span class="token operator">=</span> <span class="token class-name">Runtime</span><span class="token punctuation">.</span><span class="token function">getRuntime</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
@@ -109,13 +109,13 @@
 
 <p>继续往下找，看看谁调用了<code>checkSetValue()</code>方法，发现这是一个抽象类，是 <code>TransformedMap</code> 的父类。</p>
 <p>调用 <code>checkSetValue</code> 方法的类是 <code>AbstractInputCheckedMapDecorator</code> 类中的一个内部类 <code>MapEntry</code></p>
-<p><img src="chain-4.png"></p>
-<p><img src="chain-5.png"></p>
+<p><img src="/2025/01/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96Commons-Collections%E7%AF%8701-CC1%E9%93%BE/chain-4.png"></p>
+<p><img src="/2025/01/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96Commons-Collections%E7%AF%8701-CC1%E9%93%BE/chain-5.png"></p>
 <p><code>setValue()</code> **实际上就是在 Map 中对一组 entry（键值对）**进行 <code>setValue()</code> 操作。</p>
-<img src="chain-6.png" style="zoom:85%;">
+<img src="chain-6.png" style="zoom:85%;" />
 
-<p><img src="chain-7.png"></p>
-<img src="chain-8.png" style="zoom: 67%;">
+<p><img src="/2025/01/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96Commons-Collections%E7%AF%8701-CC1%E9%93%BE/chain-7.png"></p>
+<img src="chain-8.png" style="zoom: 67%;" />
 
 <p>所以，我们在进行 <code>.decorate</code> 方法调用，进行 Map 遍历的时候，就会走到 <code>setValue()</code> 当中，而 <code>setValue()</code> 就会调用 <code>checkSetValue</code></p>
 <pre class="language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">&#123;</span>
@@ -133,9 +133,9 @@
     <span class="token punctuation">&#125;</span></code></pre>
 
 <h4 id="反序列化入口-readObject"><a href="#反序列化入口-readObject" class="headerlink" title="反序列化入口-readObject()"></a>反序列化入口-readObject()</h4><p>接下来我们继续跟进，发现<code>AnnotationInvocationHandler</code>在<code>readObject()</code>方法调用了<code>setValue()</code>方法，至此我们的链子已经完整了</p>
-<p><img src="readObject-1.png"></p>
+<p><img src="/2025/01/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96Commons-Collections%E7%AF%8701-CC1%E9%93%BE/readObject-1.png"></p>
 <p>我们注意到类的名字为 <code>AnnotationInvocationHandler</code>，<code>InvocationHandler</code> 这个后缀，我在动态代理里面提到过，是用做<strong>动态代理中间处理</strong>，因为它继承了 <code>InvocationHandler</code> 接口。</p>
-<p><img src="readObject-2.png"></p>
+<p><img src="/2025/01/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96Commons-Collections%E7%AF%8701-CC1%E9%93%BE/readObject-2.png"></p>
 <h3 id="0x04-CC1-Exp-TransformMap"><a href="#0x04-CC1-Exp-TransformMap" class="headerlink" title="0x04 CC1 Exp(TransformMap)"></a>0x04 CC1 Exp(TransformMap)</h3><h4 id="理想状态"><a href="#理想状态" class="headerlink" title="理想状态"></a>理想状态</h4><p>我们只需要通过反射的方式来获取 <code>AnnotationInvocationHandler</code> 类及其构造函数，再实例化它，然后反序列化即可。</p>
 <pre class="language-java" data-language="java"><code class="language-java"><span class="token keyword">package</span> <span class="token namespace">com<span class="token punctuation">.</span>hsad</span><span class="token punctuation">;</span>
 
@@ -182,7 +182,7 @@
 <li><code>Runtime</code> 对象不可序列化，需要通过反射将其变成可以序列化的形式。</li>
 <li><code>setValue()</code> 的传参，是需要传 <code>Runtime</code> 对象的；而在实际情况当中的 <code>setValue()</code> 的传参是这个东西</li>
 </ol>
-<p><img src="readObject-3.png"></p>
+<p><img src="/2025/01/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96Commons-Collections%E7%AF%8701-CC1%E9%93%BE/readObject-3.png"></p>
 <ol start="3">
 <li>之前提到的<code>if</code>条件</li>
 </ol>
@@ -215,7 +215,7 @@
     <span class="token punctuation">&#125;</span></code></pre>
 
 <p>上述代码有很多复用性，所以我们可以使用<code>ChainedTransformer</code>类来简化代码</p>
-<p><img src="readObject-4.png"></p>
+<p><img src="/2025/01/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96Commons-Collections%E7%AF%8701-CC1%E9%93%BE/readObject-4.png"></p>
 <pre class="language-java" data-language="java"><code class="language-java"><span class="token keyword">package</span> <span class="token namespace">com<span class="token punctuation">.</span>hsad<span class="token punctuation">.</span></span><span class="token class-name">Fix</span><span class="token punctuation">;</span>
 
 <span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>apache<span class="token punctuation">.</span>commons<span class="token punctuation">.</span>collections<span class="token punctuation">.</span></span><span class="token class-name">Transformer</span></span><span class="token punctuation">;</span>
@@ -296,17 +296,17 @@
 
 <p>此时transform()的值并没有被正确设置，并不会弹出计算器</p>
 <h4 id="Fix：memberType为null"><a href="#Fix：memberType为null" class="headerlink" title="Fix：memberType为null"></a>Fix：memberType为null</h4><p>这个时候我们可以打断点调试一下，发现此时<code>memberType</code>为null</p>
-<p><img src="readObject-5.png"></p>
+<p><img src="/2025/01/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96Commons-Collections%E7%AF%8701-CC1%E9%93%BE/readObject-5.png"></p>
 <p>因为<code>memberValue</code>是可控的是我们传入的<code>transformedMap</code>，它触发<code>getKey()</code>只会获得我们当时随意设置的<code>&quot;a&quot;</code>，而<code>memberType</code>是我们传入的第一个参数<code>Override.class</code>，它里面并没有一个方法为<code>&quot;a&quot;</code>所以此时<code>memberType</code>为null。</p>
-<p><img src="readObject-7.png"></p>
-<p><img src="readObject-6.png"></p>
+<p><img src="/2025/01/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96Commons-Collections%E7%AF%8701-CC1%E9%93%BE/readObject-7.png"></p>
+<p><img src="/2025/01/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96Commons-Collections%E7%AF%8701-CC1%E9%93%BE/readObject-6.png"></p>
 <p>那么解决这个问题只需要修改我们传入的第一个参数，并设置<code>map</code>的<code>key</code>为他的方法的名字</p>
-<p><img src="readObject-8.png"></p>
+<p><img src="/2025/01/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96Commons-Collections%E7%AF%8701-CC1%E9%93%BE/readObject-8.png"></p>
 <p>当我们设置传入第一个参数为<code>Target.class</code>,ke为<code>value</code>时，此时<code>memberType</code>便不为<code>null</code></p>
-<p><img src="readObject-9.png"></p>
+<p><img src="/2025/01/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96Commons-Collections%E7%AF%8701-CC1%E9%93%BE/readObject-9.png"></p>
 <h4 id="Fix：setValue的传参"><a href="#Fix：setValue的传参" class="headerlink" title="Fix：setValue的传参"></a>Fix：setValue的传参</h4><p>在第二个<code>if</code>条件中，<code>setValue</code>的值并不为我们期望的<code>Runtime.class</code>，而是<code>AnnotationTypeMismatchExceptionProxy</code>。</p>
 <p>那我们这里找到了一个能够解决 <code>setValue</code> 可控参数的类 ———— <code>ConstantTransformer</code></p>
-<p><img src="readObject-10.png"></p>
+<p><img src="/2025/01/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96Commons-Collections%E7%AF%8701-CC1%E9%93%BE/readObject-10.png"></p>
 <ul>
 <li><p>构造方法：传入的任何对象都放在 <code>iConstant</code> 中</p>
 </li>
@@ -381,5 +381,5 @@
 <span class="token class-name">ChainedTransformer</span>
 <span class="token class-name">HashMap</span></code></pre>
 
-<p><img src="exp.png"></p>
-</div></article><aside class="post-outline post-outline--desktop" aria-label="文章目录"><p class="post-outline__eyebrow">本文导航</p><p class="post-outline__title">章节概览</p><nav class="post-toc" data-post-toc></nav></aside></div><nav class="post-nav"><a class="post-nav__item post-nav__item--prev" href="/2025/01/20/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96Commons-Collections%E7%AF%8702-CC6%E9%93%BE/"><span class="post-nav__label">上一篇</span><strong>Java反序列化Commons-Collections篇02-CC6链</strong></a><a class="post-nav__item post-nav__item--next" href="/2024/12/01/Java%E5%AE%89%E5%85%A8%E5%9F%BA%E7%A1%80-5/"><span class="post-nav__label">下一篇</span><strong>JAVA安全基础-- JDK动态代理</strong></a></nav></main><footer class="site-footer"><p class="site-footer__text">有些话适合留在页面里。</p><a class="site-footer__support" href="https://www.dkdun.cn/" target="_blank" rel="noopener"><img class="site-footer__support-logo" src="https://www.dkdun.cn/themes/web/www/upload/local673d5fc9c789c.png" alt="林枫云"><span class="site-footer__support-copy"><span>本网站由 </span><strong>林枫云</strong><span> 提供赞助</span></span></a><p class="site-footer__license">本站内容采用<a href="https://creativecommons.org/licenses/by-nc/4.0/deed.zh-hans" target="_blank" rel="noopener"> CC BY-NC 4.0 </a>协议发布</p></footer></div></body></html>
+<p><img src="/2025/01/01/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96Commons-Collections%E7%AF%8701-CC1%E9%93%BE/exp.png"></p>
+</div></article><aside class="post-outline post-outline--desktop" aria-label="文章目录"><p class="post-outline__eyebrow">本文导航</p><p class="post-outline__title">章节概览</p><nav class="post-toc" data-post-toc><ol class="post-toc__list"><li class="post-toc__list-item post-toc__list-level-3"><a class="post-toc__list-link" href="#0x01-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="post-toc__list-text">0x01 环境搭建</span></a></li><li class="post-toc__list-item post-toc__list-level-3"><a class="post-toc__list-link" href="#0x02-Common-Collections-%E7%9B%B8%E5%85%B3%E4%BB%8B%E7%BB%8D"><span class="post-toc__list-text">0x02 Common-Collections 相关介绍</span></a></li><li class="post-toc__list-item post-toc__list-level-3"><a class="post-toc__list-link" href="#0x03-CC1%E6%94%BB%E5%87%BB%E9%93%BE%E5%88%86%E6%9E%90-TransformMap"><span class="post-toc__list-text">0x03 CC1攻击链分析(TransformMap)</span></a></li><li class="post-toc__list-item post-toc__list-level-3"><a class="post-toc__list-link" href="#0x04-CC1-Exp-TransformMap"><span class="post-toc__list-text">0x04 CC1 Exp(TransformMap)</span></a></li><li class="post-toc__list-item post-toc__list-level-3"><a class="post-toc__list-link" href="#0x05-Exploit"><span class="post-toc__list-text">0x05 Exploit</span></a></li></ol></nav></aside></div><nav class="post-nav"><a class="post-nav__item post-nav__item--prev" href="/2025/01/20/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96Commons-Collections%E7%AF%8702-CC6%E9%93%BE/"><span class="post-nav__label">上一篇</span><strong>Java反序列化Commons-Collections篇02-CC6链</strong></a><a class="post-nav__item post-nav__item--next" href="/2024/12/01/Java%E5%AE%89%E5%85%A8%E5%9F%BA%E7%A1%80-5/"><span class="post-nav__label">下一篇</span><strong>JAVA安全基础-- JDK动态代理</strong></a></nav></main><footer class="site-footer"><p class="site-footer__text">有些话适合留在页面里。</p><a class="site-footer__support" href="https://www.dkdun.cn/" target="_blank" rel="noopener"><img class="site-footer__support-logo" src="https://www.dkdun.cn/themes/web/www/upload/local673d5fc9c789c.png" alt="林枫云"><span class="site-footer__support-copy"><span>本网站由 </span><strong>林枫云</strong><span> 提供赞助</span></span></a><p class="site-footer__license">本站内容采用<a href="https://creativecommons.org/licenses/by-nc/4.0/deed.zh-hans" target="_blank" rel="noopener"> CC BY-NC 4.0 </a>协议发布</p></footer></div></body></html>
